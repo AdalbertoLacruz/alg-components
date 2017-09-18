@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="src/index.css">
+    <script type="module" src="src/components.js"></script>
+  </head>
+  <body controller="app-controller" style="visibility: hidden">
+    <div class="header">
+      Header
+    </div>
+    <div class="content">
+      Content
+      <alg-button id="btn1"
+        text="click me"
+        color="[[app-controller:btn1-color]]">OK</alg-button>
+      <alg-button id="btn2"
+        text="{{:btn2-label:5}}"
+        color="[[app-controller:btn2-color]]"
+        on-click="[[app-controller:BTN2_CLICK]]">&times;</alg-button>
+    </div>
+    <div class="footer">
+      Footer
+    </div>
+  </body>
+</html>

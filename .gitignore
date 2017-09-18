@@ -1,0 +1,4 @@
+ignore
+/doc
+node_modules/
+/.vscode
