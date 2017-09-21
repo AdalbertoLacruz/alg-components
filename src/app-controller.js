@@ -1,6 +1,8 @@
 // @ts-check
 
-import { AlgController, TYPE_NUMBER } from './alg-components/controllers/alg-controller.js';
+import { AlgController } from './alg-components/controllers/alg-controller.js';
+import { ObsNumber } from './alg-components/types/obsNumber.js';
+import { ObsString } from './alg-components/types/obsString.js';
 
 class AppController extends AlgController {
   /**
@@ -12,58 +14,85 @@ class AppController extends AlgController {
     return 'app-controller';
   }
 
+  // @override
+  defineBindings() {
+    const bindings = super.defineBindings();
+    bindings.set('btn1-color', this.btn1Color);
+    bindings.set('btn1-label', this.btn1Label);
+    bindings.set('btn2-color', this.btn2Color);
+    bindings.set('btn2-label', this.btn2Label);
+    return bindings;
+  }
+
   constructor() {
     super();
 
-    // TODO: init()
-    this.setRegisterType('btn1-label', TYPE_NUMBER);
-    this.setRegisterType('btn2-label', TYPE_NUMBER);
+    // order is important
+    this.btn1Label.initializer((value) => {
+      this.btn1LabelValue.init(Number.parseInt(value));
+    }).observe((value) => {
+      this.btn2Color.set('blue');
+      this.btn1Color.set('red');
+    });
 
-    this.btn1ColorValue = 'blue';
-    this.btn1LabelValue = 0;
-    this.btn2ColorValue = 'blue';
-    this.btn2LabelValue = 0;
+    this.btn1LabelValue.observe((value) => {
+      this.btn1Label.set(value.toString());
+    }).init(4);
+
+    this.btn2Label.initializer((value) => {
+      this.btn2LabelValue.init(Number.parseInt(value));
+    }).observe((value) => {
+      this.btn2Color.set('red');
+      this.btn1Color.set('blue');
+    });
+
+    this.btn2LabelValue.observe((value) => {
+      this.btn2Label.set(value.toString());
+    }).init(15);
+
+    window.addEventListener('load', () => {
+      this.btn1Color.set('black');
+      this.btn2Color.set('black');
+    });
   }
 
-  set btn1ColorValue(value) {
-    this.setRegisterValue(null, 'btn1-color', value, true, true);
+  // observable btn1
+  get btn1Color() {
+    return this._btn1Color || (this._btn1Color = new ObsString('btn1Color').log());
   }
 
   get btn1LabelValue() {
-    return this.getRegisterItem('btn1-label').value;
+    return this._btn1LabelValue || (this._btn1LabelValue = new ObsNumber('btn1LabelValue').log());
   }
 
-  set btn1LabelValue(value) {
-    this.setRegisterValue(null, 'btn1-label', value, true, true);
+  get btn1Label() {
+    return this._btn1Label || (this._btn1Label = new ObsString('btn1Label').log());
   }
 
-  set btn2ColorValue(value) {
-    this.setRegisterValue(null, 'btn2-color', value, true, true);
+  // observable btn2
+
+  get btn2Color() {
+    return this._btn2Color || (this._btn2Color = new ObsString('btn2Color').log());
   }
 
   get btn2LabelValue() {
-    return this.getRegisterItem('btn2-label').value;
+    return this._btn2LabelValue || (this._btn2LabelValue = new ObsNumber('btn2LabelValue').log());
   }
 
-  set btn2LabelValue(value) {
-    this.setRegisterValue(null, 'btn2-label', value, true, true);
+  get btn2Label() {
+    return this._btn2Label || (this._btn2Label = new ObsString().setName('btn2Label').log());
   }
 
   //
-  fire(message) {
-    // TODO: directorio de message/function
-    super.fire(message);
+  fire(channel) {
+    super.fire(channel);
 
-    switch (message) {
+    switch (channel) {
       case 'BTN1_CLICK':
-        this.btn2LabelValue = this.btn2LabelValue + 1;
-        this.btn1ColorValue = 'red';
-        this.btn2ColorValue = 'blue';
+        this.btn2LabelValue.add(2);
         break;
       case 'BTN2_CLICK':
-        this.btn1LabelValue = this.btn1LabelValue + 1;
-        this.btn2ColorValue = 'red';
-        this.btn1ColorValue = 'blue';
+        this.btn1LabelValue.add(3);
         break;
       default:
     }

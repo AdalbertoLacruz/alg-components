@@ -4,7 +4,7 @@ There are many components/frameworks for web development, so this is a experimen
 
 - Observable natively in the types
 - Binding support for observable suscription
-- Horizontal bus for message fire/observation
+- Horizontal bus for channel fire/observation
 
 ## Architecture
 
@@ -16,19 +16,18 @@ File html/component.js
   - View (HTML & component itself)
 
 ## Bindings
-  - in html component: attribute="[[controller:message:defaultValue]]".
+  - in html component: attribute="[[controller:channel:defaultValue]]".
   - With {{}} the attribute is reflected in the HTML.
   - Support for missing controller, if defined abode the HTML tree, with controller="controllerName".
   - defaultValue could be ommited.
 
-  * example: [[:message]]
+  * example: [[:channel]]
 
 ## StyleBindings
-  - some like: style="color:[[:message1:blue]];background-color:[[:message2:red]]"
+  - some like: style="color:[[:channel1:blue]];background-color:[[:channel2:red]]"
 
 ## Status
 The actual version is very early. Pending to code:
-  - observable types
   - style attribute binding
 
 ## Acknowledgments

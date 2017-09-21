@@ -5,8 +5,8 @@ import { AlgController } from '../controllers/alg-controller.js';
  * Base class for AlgComponents
  * <p>
  * Para definir un componente en html:<p>
- * &lt;alg-component attribute1="[[controller:message:defaultValue]]" <br>
- * attribute2="{{controller:message:defaultValue}}" (reflects the value to the tag) <br>
+ * &lt;alg-component attribute1="[[controller:channel:defaultValue]]" <br>
+ * attribute2="{{controller:channel:defaultValue}}" (reflects the value to the tag) <br>
  * attribute3="final value" <br>
  * on-click="[[controller:ID_EVENT]]
  * <p>
@@ -15,7 +15,7 @@ import { AlgController } from '../controllers/alg-controller.js';
  * <p>
  * A component could have events by default.
  * <p>
- * A controller and defaultValue could be ommited in the handler. attribute1="[[:message]]".
+ * A controller and defaultValue could be ommited in the handler. attribute1="[[:channel]]".
  *
  * @type {class}
  */
@@ -185,7 +185,7 @@ class AlgComponent extends HTMLElement {
    * Attributes that define a handler as:<br>
    *     on-click="[[app-controller:BTN2_CLICK]]"
    *
-   * @return {Map<String, Object>} - handlerName, {controller, message}
+   * @return {Map<String, Object>} - handlerName, {controller, channel}
    */
   get handlers() {
     return this._handlers || (this._handlers = new Map());
@@ -234,14 +234,14 @@ class AlgComponent extends HTMLElement {
 
   /**
    * addEventListener's for the component, using this.handlers.<br>
-   * 'event': { controller: '...', message: '...' }
+   * 'event': { controller: '...', channel: '...' }
    */
   addEventHandlers() {
     this.handlers.forEach((value, key) => {
       const controller = AlgController.controllers.get(value.controller);
-      const message = value.message;
+      const channel = value.channel;
       this.addEventListener(key, () => {
-        controller.fire(message);
+        controller.fire(channel);
       });
     });
   }
@@ -263,9 +263,9 @@ class AlgComponent extends HTMLElement {
    *
    * Checks if value is coded as:<p>
    *
-   *    '[[controller:message:defaultValue]]'<br>
+   *    '[[controller:channel:defaultValue]]'<br>
    *    or<br>
-   *    '{{controller:message:defaultValue}}'
+   *    '{{controller:channel:defaultValue}}'
    *
    * @param  {String} attrName - Attribute Name
    * @param  {String} value    - Specifies final value o pattern for subscription
@@ -281,10 +281,10 @@ class AlgComponent extends HTMLElement {
     const attributeHandler = this.attributeHandlers.get(attrName);
     if (attributeHandler != null) {
       if (binder.sync) this.attributeSync.add(attrName); // order is important
-      const value = controller.subscribe(binder.message, binder.defaultValue,
+      const value = controller.subscribe(binder.channel, binder.defaultValue,
         attributeHandler.bind(this, attrName));
-      // with default value, the controller has updated yet the attribute
-      if (binder.defaultValue === null) this.attributeUpdate(attrName, value);
+      // value !== null we could be late for dispatch, assure the attribute value
+      if (value !== null) this.attributeUpdate(attrName, value);
     } else {
       return false;
     }
@@ -297,7 +297,7 @@ class AlgComponent extends HTMLElement {
    * checks for 'on-handler'. If true, update handlers and remove attribute.
    *
    * @param  {String} attrName - Attribute Name, such 'on-click'
-   * @param  {String}  val      - binder such [[controller:ID_MESSAGE]]
+   * @param  {String}  val      - binder such [[controller:ID_CHANNEL]]
    * @return {Boolean}         - true is event handler
    */
   attributeIsHandler(attrName, val) {
@@ -311,7 +311,7 @@ class AlgComponent extends HTMLElement {
 
     this.handlers.set(handler, {
       'controller': binder.controller,
-      'message': binder.message
+      'channel': binder.channel
     });
 
     this.removeAttribute(attrName);
@@ -319,7 +319,7 @@ class AlgComponent extends HTMLElement {
   }
 
   /**
-   * Check for binder if value == '[[controller:message:default value]]' or {{}}.
+   * Check for binder if value == '[[controller:channel:default value]]' or {{}}.
    * In that case, subscribe the attribute to changes in the controller register.
    *
    * @param  {String} attrName - Attribute Name
@@ -372,12 +372,12 @@ class AlgComponent extends HTMLElement {
   }
 
   /**
-   * Checks String value for '[[controller:message:defaultValue]]' or {{ ... }}.
+   * Checks String value for '[[controller:channel:defaultValue]]' or {{ ... }}.
    * <br>
-   * Support omit controller and defaultValue: [[:message]]
+   * Support omit controller and defaultValue: [[:channel]]
    *
    * @param  {String} value - to check for pattern
-   * @return {Object}       controller, message, defaultValue, sync
+   * @return {Object}       controller, channel, defaultValue, sync
    */
   getAttributeBinder(value) {
     const re = /^[[{]{2}([a-z-_\d]*):{1}([a-z-_\d)]+):{0,1}([a-z-_\d)]+)*[\]}]{2}/ig;
@@ -387,7 +387,7 @@ class AlgComponent extends HTMLElement {
     const controllerName = match[1] ? match[1] : this.controller;
     return {
       'controller': controllerName,
-      'message': match[2],
+      'channel': match[2],
       'defaultValue': match[3],
       'sync': value.startsWith('{')
     };
@@ -485,7 +485,7 @@ class AlgComponent extends HTMLElement {
 
   /**
    * Update event handlers with the default information.
-   * Only if we have a handler name and no controller/message defined.
+   * Only if we have a handler name and no controller/channel defined.
    */
   updateDefaultHandlers() {
     const id = this.id;
@@ -493,13 +493,13 @@ class AlgComponent extends HTMLElement {
 
     this.handlers.forEach((value, key) => {
       if (!value) {
-        const message = id ? `${id}_${key}`.toUpperCase() : null;
-        if (!message || !controller) {
+        const channel = id ? `${id}_${key}`.toUpperCase() : null;
+        if (!channel || !controller) {
           this.handlers.delete(key);
         } else {
           this.handlers.set(key, {
             'controller': controller,
-            'message': message
+            'channel': channel
           });
         }
       }

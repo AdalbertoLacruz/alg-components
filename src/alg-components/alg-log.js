@@ -64,6 +64,6 @@ class AlgLog {
 }
 
 // @ts-ignore
-if (!window.AlgLog) window.AlgLog = AlgLog;
+if (!window.log) window.log = AlgLog;
 
 export { AlgLog };

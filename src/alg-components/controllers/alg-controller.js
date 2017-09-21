@@ -1,10 +1,8 @@
 // @ts-check
-const TYPE_BOOLEAN = 'boolean';
-const TYPE_NUMBER = 'number';
-const TYPE_STRING = 'string';
 
+import { ObsString } from '../types/obsString.js';
 // TODO: controller and page association?
-// TODO: observerString and other types
+// TODO: global (app-controller) constructor(isGlobal)
 
 /**
  * Base class for page controllers
@@ -25,6 +23,17 @@ class AlgController {
   constructor() {
     AlgController.controllers.set(this.name, this);
   }
+  /**
+   * Assosiate channel - variable
+   * @return {Map}
+   */
+  get bindings() {
+    return this._bindings || (this._bindings = this.defineBindings());
+  }
+
+  get bus() {
+    return this._bus || (this._bus = new ObsString());
+  }
 
   /**
    * Storage for controller defined in the application. {"controllerName" : classInstance}
@@ -34,134 +43,41 @@ class AlgController {
     return this._controllers || (this._controllers = new Map());
   }
 
-  /**
-   * Storage for the binders
-   * @return {Object} Messages, values and subscriptors
-   */
-  get register() {
-    return this._register || (this._register = {});
+  // to @override
+  defineBindings() {
+    const bindings = new Map();
+    bindings.set('bus', this.bus);
+    return bindings;
   }
 
   /**
-   * Read or create a register item
+   * Associates an action with a channel
    *
-   * 'message': {
-   *   'actions': [action, ...]
-   *   'value':  defaultValue
-   *  }
-   *
-   * @param {String} name - message
-   * @return {Object}
-   */
-  getRegisterItem(name) {
-    return this.register[name] || (this.register[name] = {
-      'actions': [],
-      'type': TYPE_STRING,
-      'value': null
-    });
-  }
-
-  /**
-   * If raw converts to string the item.value
-   *
-   * @param  {Object} item - registem item
-   * @param  {Boolean} [raw=false] - true, keep value type
-   * @return {Object} value
-   */
-  getRegisterValue(item, raw) {
-    let value = item.value;
-    if (!raw && item.type !== TYPE_STRING) {
-      value = String(value);
-    }
-    return value;
-  }
-
-  /**
-   * Initialize the type for a message
-   *
-   * @param {String} message
-   * @param {String} type - TYPE_STRING, ...
-   */
-  setRegisterType(message, type) {
-    const item = this.getRegisterItem(message);
-    item.type = type;
-  }
-
-  /**
-   * Writes message.value = value, according to type
-   *
-   * @param  {Object} item - Optiona, the message item
-   * @param  {String} message
-   * @param  {any} value
-   * @param  {Boolean} [raw] - true, don't check type
-   * @param  {Boolean} [dispatch] - true, send message to subscribers
-   */
-  setRegisterValue(item, message, value, raw, dispatch) {
-    if (item === null) item = this.getRegisterItem(message);
-    let newValue = value;
-    if (!raw) {
-      const type = item.type;
-      switch (type) {
-        case TYPE_BOOLEAN:
-          newValue = Boolean(value);
-          break;
-        case TYPE_NUMBER:
-          newValue = Number.parseFloat(value);
-          break;
-        case TYPE_STRING:
-          newValue = String(value);
-          break;
-        default:
-      }
-    }
-    item.value = newValue;
-    if (dispatch) this.dispatch(message);
-  }
-
-  /**
-   * Associates an action with a message
-   *
-   * @param  {String} message
-   * @param  {any} defaultValue - if no null, set de value in message
+   * @param  {String} channel
+   * @param  {any} defaultValue - if no null, set the value in channel
    * @param  {Function} action - to process a change in dispatch
    * @return {any} - value
    */
-  subscribe(message, defaultValue, action) {
-    const item = this.getRegisterItem(message);
-    item.actions.push(action);
-    if (defaultValue != null) this.setRegisterValue(item, message, defaultValue);
-    const value = this.getRegisterValue(item);
-    if (value != null) {
-      this.dispatch(message);
-    }
-    return value;
-  }
-
-  /**
-   * The controller sends (down) a message to subscribers
-   *
-   * @param {String} message - channel
-   */
-  dispatch(message) {
-    // TODO: String conversion if not necessary
-    const item = this.getRegisterItem(message);
-    item.actions.forEach((action) => action(this.getRegisterValue(item)));
+  subscribe(channel, defaultValue, action) {
+    if (!this.bindings.has(channel)) return;
+    const bind = this.bindings.get(channel); // observable
+    bind.subscribe(action);
+    if (defaultValue != null) bind.init(defaultValue);
+    return bind.value;
   }
 
   /**
    * The controller receives (up) a message from the bus
    *
-   * @param {String} message - channel
+   * @param {String} channel - channel
    */
-  fire(message) {
+  fire(channel) {
     // TODO: data support
-
-    // dispatch message to the bus subscribers
-    this.setRegisterValue(null, 'bus', message, true, true);
+    this.bus.set(channel);
   }
 }
 
 // TODO: on-load event ? propagate to registred controllers
 // TODO: on-load page and controller association?
 
-export { AlgController, TYPE_BOOLEAN, TYPE_NUMBER, TYPE_STRING };
+export { AlgController };
