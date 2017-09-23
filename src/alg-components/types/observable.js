@@ -84,7 +84,7 @@ class Observable {
   set value(value) {
     this._value = value;
     // @ts-ignore
-    if (this.isLog && window.log) window.log.add(null, `${this.name}: ${this.value}`);
+    if (this.isLog && window.AlgLog) window.AlgLog.add(null, `${this.name}: ${this.value}`);
   }
 
   /* ____________________________________________ methods _____ */

@@ -1,0 +1,19 @@
+{
+  "source": {
+    "include": ["./src"],
+    "includePattern": ".js$"
+  },
+  "recurseDepth": 10,
+  "plugins": [],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true
+    }
+  },
+  "opts": {
+    "destination": "./doc/",
+    "recurse": "true"
+  }
+}

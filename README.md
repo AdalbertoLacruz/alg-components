@@ -27,7 +27,9 @@ File html/component.js
   - some like: style="color:[[:channel1:blue]];background-color:[[:channel2:red]]"
 
 ## Status
-The actual version is very early. Pending to code:
+The actual version is very early. Only works in the latest vesions of Chrome.
+
+Pending to code:
   - style attribute binding
 
 ## Acknowledgments

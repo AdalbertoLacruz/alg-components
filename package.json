@@ -1,15 +1,20 @@
 {
   "name": "alg-components",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "author": "Adalberto Lacruz <adalberto.lacruz@gmail.com>",
   "description": "web components",
   "homepage": "https://github.com/AdalbertoLacruz/alg_components",
-  "license": "APACHE",
+  "license": "Apache-2.0",
   "flat": "true",
   "main": "index.html",
   "dependencies": {
   },
-  "dev_dependencies": {
 
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  },
+  "scripts": {
+    "doc": "jsdoc -c jsdoc.json"
   }
 }
