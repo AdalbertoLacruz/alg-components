@@ -20,7 +20,7 @@ class AlgController {
 
   // *************************** ****************************
 
-  constructor() {
+  constructor() { // TODO: isGlobal = false
     AlgController.controllers.set(this.name, this);
   }
   /**
@@ -59,7 +59,7 @@ class AlgController {
    * @return {any} - value
    */
   subscribe(channel, defaultValue, action) {
-    if (!this.bindings.has(channel)) return;
+    if (!this.bindings.has(channel)) return defaultValue;
     const bind = this.bindings.get(channel); // observable
     bind.subscribe(action);
     if (defaultValue != null) bind.init(defaultValue);
@@ -72,7 +72,7 @@ class AlgController {
    * @param {String} channel - channel
    */
   fire(channel) {
-    // TODO: data support
+    // TODO: message
     this.bus.set(channel);
   }
 }

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <title>alg-components demo</title>
     <link rel="stylesheet" type="text/css" href="src/index.css">
     <script type="module" src="src/components.js"></script>
   </head>
@@ -12,12 +13,16 @@
     <div class="content">
       Content
       <alg-button id="btn1"
-        text="{{:btn1-label}}"
-        color="[[app-controller:btn1-color]]">OK</alg-button>
+        text="{{:btn1-text}}"
+        color="[[app-controller:btn1-color]]"
+        style="margin:[[:btn1-style-margin:40px]];background-color:yellow">OK</alg-button>
       <alg-button id="btn2"
-        text="{{:btn2-label:15}}"
+        text="{{:btn2-text:15}}"
         color="[[app-controller:btn2-color]]"
         on-click="[[app-controller:BTN2_CLICK]]">&times;</alg-button>
+      <alg-button id="btn1"
+        text color style="margin;background-color;color:black" attr="25">OK</alg-button>
+      <br>
     </div>
     <div class="footer">
       Footer

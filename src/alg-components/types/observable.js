@@ -25,17 +25,9 @@ class Observable {
 
   /*  ___________________________________________ properties _____ */
 
-  /**
-   * Function called by init(value)
-   * @return {Function}
-   */
-  get initHandler() {
-    return this._initHandler;
-  }
-
-  set initHandler(handler) {
-    this._initHandler = handler;
-  }
+  /** Function called by init(value) @param {Function} handler */
+  set initHandler(handler) { this._initHandler = handler; }
+  get initHandler() { return this._initHandler; }
 
   /**
    * If true, value changes must be logged
@@ -45,17 +37,10 @@ class Observable {
     if (this._isLog == null) this._isLog = false;
     return this._isLog;
   }
-  /**
-   * internal name used in logs
-   * @return {String}
-   */
-  get name() {
-    return this._name;
-  }
 
-  set name(value) {
-    this._name = value;
-  }
+  /** internal name used in logs @param {String} value */
+  set name(value) { this._name = value; }
+  get name() { return this._name; }
 
   /**
    * Observers are Functions defined at controller level
@@ -167,6 +152,7 @@ class Observable {
     }
     return this;
   }
+  // TODO: update
 
   /**
    * Change the name used in log

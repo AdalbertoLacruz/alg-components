@@ -9,21 +9,9 @@
  * @type {class}
  */
 class AlgLog {
-  /**
-   * global id.
-   * @return {Number}
-   */
-  static get id() {
-    return this._id || (this._id = 0);
-  }
-
-  /**
-   * global id
-   * @param {Number} value
-   */
-  static set id(value) {
-    this._id = value;
-  }
+  /** global id @param {Number} value */
+  static set id(value) { this._id = value; }
+  static get id() { return this._id || (this._id = 0); }
 
   /**
    * Global storage

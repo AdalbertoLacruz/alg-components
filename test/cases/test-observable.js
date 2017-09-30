@@ -1,4 +1,4 @@
-/* global mocha chai */
+/* global mocha chai describe it before beforeEach */
 import { Observable } from '../../src/alg-components/types/observable.js';
 
 let assert = chai.assert;

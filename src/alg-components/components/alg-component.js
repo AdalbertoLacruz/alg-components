@@ -1,5 +1,6 @@
 // @ts-check
 import { AlgController } from '../controllers/alg-controller.js';
+import { BinderParser } from './binder-parser.js';
 
 /**
  * Base class for AlgComponents
@@ -16,10 +17,17 @@ import { AlgController } from '../controllers/alg-controller.js';
  * A component could have events by default.
  * <p>
  * A controller and defaultValue could be ommited in the handler. attribute1="[[:channel]]".
+ * <p>
+ * style="property:[[controller:channel:defaultValue]];otherProperty:[[*]]" or
+ * style="property:value;..."
+ * <br>
+ * In this last case try autobinding to default-controller, with channel= id-style-property
  *
  * @type {class}
  */
 class AlgComponent extends HTMLElement {
+  // TODO: extends BinderElement
+
   /* **************** to override *************** */
 
   /**
@@ -28,7 +36,8 @@ class AlgComponent extends HTMLElement {
    */
   get attributeHandlers() {
     return this._attributeHandlers || (this._attributeHandlers = new Map()
-      .set('disabled', this.setDisabled));
+      .set('disabled', this.setDisabled))
+      .set('style', this.setStyle);
   }
 
   /**
@@ -36,7 +45,7 @@ class AlgComponent extends HTMLElement {
    * @return {Array<String>}
    */
   static get observedAttributes() {
-    return ['disabled'];
+    return ['disabled', 'style'];
   }
 
   /**
@@ -117,7 +126,7 @@ class AlgComponent extends HTMLElement {
     if (newVal == null) return; // happens in attribute removal
 
     if (this.attributeRegister.has(attrName)) {
-      this.attributeUpdate(attrName, newVal);
+      if (attrName !== 'style') this.attributeUpdate(attrName, newVal);
     } else {
       // binder is not processed yet
       this.attributeSubscribe(attrName, newVal);
@@ -146,6 +155,7 @@ class AlgComponent extends HTMLElement {
   // disconnectedCallback() {
   //   // this.removeEventListener
   // }
+  // TODO: unsubscribe
 
   // ******************* own class members **********************
 
@@ -165,21 +175,9 @@ class AlgComponent extends HTMLElement {
     return this._attributeSync || (this._attributeSync = new Set());
   }
 
-  /**
-   * Controller Name associate to the component
-   * @return {String}
-   */
-  get controller() {
-    return this._controller;
-  }
-
-  /**
-   * Controller Name associate to the component
-   * @param  {String} value
-   */
-  set controller(value) {
-    this._controller = value;
-  }
+  /** Controller Name associate to the component @param  {String} value */
+  set controller(value) { this._controller = value; }
+  get controller() { return this._controller; }
 
   /**
    * Attributes that define a handler as:<br>
@@ -245,6 +243,7 @@ class AlgComponent extends HTMLElement {
       });
     });
   }
+  // TODO: fire with message
 
   /**
    * check for tabIndex, role, and add them if not defined
@@ -259,63 +258,68 @@ class AlgComponent extends HTMLElement {
   }
 
   /**
-   * In the html page we have: &lt;alg-component attrName="value" ...<p><p>
+   * Process attr="[[controller:channel:defaultValue]]" or
+   * attr="{{controller:channel:defaultValue}}"
    *
-   * Checks if value is coded as:<p>
-   *
-   *    '[[controller:channel:defaultValue]]'<br>
-   *    or<br>
-   *    '{{controller:channel:defaultValue}}'
-   *
-   * @param  {String} attrName - Attribute Name
-   * @param  {String} value    - Specifies final value o pattern for subscription
-   * @return {Boolean} True if binder pattern found
+   * @param {BinderParser} binderParser
    */
-  attributeIsBinder(attrName, value) {
-    const binder = this.getAttributeBinder(value);
-    if (!binder) return false;
+  attributeIsBinder(binderParser) {
+    const attrName = binderParser.attrName;
 
-    const controller = AlgController.controllers.get(binder.controller);
-    if (!controller) return false;
+    const controller = AlgController.controllers.get(binderParser.controller);
+    if (!controller) return this.attributeUpdate(attrName, binderParser.value);
 
     const attributeHandler = this.attributeHandlers.get(attrName);
     if (attributeHandler != null) {
-      if (binder.sync) this.attributeSync.add(attrName); // order is important
-      const value = controller.subscribe(binder.channel, binder.defaultValue,
-        attributeHandler.bind(this, attrName));
-      // value !== null we could be late for dispatch, assure the attribute value
+      if (binderParser.isSync) this.attributeSync.add(attrName); // order is important
+      const channel = binderParser.autoChannel;
+      let value = binderParser.autoValue;
+      if (channel) {
+        value = value === '' ? null : value; // support attribute without value
+        value = controller.subscribe(channel, value, attributeHandler.bind(this, attrName));
+      }
       if (value !== null) this.attributeUpdate(attrName, value);
+      if (!binderParser.isSync) this.removeAttribute(attrName);
     } else {
-      return false;
+      this.attributeUpdate(attrName, binderParser.value);
     }
-
-    if (!binder.sync) this.removeAttribute(attrName);
-    return true;
   }
 
   /**
-   * checks for 'on-handler'. If true, update handlers and remove attribute.
+   * Process on-handler="[[controller:ID_CHANNEL]]"
    *
-   * @param  {String} attrName - Attribute Name, such 'on-click'
-   * @param  {String}  val      - binder such [[controller:ID_CHANNEL]]
-   * @return {Boolean}         - true is event handler
+   * @param  {BinderParser} binderParser
    */
-  attributeIsHandler(attrName, val) {
-    const re = /^on-(\w+)/g;
-    const match = re.exec(attrName);
-    if (!match) return false;
-
-    const handler = match[1];
-    const binder = this.getAttributeBinder(val);
-    if (!binder) return false;
-
-    this.handlers.set(handler, {
-      'controller': binder.controller,
-      'channel': binder.channel
+  attributeIsEvent(binderParser) {
+    this.handlers.set(binderParser.handler, {
+      'controller': binderParser.controller,
+      'channel': binderParser.channel
     });
+    this.removeAttribute(binderParser.attrName);
+  }
 
-    this.removeAttribute(attrName);
-    return true;
+  /**
+   * Process style="propiedad1:[[controller:channel:default_value]];propiedad2:[[*]]"
+   *
+   * @param {BinderParser} binderParser
+   */
+  attributeIsStyle(binderParser) {
+    let attributeHandler, channel, controller, property, value;
+
+    do {
+      controller = AlgController.controllers.get(binderParser.controller);
+      property = binderParser.styleProperty;
+      if (!controller) return this.setStyle(property, binderParser.value);
+      attributeHandler = this.attributeHandlers.get('style');
+      channel = binderParser.getAutoStyleChannel(property);
+      value = binderParser.autoValue;
+      if (channel) {
+        value = value === '' ? null : value; // support attribute without value
+        value = controller.subscribe(channel, value, attributeHandler.bind(this, property));
+      }
+
+      if (value !== null) this.setStyle(property, value);
+    } while (binderParser.next());
   }
 
   /**
@@ -327,13 +331,11 @@ class AlgComponent extends HTMLElement {
    */
   attributeSubscribe(attrName, value) {
     if (value === null) return;
+    const binderParser = new BinderParser(attrName, value, this.controller, this.id);
 
-    const _val = value.trim();
-
-    if (this.attributeIsHandler(attrName, _val)) return;
-    if (this.attributeIsBinder(attrName, _val)) return;
-
-    this.attributeUpdate(attrName, _val);
+    if (binderParser.isEventBinder) return this.attributeIsEvent(binderParser);
+    if (binderParser.isStyleBinder) return this.attributeIsStyle(binderParser);
+    return this.attributeIsBinder(binderParser);
   }
 
   /**
@@ -369,28 +371,6 @@ class AlgComponent extends HTMLElement {
       task();
       tasks.delete(task);
     });
-  }
-
-  /**
-   * Checks String value for '[[controller:channel:defaultValue]]' or {{ ... }}.
-   * <br>
-   * Support omit controller and defaultValue: [[:channel]]
-   *
-   * @param  {String} value - to check for pattern
-   * @return {Object}       controller, channel, defaultValue, sync
-   */
-  getAttributeBinder(value) {
-    const re = /^[[{]{2}([a-z-_\d]*):{1}([a-z-_\d)]+):{0,1}([a-z-_\d)]+)*[\]}]{2}/ig;
-    const match = re.exec(value);
-    if (!match) return;
-
-    const controllerName = match[1] ? match[1] : this.controller;
-    return {
-      'controller': controllerName,
-      'channel': match[2],
-      'defaultValue': match[3],
-      'sync': value.startsWith('{')
-    };
   }
 
   /**
@@ -481,6 +461,16 @@ class AlgComponent extends HTMLElement {
   setHiden(value) {
     if (value) this.style.visibility = 'hidden';
     if (!value) this.style.visibility = '';
+  }
+
+  /**
+   * style="property:value"
+   * @param {String} property
+   * @param {String} value
+   */
+  setStyle(property, value) {
+    if (this.setAttributeSuper('style', value)) return;
+    this.style[property] = value;
   }
 
   /**

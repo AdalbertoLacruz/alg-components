@@ -20,6 +20,7 @@ class AlgButton extends AlgComponent {
       .set('color', this.setColor)
       .set('text', this.setText));
   }
+  // TODO: avoid this
 
   /**
    * Attributes managed by the component
@@ -58,6 +59,7 @@ class AlgButton extends AlgComponent {
       <style>
         button {
           color: #cb6918;
+          cursor: pointer;
         }
         #in {
           line-height: 2;
@@ -92,7 +94,7 @@ class AlgButton extends AlgComponent {
     if (this.setAttributeSuper(attrName, value)) return;
     this.ids['in'].style.color = value;
   }
-  // TODO: support style="color:[[...]];background-color:[[..]]"
+  // TODO: updateColor
 
   /**
    * Set Text attribute
@@ -104,6 +106,7 @@ class AlgButton extends AlgComponent {
     if (this.setAttributeSuper(attrName, value)) return;
     this.ids['in'].innerHTML = value;
   }
+  // TODO: UpdateText
 }
 
 window.customElements.define('alg-button', AlgButton);

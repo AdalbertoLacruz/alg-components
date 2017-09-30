@@ -17,5 +17,6 @@ class ObsNumber extends Observable {
     return this;
   }
 }
+// TODO: assure value is number
 
 export { ObsNumber };
