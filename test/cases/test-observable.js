@@ -16,7 +16,8 @@ export function TestObservable() {
       initialValue = value;
     }).observe((value) => {
       observeValue = value;
-    }).subscribe((value) => {
+    });
+    observableVar.subscribe(null, null, (value) => {
       subscribeValue = value;
     });
     observableVar.init(value);

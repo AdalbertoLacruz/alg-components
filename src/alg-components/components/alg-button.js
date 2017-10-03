@@ -10,17 +10,16 @@ import { AlgComponent } from './alg-component.js';
  * @type {class}
  */
 class AlgButton extends AlgComponent {
-  /**
-   * Methods to update each attribute
-   * @override
-   * @return {Map<String, Function>}
-   */
-  get attributeHandlers() {
-    return this._attributeHandlers || (this._attributeHandlers = super.attributeHandlers
-      .set('color', this.setColor)
-      .set('text', this.setText));
-  }
-  // TODO: avoid this
+  // /**
+  //  * Methods to update each attribute
+  //  * @override
+  //  * @return {Map<String, Function>}
+  //  */
+  // get attributeHandlers() {
+  //   return this._attributeHandlers || (this._attributeHandlers = super.attributeHandlers
+  //     .set('color', this.bindedColor)
+  //     .set('text', this.bindedText));
+  // }
 
   /**
    * Attributes managed by the component
@@ -33,19 +32,38 @@ class AlgButton extends AlgComponent {
 
   /**
    * For Aria
-   * @override
-   * @return {String}
+   * @override @return {String}
    */
-  get role() {
-    return 'button';
-  }
+  get role() { return 'button'; }
 
   /**
    * Default events for the component
    * @override
    */
   addDefaultEventHandlers() {
-    this.handlers.set('click', null);
+    this.eventHandlers.set('click', null);
+  }
+
+  /**
+   * Set binded style color attribute
+   *
+   * @param {String} attrName - Attribute Name
+   * @param {String} value    - Color to set
+   */
+  bindedColor(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
+    this.ids['in'].style.color = value;
+  }
+
+  /**
+   * Set binded text attribute
+   *
+   * @param {String} attrName - Attribute Name
+   * @param {String} value    - text to set
+   */
+  bindedText(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
+    this.ids['in'].innerHTML = value;
   }
 
   /**
@@ -83,30 +101,6 @@ class AlgButton extends AlgComponent {
 
     return template;
   }
-
-  /**
-   * Set Style color attribute
-   *
-   * @param {String} attrName - Attribute Name
-   * @param {String} value    - Color to set
-   */
-  setColor(attrName, value) {
-    if (this.setAttributeSuper(attrName, value)) return;
-    this.ids['in'].style.color = value;
-  }
-  // TODO: updateColor
-
-  /**
-   * Set Text attribute
-   *
-   * @param {String} attrName - Attribute Name
-   * @param {String} value    - text to set
-   */
-  setText(attrName, value) {
-    if (this.setAttributeSuper(attrName, value)) return;
-    this.ids['in'].innerHTML = value;
-  }
-  // TODO: UpdateText
 }
 
 window.customElements.define('alg-button', AlgButton);

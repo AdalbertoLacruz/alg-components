@@ -82,7 +82,7 @@ class Observable {
    */
   init(value) {
     if (this.initHandler) this.initHandler(value);
-    this.set(value);
+    this.update(value);
     return this;
   }
 
@@ -141,20 +141,6 @@ class Observable {
   }
 
   /**
-   * Changes a value and trigger the suscriptors and observers
-   * @param  {*} value
-   * @return {*} Observable
-   */
-  set(value) {
-    if (this.value !== value) {
-      this.value = value;
-      this.dispatch();
-    }
-    return this;
-  }
-  // TODO: update
-
-  /**
    * Change the name used in log
    * @param {String} value
    * @return {*} Observable
@@ -171,11 +157,37 @@ class Observable {
 
   /**
    * A value change execute the subscriber functions
+   * @param {String} channel - For internal subscription inside complex objects
+   * @param {*} defaultValue
    * @param {Function} handler
    * @return {*} observable
    */
-  subscribe(handler) {
+  subscribe(channel, defaultValue, handler) {
     this.subscribers.add(handler);
+    if (defaultValue != null) this.init(defaultValue);
+    return this.value;
+  }
+
+  /**
+   * Remove the susbscriber
+   * @param {Function} handler
+   * @return {*} observable
+   */
+  unSubscribe(handler) {
+    this.subscribers.delete(handler);
+    return this;
+  }
+
+  /**
+   * Changes a value and trigger the suscriptors and observers
+   * @param  {*} value
+   * @return {*} Observable
+   */
+  update(value) {
+    if (this.value !== value) {
+      this.value = value;
+      this.dispatch();
+    }
     return this;
   }
 }

@@ -13,7 +13,7 @@ class ObsNumber extends Observable {
    * @return {ObsNumber}
    */
   add(value) {
-    this.set(this.value + value);
+    this.update(this.value + value);
     return this;
   }
 }

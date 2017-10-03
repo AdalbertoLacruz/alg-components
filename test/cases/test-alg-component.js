@@ -27,22 +27,22 @@ class Controller extends AlgController {
 
 class Component extends AlgComponent {
   addDefaultEventHandlers() {
-    this.handlers.set('click', null);
+    this.eventHandlers.set('click', null);
   }
 
   get attributeHandlers() {
     return this._attributeHandlers || (this._attributeHandlers = super.attributeHandlers
-      .set('text', this.setText)
-      .set('color', this.setColor));
+      .set('text', this.bindedText)
+      .set('color', this.bindedColor));
   }
 
-  setColor(attrName, value) {
-    if (this.setAttributeSuper(attrName, value)) return;
+  bindedColor(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
     this._color = value;
   }
 
-  setText(attrName, value) {
-    if (this.setAttributeSuper(attrName, value)) return;
+  bindedText(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
     this._text = value;
   }
 }
@@ -61,7 +61,7 @@ export function TestAlgComponent() {
 
     it('on-handler (on-click="[[controller:COMPONENT_CLICK]]")', () => {
       component.attributeChangedCallback('on-click', null, '[[controller:COMPONENT_CLICK]]');
-      const handler = component.handlers.get('click');
+      const handler = component.eventHandlers.get('click');
       const controller = handler.controller;
       const channel = handler.channel;
 

@@ -1,6 +1,8 @@
 // @ts-check
 
 import { ObsString } from '../types/obsString.js';
+import * as Str from '../util/util-str.js';
+
 // TODO: controller and page association?
 // TODO: global (app-controller) constructor(isGlobal)
 
@@ -23,6 +25,7 @@ class AlgController {
   constructor() { // TODO: isGlobal = false
     AlgController.controllers.set(this.name, this);
   }
+
   /**
    * Assosiate channel - variable
    * @return {Map}
@@ -59,11 +62,29 @@ class AlgController {
    * @return {any} - value
    */
   subscribe(channel, defaultValue, action) {
-    if (!this.bindings.has(channel)) return defaultValue;
-    const bind = this.bindings.get(channel); // observable
-    bind.subscribe(action);
-    if (defaultValue != null) bind.init(defaultValue);
-    return bind.value;
+    const bind = this.getBinding(channel);
+    if (!bind) return defaultValue;
+    return bind.subscribe(channel, defaultValue, action);
+  }
+
+  /**
+   * Search a channel in bindings or as observable
+   * @param {String} channel
+   * @return {*}
+   */
+  getBinding(channel) {
+    let bind = this.bindings.get(channel);
+    if (bind) return bind;
+    const binderNames = Str.dashToCamelList(channel);
+
+    for (let i = binderNames.length - 1; i >= 0; i--) {
+      bind = this[binderNames[i]];
+      if (bind) {
+        this.bindings.set(channel, bind);
+        return bind;
+      }
+    }
+    return null;
   }
 
   /**
@@ -73,7 +94,17 @@ class AlgController {
    */
   fire(channel) {
     // TODO: message
-    this.bus.set(channel);
+    this.bus.update(channel);
+  }
+
+  /**
+   * Removes the association channel/action
+   * @param {String} channel
+   * @param {Function} action
+   */
+  unSubscribe(channel, action) {
+    const bind = this.bindings.get(channel);
+    if (bind) bind.unSubscribe(action);
   }
 }
 
