@@ -1,4 +1,6 @@
 // @ts-check
+import { ObsArray } from './types/obs-array.js';
+
 /**
  * Global log: AlgLog.register.
  * <p>
@@ -15,10 +17,10 @@ class AlgLog {
 
   /**
    * Global storage
-   * @return {Array<Object>}
+   * @return {*}
    */
   static get register() {
-    return this._register || (this._register = []);
+    return this._register || (this._register = new ObsArray('log'));
   }
 
   /**
@@ -45,7 +47,7 @@ class AlgLog {
       'id': id,
       'message': message
     };
-    this.register.push(item);
+    this.register.add(item);
     // console.log(item);
     return id;
   }

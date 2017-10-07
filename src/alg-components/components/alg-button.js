@@ -1,6 +1,5 @@
 // @ts-check
 import { AlgComponent } from './alg-component.js';
-// import { AlgLog} from './alg-log.js';
 
 /**
  * Definition for alg-button component
@@ -10,17 +9,6 @@ import { AlgComponent } from './alg-component.js';
  * @type {class}
  */
 class AlgButton extends AlgComponent {
-  // /**
-  //  * Methods to update each attribute
-  //  * @override
-  //  * @return {Map<String, Function>}
-  //  */
-  // get attributeHandlers() {
-  //   return this._attributeHandlers || (this._attributeHandlers = super.attributeHandlers
-  //     .set('color', this.bindedColor)
-  //     .set('text', this.bindedText));
-  // }
-
   /**
    * Attributes managed by the component
    * @override

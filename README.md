@@ -66,6 +66,9 @@ And also to:
 
   The component would fire a ID_CLICK message to the controller.
 
+## Observable Arrays
+They have granularity at row level, with add, delete, update and create operations.
+
 ## Status
 The actual version is very early. Only works in the latest vesions of Chrome.
 

@@ -1,4 +1,5 @@
 body {
+  box-sizing: border-box;
   margin: 0;
   font-family: 'Roboto', 'Noto', sans-serif;
   line-height: 1.5;
@@ -28,4 +29,12 @@ body {
 
 alg-button {
   background-color: lightBlue;
+}
+
+alg-show-log {
+  background-color: #70D070;
+  width: 800px;
+  height: 10vh;
+  overflow-y: auto;
+  margin-left: 20px
 }

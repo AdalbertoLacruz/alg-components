@@ -1,6 +1,6 @@
 // @ts-check
 
-import { ObsString } from '../types/obsString.js';
+import { ObsString } from '../types/obs-string.js';
 import * as Str from '../util/util-str.js';
 
 // TODO: controller and page association?

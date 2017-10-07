@@ -22,9 +22,11 @@ class AlgComponent extends BinderElement {
    */
   createTemplate() {
     let template = this.selfClass.templateElement = document.createElement('template');
+
     // Each component must fill innerHTML
     template.innerHTML = `
     `;
+
     // Each component must search for templateIds:
     // this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
     this.selfClass.templateIds = [];
@@ -39,11 +41,13 @@ class AlgComponent extends BinderElement {
    */
   createTemplateStyle() {
     let template = this.selfClass.templateStyle = document.createElement('template');
+
     // Each component must fill innerHTML
     template.innerHTML = `
       <style>
       </style>
     `;
+
     return template;
   }
 
@@ -60,10 +64,10 @@ class AlgComponent extends BinderElement {
    * @override
    */
   connectedCallback() {
-    super.connectedCallback();
-
     // Apply Style
     this.shadowRoot.insertBefore(this.templateStyle.content.cloneNode(true), this.shadowRoot.firstChild);
+
+    super.connectedCallback();
     this.addStandardAttributes();
   }
 
@@ -73,8 +77,6 @@ class AlgComponent extends BinderElement {
   get selfClass() {
     return this._selfClass || (this._selfClass = window.customElements.get(this.localName));
   }
-
-  // TODO: repeat structures in the template (CreateDocumentFragment?)
 
   /**
    * HTMLElement template for the component

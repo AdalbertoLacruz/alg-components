@@ -1,8 +1,8 @@
 // @ts-check
 
 import { AlgController } from './alg-components/controllers/alg-controller.js';
-import { ObsNumber } from './alg-components/types/obsNumber.js';
-import { ObsString } from './alg-components/types/obsString.js';
+import { ObsNumber } from './alg-components/types/obs-number.js';
+import { ObsString } from './alg-components/types/obs-string.js';
 import * as Str from './alg-components/util/util-str.js';
 
 class AppController extends AlgController {
@@ -31,6 +31,11 @@ class AppController extends AlgController {
 
   get btn2() {
     return this._btn2 || (this._btn2 = new ButtonObservable('btn2', this._isLog));
+  }
+
+  get logData() {
+    // @ts-ignore
+    return this._logData || (this._logData = window.AlgLog.register);
   }
 
   //

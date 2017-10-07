@@ -98,15 +98,17 @@ class Observable {
 
   /**
    * Call the observers and subscribers
+   * @param {*} data
    * @return {*} Observable
    */
-  dispatch() {
+  dispatch(data = null) {
+    if (data === null) data = this.value;
     this.observers.forEach((handler) => {
-      handler(this.value);
+      handler(data);
     });
 
     this.subscribers.forEach((handler) => {
-      handler(this.value);
+      handler(data);
     });
 
     return this;
