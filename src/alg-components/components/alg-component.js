@@ -115,6 +115,28 @@ class AlgComponent extends BinderElement {
   }
 
   /**
+   * Set or remove the attribute according to force.
+   * If force is null, set the attribute if not exist and vice versa
+   * @param {String} attrName
+   * @param {Boolean} force
+   */
+  attributeToggle(attrName, force) {
+    if (force !== null) {
+      if (force) {
+        this.setAttribute(attrName, '');
+      } else {
+        this.removeAttribute(attrName);
+      }
+    } else {
+      if (this.hasAttribute(attrName)) {
+        this.removeAttribute(attrName);
+      } else {
+        this.setAttribute(attrName, '');
+      }
+    }
+  }
+
+  /**
    * Build the shadow element, and the reference to the id elements
    */
   createShadowElement() {

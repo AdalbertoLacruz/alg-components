@@ -19,8 +19,9 @@ class Observable {
   /**
    * @param {String} name - Used to identify the variable in logs
    */
-  constructor(name = '') {
-    this.name = name;
+  constructor(name = '', value = null) {
+    this._name = name;
+    this._value = value;
   }
 
   /*  ___________________________________________ properties _____ */
@@ -38,7 +39,7 @@ class Observable {
     return this._isLog;
   }
 
-  /** internal name used in logs @param {String} value */
+  /** internal name used in logs, attributes, ... @param {String} value */
   set name(value) { this._name = value; }
   get name() { return this._name; }
 
@@ -143,6 +144,29 @@ class Observable {
   }
 
   /**
+   * Send a custom event on value change
+   * @param {*} item
+   * @param {String} event - name
+   */
+  onChangeFireMessage(item, event) {
+    this.observe((value) => {
+      item.fire(event, this.value);
+    });
+    return this;
+  }
+
+  /**
+   * Set attribute in a value change
+   * @param {*} item - Element to set attribute
+   */
+  onChangeReflectToAttribute(item) {
+    this.observe((value) => {
+      item.setAttribute(this.name, value.toString());
+    });
+    return this;
+  }
+
+  /**
    * Change the name used in log
    * @param {String} value
    * @return {*} Observable
@@ -162,9 +186,11 @@ class Observable {
    * @param {String} channel - For internal subscription inside complex objects
    * @param {*} defaultValue
    * @param {Function} handler
+   * @param {Object} status
    * @return {*} observable
    */
-  subscribe(channel, defaultValue, handler) {
+  subscribe(channel, defaultValue, handler, status) {
+    status.hasChannel = true;
     this.subscribers.add(handler);
     if (defaultValue != null) this.init(defaultValue);
     return this.value;

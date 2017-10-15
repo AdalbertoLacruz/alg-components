@@ -44,8 +44,7 @@ class BinderElement extends HTMLElement {
    */
   get attributeHandlers() {
     return this._attributeHandlers || (this._attributeHandlers = new Map()
-      .set('disabled', this.bindedDisabled))
-      .set('style', this.bindedStyle);
+      .set('style', this.bindedStyle));
   }
 
   /**
@@ -53,7 +52,7 @@ class BinderElement extends HTMLElement {
    * @return {Array<String>}
    */
   static get observedAttributes() {
-    return ['disabled', 'style'];
+    return ['style'];
   }
 
   //  ******************* end overrides **********************
@@ -134,6 +133,9 @@ class BinderElement extends HTMLElement {
   set controller(value) { this._controller = value; }
   get controller() { return this._controller; }
 
+  /** eventHandlers that don't addEventListener @return {Set} */
+  get customHandlers() { return this._customHandlers || (this._customHandlers = new Set()); }
+
   /**
    * Attributes that define a handler as:<br>
    *     on-click="[[app-controller:BTN2_CLICK]]"
@@ -166,6 +168,7 @@ class BinderElement extends HTMLElement {
    */
   addEventHandlers() {
     this.eventHandlers.forEach((value, key) => {
+      if (this.customHandlers.has(key)) return;
       const controller = AlgController.controllers.get(value.controller);
       const channel = value.channel;
       const handler = () => { controller.fire(channel); };
@@ -183,6 +186,7 @@ class BinderElement extends HTMLElement {
    */
   attributeIsBinder(binderParser) {
     const attrName = binderParser.attrName;
+    const status = { hasChannel: false};
 
     const controller = AlgController.controllers.get(binderParser.controller);
     if (!controller) return this.attributeUpdate(attrName, binderParser.value);
@@ -195,11 +199,14 @@ class BinderElement extends HTMLElement {
       if (channel) {
         value = value === '' ? null : value; // support attribute without value
         const handler = attributeHandler.bind(this, attrName);
-        value = controller.subscribe(channel, value, handler);
-        this.unsubscribeHandlers.add(controller.unSubscribe.bind(controller, channel, handler));
+        value = controller.subscribe(channel, value, handler, status);
+        if (status.hasChannel) {
+          this.unsubscribeHandlers.add(controller.unSubscribe.bind(controller, channel, handler));
+        }
       }
+      if (value === null) value = binderParser.autoValue; // support attribute without value
       if (value !== null) this.attributeUpdate(attrName, value);
-      if (!binderParser.isSync) this.removeAttribute(attrName);
+      if (!binderParser.isSync && status.hasChannel) this.removeAttribute(attrName);
     } else {
       this.attributeUpdate(attrName, binderParser.value);
     }
@@ -225,6 +232,7 @@ class BinderElement extends HTMLElement {
    */
   attributeIsStyle(binderParser) {
     let attributeHandler, channel, controller, property, value;
+    const status = { hasChannel: false };
 
     do {
       controller = AlgController.controllers.get(binderParser.controller);
@@ -236,8 +244,10 @@ class BinderElement extends HTMLElement {
       if (channel) {
         value = value === '' ? null : value; // support attribute without value
         const handler = attributeHandler.bind(this, property);
-        value = controller.subscribe(channel, value, handler);
-        this.unsubscribeHandlers.add(controller.unSubscribe.bind(controller, channel, handler));
+        value = controller.subscribe(channel, value, handler, status);
+        if (status.hasChannel) {
+          this.unsubscribeHandlers.add(controller.unSubscribe.bind(controller, channel, handler));
+        }
       }
 
       if (value !== null) this.bindedStyle(property, value);
@@ -285,21 +295,23 @@ class BinderElement extends HTMLElement {
     return false;
   }
 
-  /**
-   * Set Disabled attribute
-   *
-   * @param {String} attrName - Attribute Name
-   * @param {*} value    - true => set, false => remove
-   */
-  bindedDisabled(attrName, value) {
-    if (this.bindedAttributeSuper(attrName, value)) return;
+  // /**
+  //  * Set Disabled attribute
+  //  *
+  //  * @param {String} attrName - Attribute Name
+  //  * @param {*} value    - true => set, false => remove
+  //  */
+  // bindedDisabled(attrName, value) {
+  //   if (this.bindedAttributeSuper(attrName, value)) return;
 
-    if (value) {
-      this.setAttribute('disabled', '');
-    } else {
-      this.removeAttribute('disabled');
-    }
-  }
+  //   if (value) {
+  //     this.disabled = true;
+  //     this.setAttribute('disabled', '');
+  //   } else {
+  //     this.disabled = false;
+  //     this.removeAttribute('disabled');
+  //   }
+  // }
 
   /**
    * Hide/Unhide the component
@@ -330,13 +342,13 @@ class BinderElement extends HTMLElement {
    * If not found, use the first controller instantiated.
    */
   findController() {
-    if (this.controller) return;
+    if (this.controller != null) return;
 
     const elementsToSet = new Set();
     let element = this;
     let controllerName;
 
-    while ((element.localName !== 'html') && !controllerName) {
+    while ((element !== null) && (element.localName !== 'html') && !controllerName) {
       if (element.controller) {
         controllerName = element.controller;
       } else {
@@ -355,6 +367,19 @@ class BinderElement extends HTMLElement {
     elementsToSet.forEach((element) => {
       element.controller = controllerName;
     });
+  }
+
+  /**
+   * Send a message to the controller
+   * @param {String} customEvent
+   * @param {String} message
+   */
+  fire(customEvent, message) {
+    const handler = this.eventHandlers.get(customEvent);
+    if (handler == null) return;
+    const controller = AlgController.controllers.get(handler.controller);
+    const channel = handler.channel;
+    controller.fire(channel, message);
   }
 
   /**

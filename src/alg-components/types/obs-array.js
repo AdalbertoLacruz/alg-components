@@ -10,9 +10,8 @@ class ObsArray extends Observable {
   /**
    * @param {String} name - variable name
    */
-  constructor(name = '') {
-    super(name);
-    this._value = [];
+  constructor(name = '', value = []) {
+    super(name, value);
   }
 
   /**

@@ -5,6 +5,8 @@ There are many components/frameworks for web development, so this is an experime
 - Observable, natively in the types
 - Binding support for observable suscription
 - Horizontal message bus for channel fire/observation
+- Javascript class mixins and properties
+- Css mixins
 
 ## Architecture
 

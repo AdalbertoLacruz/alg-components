@@ -59,12 +59,16 @@ class AlgController {
    * @param  {String} channel
    * @param  {any} defaultValue - if no null, set the value in channel
    * @param  {Function} action - to process a change in dispatch
+   * @param  {Object} status - channel information
    * @return {any} - value
    */
-  subscribe(channel, defaultValue, action) {
+  subscribe(channel, defaultValue, action, status) {
     const bind = this.getBinding(channel);
-    if (!bind) return defaultValue;
-    return bind.subscribe(channel, defaultValue, action);
+    if (!bind) {
+      status.hasChannel = false;
+      return defaultValue;
+    }
+    return bind.subscribe(channel, defaultValue, action, status);
   }
 
   /**
@@ -92,7 +96,7 @@ class AlgController {
    *
    * @param {String} channel - channel
    */
-  fire(channel) {
+  fire(channel, message) {
     // TODO: message
     this.bus.update(channel);
   }

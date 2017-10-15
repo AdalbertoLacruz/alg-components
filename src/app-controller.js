@@ -39,8 +39,8 @@ class AppController extends AlgController {
   }
 
   //
-  fire(channel) {
-    super.fire(channel);
+  fire(channel, message) {
+    super.fire(channel, message);
 
     switch (channel) {
       case 'BTN1_CLICK':
@@ -50,6 +50,9 @@ class AppController extends AlgController {
       case 'BTN2_CLICK':
         this.btn1.push();
         this.btn2.relax();
+        break;
+      case 'BTN2_CHANGE':
+        console.log('controller on-change: ' + message);
         break;
       default:
     }
@@ -119,13 +122,17 @@ class ButtonObservable {
    * @param  {String} channel
    * @param  {any} defaultValue - if no null, set the value in channel
    * @param  {Function} action - to process a change in dispatch
+   * @param  {Object} status - channel information
    * @return {any} - value
    */
-  subscribe(channel, defaultValue, action) {
+  subscribe(channel, defaultValue, action, status) {
     const bind = this.getBinding(channel);
-    if (!bind) return defaultValue;
+    if (!bind) {
+      status.hasChannel = false;
+      return defaultValue;
+    }
     this.bindings.set(action, bind);
-    return bind.subscribe(channel, defaultValue, action);
+    return bind.subscribe(channel, defaultValue, action, status);
   }
 
   /**

@@ -11,7 +11,7 @@
       Header
     </div>
     <div class="content">
-      Content
+      <h2>Content</h2>
       <alg-button id="btn1"
         text="{{:btn1-text}}"
         color="[[app-controller:btn1-color]]"
@@ -24,7 +24,13 @@
       <alg-button id="btn1"
         text color style="margin;background-color;color:black" attr="25">OK</alg-button>
       <br><br>
-      <alg-show-log id="log" data></alg-show-log>
+      <div id="container">
+        <alg-paper-button id="btn2" class="pink">link</alg-paper-button>
+        <alg-paper-button id="btn2" raised class="indigo" on-click>raised</alg-paper-button>
+        <alg-paper-button id="btn2" toggles raised class="green" on-change>toggles</alg-paper-button>
+        <alg-paper-button id="btn2" disabled>disabled</alg-paper-button>
+      </div>
+      <!-- <alg-show-log id="log" data></alg-show-log> -->
     </div>
     <div class="footer">
       Footer

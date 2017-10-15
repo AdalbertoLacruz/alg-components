@@ -13,7 +13,7 @@ export function TestAlgLog() {
     });
 
     it('message', () => {
-      const message = AlgLog.register[0].message;
+      const message = AlgLog.register._value[0].message;
       assert.equal(message, logMessage, 'message stored in AlgLog.register');
     });
   });

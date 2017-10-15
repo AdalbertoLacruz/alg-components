@@ -27,7 +27,13 @@ class BinderParser {
     this.id = id;
 
     if (this.attributeIsHandler(_attrName)) {
-      this.isEventBinder = this.getAttributeBinder(_value);
+      if (value === '') {
+        this.isEventBinder = true;
+        this.controller = this.defaultController;
+        if (this.id !== '') this.channel = (this.id + '_' + this.handler).toUpperCase();
+      } else {
+        this.isEventBinder = this.getAttributeBinder(_value);
+      }
     } else if (this.attributeIsStyle(_attrName)) {
       this.getAttributeStyle(value);
     } else if (this.getAttributeBinder(_value)) {

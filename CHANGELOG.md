@@ -1,3 +1,4 @@
+## v0.0.7 (2017-10-15) paper-button, styles, EventManager, paper-ripple
 ## v0.0.6 (2017-10-07) Array components
 ## v0.0.5 (2017-10-03) BinderElement, unSubscribe, util-str, util-exec
 ## v0.0.4 (2017-09-30) BinderParser, bind style, autobinding

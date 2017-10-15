@@ -11,6 +11,7 @@ export function TestObservable() {
     let subscribeValue;
     let value = 'VALUE';
     const observableVar = new Observable(name);
+    const status = { hasChannel: false };
 
     observableVar.initializer((value) => {
       initialValue = value;
@@ -19,7 +20,7 @@ export function TestObservable() {
     });
     observableVar.subscribe(null, null, (value) => {
       subscribeValue = value;
-    });
+    }, status);
     observableVar.init(value);
 
     it('name', () => {
