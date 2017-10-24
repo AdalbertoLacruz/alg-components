@@ -8,6 +8,19 @@ import { EventManager } from '../types/event-manager.js';
 import { ObsBoolean } from '../types/obs-boolean.js';
 import { Ripple } from '../util/ripple.js';
 
+/**
+ * Ripple effect
+ *
+ * External Properties: .noink = true | false
+ * External Methods:    .simulateRipple()
+ *
+ * Trigger Event: 'transitionend'.
+ *  with event == {node: Object} the animated node.
+ *  Fired when the animation finishes. This is useful if you want to wait until
+ *  the ripple animation finishes to perform some action.
+ *
+ * @class
+ */
 class AlgPaperRipple extends AlgPaperComponent {
   /**
      * Build the static template for style
@@ -107,25 +120,30 @@ class AlgPaperRipple extends AlgPaperComponent {
   //   super();
   // }
 
-  /** True when there are visible ripples animating within the element. @return {ObsBoolean} */
+  /**
+   * True when there are visible ripples animating within the element.
+   * @return {ObsBoolean}
+   */
   get animating() {
     return this._animating || (this._animating = new ObsBoolean('animating', false)
-      .onChangeReflectToAttribute(this));
+      .onChangeReflectToAttribute(this.keyEventTarget));
   }
 
-  /** If true, ripples will center inside its container. @return {Boolean} */
+  /** If true, ripples will center inside its container. Used by Ripple(). @return {Boolean} */
   get center() { return this._center || (this._center = false); }
 
-  /** The initial opacity set on the wave. @return {Number} */
+  /** The initial opacity set on the wave. Used by Ripple(). @return {Number} */
   get initialOpacity() { return this._initialOpacity || (this._initialOpacity = 0.25); }
 
   /**
    * If true, the ripple will remain in the "down" state until `holdDown` is set to false again.
+   * holdDown does not respect noink since it can be a focus based effect.
+   * Changed outside the component.
    * @return {ObsBoolean}
    */
   get holdDown() {
-    return this._holdDown || (this._holdDown = new ObsBoolean('holdDown', false)
-      .observe(this._holdDownChanged.bind(this)));
+    return this._holdDown ||
+      (this._holdDown = /** @type {ObsBoolean} */ (this.eventManager.getObservable('mousehold')));
   }
 
   /**
@@ -134,6 +152,7 @@ class AlgPaperRipple extends AlgPaperComponent {
    * @return {Boolean}
    */
   get noink() { return this._noink || (this._noink = false); }
+  set noink(value) { this._noink = value; }
 
   /** How fast (opacity per second) the wave fades out. @return {Number} */
   get opacityDecayVelocity() { return this._opacityDecayVelocity || (this._opacityDecayVelocity = 0.8); }
@@ -155,9 +174,11 @@ class AlgPaperRipple extends AlgPaperComponent {
         return true;
       }
     }
-
     return false;
   }
+
+  /** @return {EventTarget} */
+  get target() { return this.keyEventTarget; }
 
   /**
    * Called every time the element is inserted into the DOM
@@ -165,31 +186,43 @@ class AlgPaperRipple extends AlgPaperComponent {
    */
   connectedCallback() {
     super.connectedCallback();
-    // Set up a11yKeysBehavior to listen to key events on the target,
+    // Set up EventManager to listen to key events on the target,
     // so that space and enter activate the ripple even if the target doesn't
     // handle key events. The key handlers deal with `noink` themselves.
+
+    /** @type {EventTarget} */
     const keyEventTarget = this.keyEventTarget = (this.parentNode.nodeType === 11)
-      // @ts-ignore
       ? this.getRootNode().host
       : this.parentNode;
 
-    const eventManager /** @type {EventManager} */ = (keyEventTarget.eventManager != null)
+    /** @type {EventManager} */
+    const parentEventManager = this._parentEventManager = (keyEventTarget.eventManager != null)
       ? keyEventTarget.eventManager
-      : new EventManager(keyEventTarget);
-    eventManager
-      .on('mousedown', (event) => {
-        const ripple = this.addRipple();
-        ripple.downAction(event);
-        if (!this.animating.value) {
-          this.animating.update(true);
-          this.animate();
-        }
-      }).on('mouseup', () => {
-        this.ripples.forEach((ripple) => { ripple.upAction(event); });
+      : new EventManager(keyEventTarget); // Not alg-component (div, ...)
 
-        this.animating.update(true);
-        this.animate();
-      }).subscribe();
+    parentEventManager
+      .on('mousedown', this.uiDownAction.bind(this))
+      .on('mouseup', this.uiUpAction.bind(this))
+      .onCustom('mousehold') // For action, used mousedown and mouseup, we need the event
+      .onKey('enter:keydown', () => {
+        this.uiDownAction();
+        this.async(this.uiUpAction, 1);
+      }).onKey('space:keydown', () => {
+        this.uiDownAction(); // don't pass event argument
+      }).onKey('space:keyup', () => {
+        this.uiUpAction(); // don't pass event argument
+      })
+      .subscribe();
+  }
+
+  /**
+   * Called every time the element is removed from the DOM. Unsubscribe.
+   * @override
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    // If we need reconnect the element, the parentEventManager must be different from component native
+    this.keyEventTarget = null;
   }
 
   /** no standard attributes @override */
@@ -197,6 +230,7 @@ class AlgPaperRipple extends AlgPaperComponent {
 
   addRipple() {
     const ripple = new Ripple(this);
+
     this.ids['waves'].appendChild(ripple.waveContainer);
     this.ids['background'].style.backgroundColor = ripple.color;
     this.ripples.push(ripple);
@@ -206,6 +240,10 @@ class AlgPaperRipple extends AlgPaperComponent {
     return ripple;
   }
 
+  /**
+   * This conflicts with Element#antimate().
+   * https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
+   */
   animate() {
     if (!this.animating.value) return;
 
@@ -224,18 +262,38 @@ class AlgPaperRipple extends AlgPaperComponent {
     if (!this.shouldKeepAnimating && this.ripples.length === 0) {
       this.onAnimationComplete();
     } else {
-      window.requestAnimationFrame(this.animate.bind(this));
+      window.requestAnimationFrame(this._boundAnimate());
     }
   }
 
-  _holdDownChanged() {
+  _boundAnimate() {
+    return this.animate.bind(this);
+  }
 
+  /**
+   * Provokes a ripple down effect via a UI event,
+   * *not* respecting the `noink` property.
+   * @param {UIEvent=} event
+   */
+  downAction(event) {
+    if (this.holdDown.value && this.ripples.length > 0) return;
+
+    const ripple = this.addRipple();
+    ripple.downAction(event);
+
+    if (!this.animating.value) {
+      this.animating.update(true);
+      this.animate();
+    }
   }
 
   onAnimationComplete() {
     this.animating.update(false);
     this.ids['background'].style.backgroundColor = null;
-    // this.fire('transitionend');
+
+    // 'transitionend' is a dom (transition) event.
+    // Use eventManager.onCustom to receive it, else we receive it twice
+    this._parentEventManager.fire('transitionend', { node: this });
   }
 
   removeRipple(ripple) {
@@ -247,6 +305,46 @@ class AlgPaperRipple extends AlgPaperComponent {
     ripple.remove();
 
     if (!this.ripples.length) this.animating.update(false);
+  }
+
+  /**
+   * simulate a click onto element
+   */
+  simulateRipple() {
+    this.downAction(null);
+    this.async(this.upAction, 1);
+  }
+
+  /**
+   * Provokes a ripple up effect via a UI event,
+   * *not* respecting the `noink` property.
+   * @param {UIEvent=} event
+   */
+  upAction(event) {
+    if (this.holdDown.value) return;
+
+    this.ripples.forEach((ripple) => { ripple.upAction(event); });
+
+    this.animating.update(true);
+    this.animate();
+  }
+
+  /**
+   * Provokes a ripple down effect via a UI event,
+   * respecting the `noink` property.
+   * @param {UIEvent=} event
+   */
+  uiDownAction(event) {
+    if (!this.noink) this.downAction(event);
+  }
+
+  /**
+   * Provokes a ripple up effect via a UI event,
+   * respecting the `noink` property.
+   * @param {UIEvent=} event
+   */
+  uiUpAction(event) {
+    if (!this.noink) this.upAction(event);
   }
 }
 

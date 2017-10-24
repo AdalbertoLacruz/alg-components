@@ -4,6 +4,10 @@
 
 const RIPPLE_MAX_RADIUS = 300;
 
+/**
+ * Ripple effect for alg-paper-element used with alg-paper-ripple
+ * @type {class}
+ */
 class Ripple {
   /**
    * @param {HTMLElement} element
@@ -35,9 +39,7 @@ class Ripple {
   }
 
   /** @return {Boolean} */
-  get isMouseDown() {
-    return this.mouseDownStart && !this.mouseUpStart;
-  }
+  get isMouseDown() { return this.mouseDownStart && !this.mouseUpStart; }
 
   /** @return {Boolean} */
   get isOpacityFullyDecayed() {
@@ -53,12 +55,9 @@ class Ripple {
 
   /** @return {Number} */
   get mouseDownElapsed() {
-    let elapsed;
-
     if (!this.mouseDownStart) return 0;
 
-    elapsed = Utility.now() - this.mouseDownStart;
-
+    let elapsed = Utility.now() - this.mouseDownStart;
     if (this.mouseUpStart) {
       elapsed -= this.mouseUpElapsed;
     }
@@ -150,7 +149,7 @@ class Ripple {
     const yCenter = this.containerMetrics.height / 2;
 
     this.resetInteractionState();
-    this.mouseDownStart = Utility.now(); // TODO:
+    this.mouseDownStart = Utility.now();
 
     if (this.center) {
       this.xStart = xCenter;
@@ -245,8 +244,7 @@ class ElementMetrics {
 
   /**
    *
-   * @param {Number} x
-   * @param {Number} y
+   * @param {Number} x @param {Number} y
    * @return {Number}
    */
   furthestCornerDistanceFrom(x, y) {
@@ -262,10 +260,8 @@ class ElementMetrics {
 class Utility {
   /**
    *
-   * @param {Number} x1
-   * @param {Number} y1
-   * @param {Number} x2
-   * @param {Number} y2
+   * @param {Number} x1 @param {Number} y1
+   * @param {Number} x2 @param {Number} y2
    * @return {Number}
    */
   static distance(x1, y1, x2, y2) {
@@ -275,10 +271,10 @@ class Utility {
     return Math.sqrt(xDelta * xDelta + yDelta * yDelta);
   }
 
-  /** @return {Number} */
+  /** Time @return {Number} */
   static now() {
     return window.performance && window.performance.now
-      ? window.performance.now.bind(window.performance)()
+      ? window.performance.now()
       : Date.now();
   }
 }

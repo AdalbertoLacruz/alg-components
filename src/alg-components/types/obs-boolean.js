@@ -10,10 +10,24 @@ class ObsBoolean extends Observable {
   /**
    * Set attribute in a value change
    * @param {*} item - Element to set attribute
+   * @param {String} attrName - attribute to set
    */
-  onChangeReflectToAttribute(item) {
+  onChangeReflectToAttribute(item, attrName = null) {
+    if (attrName == null) attrName = this.name;
     this.observe((value) => {
-      item.attributeToggle(this.name, value);
+      item.attributeToggle(attrName, value);
+    });
+    return this;
+  }
+
+  /**
+   * Set class in a value change
+   * @param {*} item
+   * @param {String} className
+   */
+  onChangeReflectToClass(item, className) {
+    this.observe((value) => {
+      item.classList.toggle(className, value);
     });
     return this;
   }

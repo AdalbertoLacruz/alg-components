@@ -3,6 +3,7 @@
 // @copyright 2017 ALG
 // @ts-check
 /* global cssRules */
+
 import { AlgIronButtonState } from '../iron/alg-iron-button-state.js';
 import { AlgPaperComponent } from './alg-paper-component.js';
 import { AlgPaperRippleBehavior } from './alg-paper-ripple-behavior.js';
@@ -138,15 +139,15 @@ class AlgPaperButton extends AlgPaperComponent {
     this.ironButtonState = new AlgIronButtonState(this); // mixin. Order is important
     this.AlgPaperRippleBehavior = new AlgPaperRippleBehavior(this);
 
-    this.elevation.onChangeReflectToAttribute(this);
-    this.active.observe(this._calculateElevation.bind(this));
-    this.disabled.observe(this._calculateElevation.bind(this));
-    this.focused.observe(this._calculateElevation.bind(this));
-    this.pressed.observe(this._calculateElevation.bind(this));
-    this.raised.observe(this._calculateElevation.bind(this));
-    this.receivedFocusFromKeyboard
-      .observe(this._calculateElevation.bind(this))
-      .observe(this._computeKeyboardClass.bind(this));
+    const eventManager = this.eventManager;
+    eventManager
+      .onCustom('active', this._calculateElevation.bind(this))
+      .onCustom('disabled', this._calculateElevation.bind(this))
+      .onCustom('focused', this._calculateElevation.bind(this))
+      .onCustom('pressed', this._calculateElevation.bind(this))
+      .onCustom('receivedFocusFromKeyboard', this._calculateElevation.bind(this))
+      .onChangeReflectToClass('receivedFocusFromKeyboard', this, 'keyboard-focus', true)
+      .subscribe();
   }
 
   /**
@@ -155,16 +156,49 @@ class AlgPaperButton extends AlgPaperComponent {
    * @return {Array<String>}
    */
   static get observedAttributes() {
-    return super.observedAttributes.concat(['raised', 'toggles', 'on-change', 'on-click']);
+    return super.observedAttributes.concat(['noink', 'raised', 'toggles', 'on-change', 'on-click']);
+  }
+
+  get active() {
+    return this._active ||
+      (this._active = /** @type {ObsBoolean} */ (this.eventManager.getObservable('active')));
+  }
+
+  get disabled() {
+    return this._pressed ||
+      (this._disabled = /** @type {ObsBoolean} */ (this.eventManager.getObservable('disabled')));
   }
 
   get elevation() {
-    return this._elevation || (this._elevation = new ObsNumber('elevation', 0));
+    return this._elevation || (this._elevation = new ObsNumber('elevation', 0)
+      .onChangeReflectToAttribute(this));
   }
 
-  /** If true, the button should be styled with a shadow. @return {ObsBoolean} */
+  /**
+   * If true, the user is currently holding down the button.
+   * @return {ObsBoolean}
+   */
+  get pressed() {
+    return this._pressed ||
+      (this._pressed = /** @type {ObsBoolean} */ (this.eventManager.getObservable('pressed')));
+  }
+
+  /**
+   * Attribute, if true, the button should be styled with a shadow.
+   * @return {ObsBoolean}
+   */
   get raised() {
-    return this._raised || (this._raised = new ObsBoolean('raised', false));
+    return this._raised || (this._raised = new ObsBoolean('raised', false)
+      .observe(this._calculateElevation.bind(this)));
+  }
+
+  /**
+   * True if the input device that caused the element to receive focus was a keyboard.
+   * @return {ObsBoolean}
+   */
+  get receivedFocusFromKeyboard() {
+    return this._receivedFocusFromKeyboard || (this._receivedFocusFromKeyboard =
+      /** @type {ObsBoolean} */ (this.eventManager.getObservable('receivedFocusFromKeyboard')));
   }
 
   /** For Aria @override @return {String} */
@@ -176,7 +210,7 @@ class AlgPaperButton extends AlgPaperComponent {
   //  */
   // addDefaultEventHandlers() {
   //   // this.eventHandlers.set('click', null);
-  //   // this.customHandlers.add('change'); // o  alg-iron-button-state
+  //   // this.customHandlers.add('change'); // on alg-iron-button-state
   // }
 
   /**
@@ -194,11 +228,12 @@ class AlgPaperButton extends AlgPaperComponent {
    */
   bindedRaised(attrName, value) {
     if (this.bindedAttributeSuper(attrName, value)) return;
+
     this.raised.update(value !== null);
   }
 
   /**
-   * Calculates the item shadow
+   * Calculate the item shadow
    * @override
    */
   _calculateElevation() {
@@ -216,10 +251,6 @@ class AlgPaperButton extends AlgPaperComponent {
       }
     }
     this.elevation.update(elevation);
-  }
-
-  _computeKeyboardClass(receivedFocusFromKeyboard) {
-    this.classList.toggle('keyboard-focus', receivedFocusFromKeyboard);
   }
 }
 

@@ -4,19 +4,12 @@
 import '../styles/iron-flex-layout.js';
 
 import { AlgComponent } from '../components/alg-component.js';
-import { ObsBoolean } from '../types/obs-boolean.js';
 
 class AlgIronComponent extends AlgComponent {
-  // this._oldTabIndex {Number}
-
-  // /** @return {ObsBoolean} */
-  // get active() { return this._active || (this._active = new ObsBoolean('active', false)); }
-
-  /** If true, the user cannot interact with this element. @return {ObsBoolean} */
-  get disabled() { return this._disabled || (this._disabled = new ObsBoolean('disabled', false)); }
-
-  /** @return {ObsBoolean} */
-  get focused() { return this._focused || (this._focused = new ObsBoolean('focused', false)); }
+  constructor() {
+    super();
+    this.eventManager.onCustom('disabled');
+  }
 
   /**
    * Attributes managed by the component
@@ -27,14 +20,15 @@ class AlgIronComponent extends AlgComponent {
     return super.observedAttributes.concat(['disabled']);
   }
 
-  // /** @return {ObsBoolean} */
-  // get pressed() { return this._pressed || (this._pressed = new ObsBoolean('pressed', false)); }
-
-  // /** @return {ObsBoolean} */
-  // get receivedFocusFromKeyboard() {
-  //   return this._receivedFocusFromKeyboard ||
-  //   (this._receivedFocusFromKeyboard = new ObsBoolean('receivedFocusFromKeyboard', false));
-  // }
+  /**
+   * Delayed execution of fn
+   * @param {Function} fn
+   * @param {Number} delay
+   * @return {Number} id
+   */
+  async(fn, delay = 0) {
+    return setTimeout(fn.bind(this), delay);
+  }
 
   /**
    * Set Disabled attribute
@@ -51,9 +45,9 @@ class AlgIronComponent extends AlgComponent {
 
     if (disabled) {
       this._oldTabIndex = this.tabIndex;
-      // this._setFocused(false);
+      // see blur() - this._setFocused(false);
       this.tabIndex = -1;
-      this.blur();
+      this.blur(); // focused = false, pressed = false
       this.setAttribute('disabled', '');
       this.classList.add('disabled');
     } else {
@@ -63,7 +57,7 @@ class AlgIronComponent extends AlgComponent {
       this.removeAttribute('disabled');
       this.classList.remove('disabled');
     }
-    this.disabled.update(disabled); // last, because fire other code
+    this.eventManager.fire('disabled', disabled);
   }
 }
 

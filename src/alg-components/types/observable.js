@@ -158,8 +158,9 @@ class Observable {
   /**
    * Set attribute in a value change
    * @param {*} item - Element to set attribute
+   * @param {String} attrName - // TODO:
    */
-  onChangeReflectToAttribute(item) {
+  onChangeReflectToAttribute(item, attrName = null) {
     this.observe((value) => {
       item.setAttribute(this.name, value.toString());
     });

@@ -7,6 +7,7 @@ There are many components/frameworks for web development, so this is an experime
 - Horizontal message bus for channel fire/observation
 - Javascript class mixins and properties
 - Css mixins
+- EventManager for compound events (state)
 
 ## Architecture
 

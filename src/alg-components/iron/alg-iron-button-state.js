@@ -3,11 +3,13 @@
 // @ts-check
 
 import { ObsBoolean } from '../types/obs-boolean.js';
-import { EventManager } from '../types/event-manager.js';
 
 class AlgIronButtonState {
-  /** Mixin, code injection to item. @param {AlgIronComponent} */
-  constructor(item) { //
+  /**
+   * Mixin, code injection to item.
+   * @param {*} item - AlgIronComponent
+   */
+  constructor(item) {
     this.item = item;
 
     // -----------------------------        custom events
@@ -15,28 +17,10 @@ class AlgIronButtonState {
 
     // -----------------------------        properties
 
-    // If true, the button is a toggle and is currently in the active state.
-    item.active = new ObsBoolean('active', false)
-      .onChangeReflectToAttribute(item)
-      .observe(this._activeChanged.bind(item))
-      .onChangeFireMessage(item, 'change');
-
-    item.focused.observe(this._focusChanged.bind(item));
-
-    // True if the element is currently being pressed by a "pointer," which is loosely
-    // defined as mouse or touch input (but specifically excluding keyboard input).
-    item.pointerDown = new ObsBoolean('pointerDown', false);
-
-    // If true, the user is currently holding down the button.
-    item.pressed = new ObsBoolean('pressed', false)
-      .onChangeReflectToAttribute(item);
-
-    // True if the input device that caused the element to receive focus was a keyboard.
-    item.receivedFocusFromKeyboard = new ObsBoolean('receivedFocusFromKeyboard', false);
-
     // If true, the button toggles the active state with each tap or press of the spacebar.
     item.toggles = new ObsBoolean('toggles', false)
-      .onChangeReflectToAttribute(item);
+      .onChangeReflectToAttribute(item)
+      .observe(() => this._activeChanged());
 
     // -----------------------------        Attribute change management
 
@@ -44,65 +28,67 @@ class AlgIronButtonState {
 
     // -----------------------------        handlers
 
-    item.eventManager = new EventManager(item)
-      // .on('click', this._tapHandler.bind(item))
-      .on('click', () => {
-        if (item.toggles.value) {
-          item.active.toggle();
-        } else {
-          item.active.update(false);
-        }
-      }).on('mousehold', (value) => {
-        item.pointerDown.update(value);
-        item.pressed.update(value);
-      }).subscribe(); // always, last
-  }
-
-  _activeChanged(active) {
-  //   if(this.toggles) {
-  //     this.setAttribute(this.ariaActiveAttribute,
-  //       active ? 'true' : 'false');
-  //   } else {
-  //     this.removeAttribute(this.ariaActiveAttribute);
-  //   }
-  //   this._changedButtonState();
-  }
-
-  // Toggles attribute change
-  bindedToggles(attrName, value) {
-    if (this.bindedAttributeSuper(attrName, value)) return;
-    this.toggles.update(value !== null);
-  }
-
-  // _downHandler() {
-  //   this.pointerDown.update(true);
-  //   this.pressed.update(true);
-  //   this.receivedFocusFromKeyboard.update(false); // TODO: pte
-  // }
-
-  _focusChanged(focused) {
-    // this._detectKeyboardFocus(focused);
-
-    // if (!focused) {
-    //   this._setPressed(false);
-    // }
+    // If true, the button is a toggle and is currently in the active state.
+    item.eventManager.register.set('active', {
+      init: (local) => {
+        local.data = new ObsBoolean('active', false)
+          .onChangeReflectToAttribute(item)
+          .onChangeFireMessage(item, 'change');
+      }
+    });
+    item.eventManager
+      .onCustom('active', () => this._activeChanged())
+      .on('click', this._tapHandler.bind(this))
+      .onChangeReflectToAttribute('pressed', item, 'pressed', true)
+      .onKey('enter:keydown', () => this._asyncClick())
+      .onKey('space:keyup', () => this._asyncClick())
+      .subscribe(); // always, last
   }
 
   /**
-   * toggles management
+   * aria-pressed attribute
+   * @param {Boolean} active
    */
-  // _tapHandler() {
-  //   if (this.toggles.value) {
-  //     this.active.toggle();
-  //   } else {
-  //     this.active.update(false);
-  //   }
-  // }
+  _activeChanged() {
+    const active = this.item.eventManager.getObservable('active').value;
+    if (this.item.toggles.value) {
+      this.item.setAttribute('aria-pressed', active ? 'true' : 'false');
+    } else {
+      this.item.removeAttribute('aria-pressed');
+    }
+  }
 
-  // _upHandler() {
-  //   this.pointerDown.update(false);
-  //   this.pressed.update(false);
-  // }
+  /**
+   * trigger click asynchronously, the asynchrony is useful to allow one
+   * event handler to unwind before triggering another event
+   */
+  _asyncClick() {
+    this.item.eventManager.fire('click'); // fire is async
+  }
+
+  /**
+   * Toggles attribute change
+   * @param {String} attrName - Attribute Name
+   * @param {String} value
+   */
+  bindedToggles(attrName, value) {
+    // @ts-ignore
+    if (this.bindedAttributeSuper(attrName, value)) return;
+    // @ts-ignore
+    this.toggles.update(value !== null);
+  }
+
+  /**
+   * Response to a click event or enter key
+   */
+  _tapHandler() {
+    const active = this.item.eventManager.getObservable('active');
+    if (this.item.toggles.value) {
+      active.toggle();
+    } else {
+      active.update(false);
+    }
+  }
 }
 
 export { AlgIronButtonState };

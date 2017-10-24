@@ -1,6 +1,7 @@
 // @ts-check
 import { AlgController } from '../controllers/alg-controller.js';
 import { BinderParser } from './binder-parser.js';
+import { EventManager } from '../types/event-manager.js';
 import * as Exec from '../util/util-exec.js';
 import * as Str from '../util/util-str.js';
 
@@ -108,13 +109,14 @@ class BinderElement extends HTMLElement {
    * @override
    */
   disconnectedCallback() {
-    Exec.executeTaskQueue(this.unsubscribeHandlers);
+    Exec.executeTaskQueue(this.unsubscribeHandlers); // controller
+    this.eventManager.unsubscribe();
   }
 
   // ******************* own class members **********************
 
   /**
-   * Contains the last value of a attribute. This meaning that has been checked for binding
+   * Contains the last value from an attribute. This meaning that has been checked for binding
    * @return {Map<String, String>}
    */
   get attributeRegister() {
@@ -146,6 +148,9 @@ class BinderElement extends HTMLElement {
     return this._eventHandlers || (this._eventHandlers = new Map());
   }
 
+  /** @return {EventManager} */
+  get eventManager() { return this._eventManager || (this._eventManager = new EventManager(this)); }
+
   /**
    * List of Functions pending execution.
    * @Return {Set<Function>}
@@ -155,7 +160,7 @@ class BinderElement extends HTMLElement {
   }
 
   /**
-   * List of handlers to unsubscribe (attribute, style, event)
+   * List of handlers to unsubscribe from the controller (attribute, style)
    * @return {Set<Function>}
    */
   get unsubscribeHandlers() {
@@ -163,20 +168,19 @@ class BinderElement extends HTMLElement {
   }
 
   /**
-   * addEventListener's for the component, using this.handlers.<br>
+   * Trought eventManager add EventListener's for the component, using this.handlers.<br>
    * 'event': { controller: '...', channel: '...' }
    */
   addEventHandlers() {
     this.eventHandlers.forEach((value, key) => {
-      if (this.customHandlers.has(key)) return;
+      const custom = this.customHandlers.has(key);
       const controller = AlgController.controllers.get(value.controller);
       const channel = value.channel;
-      const handler = () => { controller.fire(channel); };
-      this.addEventListener(key, handler);
-      this.unsubscribeHandlers.add(this.removeEventListener.bind(this, key, handler));
+      const handler = (value) => { controller.fire(channel, value); };
+      this.eventManager.on(key, handler, custom);
     });
+    this.eventManager.subscribe();
   }
-  // TODO: fire with message
 
   /**
    * Process attr="[[controller:channel:defaultValue]]" or
@@ -285,11 +289,11 @@ class BinderElement extends HTMLElement {
    * Common task to set a attribute value, with or not sync
    *
    * @param {String} attrName - Attribute Name
-   * @param {String} value    - Attribute value
+   * @param {String} value    - Attribute value, could be null
    * @return {Boolean} true if nothing more to do
    */
   bindedAttributeSuper(attrName, value) {
-    if ((value === null) || (this.attributeRegister.get(attrName) === value)) return true;
+    if (this.attributeRegister.has(attrName) && (this.attributeRegister.get(attrName) === value)) return true;
     this.attributeRegister.set(attrName, value);
     if (this.attributeSync.has(attrName)) this.setAttribute(attrName, value);
     return false;
@@ -394,6 +398,21 @@ class BinderElement extends HTMLElement {
     handler = this[handlerName];
     this.attributeHandlers.set(attrName, handler);
     return handler;
+  }
+
+  /**
+   * in Attribute change on == '', off == null
+   * and the controller could be true/false. Then:
+   *
+   * true: true, ''
+   * false: false, null
+   *
+   * @param {*} value
+   * @return {Boolean}
+   */
+  toBoolean(value) {
+    if (value === '') return true;
+    return Boolean(value);
   }
 
   /**

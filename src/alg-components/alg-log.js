@@ -32,13 +32,9 @@ class AlgLog {
   static add(id, message) {
     if (id == null) id = AlgLog.id++;
     const time = new Date();
-    // @ts-ignore
     const hours = time.getHours().toString().padStart(2, '0');
-    // @ts-ignore
     const minutes = time.getMinutes().toString().padStart(2, '0');
-    // @ts-ignore
     const seconds = time.getSeconds().toString().padStart(2, '0');
-    // @ts-ignore
     const milliseconds = time.getMilliseconds().toString().padStart(3, '0');
 
     const timeStr = `${hours}:${minutes}:${seconds}.${milliseconds}`;

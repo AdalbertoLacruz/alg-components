@@ -40,6 +40,7 @@ class AppController extends AlgController {
 
   //
   fire(channel, message) {
+    console.log('app-controller channel:', channel, 'message:', message);
     super.fire(channel, message);
 
     switch (channel) {
@@ -50,9 +51,6 @@ class AppController extends AlgController {
       case 'BTN2_CLICK':
         this.btn1.push();
         this.btn2.relax();
-        break;
-      case 'BTN2_CHANGE':
-        console.log('controller on-change: ' + message);
         break;
       default:
     }
