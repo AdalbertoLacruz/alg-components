@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 // @ts-check
 
 import { AlgController } from './alg-components/controllers/alg-controller.js';

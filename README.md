@@ -6,7 +6,7 @@ There are many components/frameworks for web development, so this is an experime
 - Binding support for observable suscription
 - Horizontal message bus for channel fire/observation
 - Javascript class mixins and properties
-- Css mixins
+- Css mixins and @apply
 - EventManager for compound events (state)
 
 ## Architecture

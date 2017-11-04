@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 // @ts-check
 
 import { ObsString } from '../types/obs-string.js';

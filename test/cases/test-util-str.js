@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 /* global mocha chai describe it before beforeEach */
 import * as Str from '../../src/alg-components/util/util-str.js';
 

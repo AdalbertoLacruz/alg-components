@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 // @ts-check
 import { AlgController } from '../controllers/alg-controller.js';
 import { BinderParser } from './binder-parser.js';
@@ -173,11 +174,13 @@ class BinderElement extends HTMLElement {
    */
   addEventHandlers() {
     this.eventHandlers.forEach((value, key) => {
-      const custom = this.customHandlers.has(key);
       const controller = AlgController.controllers.get(value.controller);
       const channel = value.channel;
-      const handler = (value) => { controller.fire(channel, value); };
-      this.eventManager.on(key, handler, custom);
+      if (controller && channel) {
+        const custom = this.customHandlers.has(key);
+        const handler = (value) => { controller.fire(channel, value); };
+        this.eventManager.on(key, handler, custom);
+      }
     });
     this.eventManager.subscribe();
   }
@@ -352,8 +355,8 @@ class BinderElement extends HTMLElement {
     let element = this;
     let controllerName;
 
-    while ((element !== null) && (element.localName !== 'html') && !controllerName) {
-      if (element.controller) {
+    while ((element !== null) && (element.localName !== 'html') && controllerName == null) {
+      if (element.controller != null) {
         controllerName = element.controller;
       } else {
         elementsToSet.add(element);
@@ -366,7 +369,7 @@ class BinderElement extends HTMLElement {
       }
     }
 
-    if (!controllerName) controllerName = AlgController.controllers.keys().next().value; // first key
+    if (!controllerName) controllerName = AlgController.controllers.keys().next().value || ''; // first key
 
     elementsToSet.forEach((element) => {
       element.controller = controllerName;

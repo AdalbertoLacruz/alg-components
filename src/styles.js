@@ -1,9 +1,7 @@
 // @copyright 2017 ALG
 
-const templateStyle = document.createElement('Style');
-templateStyle.setAttribute('type', 'text/css');
-templateStyle.setAttribute('id', 'styles');
-templateStyle.innerHTML = `
+import * as css from './alg-components/util/css-style.js';
+css.style('styles', `
   #container {
     display: flex;
   }
@@ -46,6 +44,4 @@ templateStyle.innerHTML = `
   alg-paper-button.disabled {
     color: white;
   }
-`;
-
-document.head.appendChild(templateStyle);
+`);

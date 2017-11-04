@@ -30,7 +30,7 @@ import { ObsNumber } from '../types/obs-number.js';
  */
 class AlgPaperButton extends AlgPaperComponent {
   /**
-   * Build the static template for style
+   * Build the static template for style - static. this.apply let custom styles.
    * @override
    * @return {HTMLTemplateElement} The template Element with style
    */
@@ -38,10 +38,10 @@ class AlgPaperButton extends AlgPaperComponent {
     let template = super.createTemplateStyle();
     template.innerHTML = `
       <style>
-        ${cssRules.get('paper-material-styles')}
+        ${this.getRule('paper-material-styles')}
         :host {
-          ${cssRules.get('--layout-inline')}
-          ${cssRules.get('--layout-center-center')}
+          ${this.getRule('--layout-inline')}
+          ${this.getRule('--layout-center-center')}
           position: relative;
           box-sizing: border-box;
           min-width: 5.14em;
@@ -61,28 +61,28 @@ class AlgPaperButton extends AlgPaperComponent {
           z-index: 0;
           padding: 0.7em 0.57em;
 
-          ${cssRules.get('--paper-font-common-base') || '/*--paper-font-common-base*/'}
-          ${cssRules.get('--paper-button') || '/*--paper-button*/'}
+          ${this.getRule('--paper-font-common-base')}
+          ${this.apply('--paper-button')}
         }
 
         :host([elevation="1"]) {
-          ${cssRules.get('--paper-material-elevation-1')}
+          ${this.getRule('--paper-material-elevation-1')}
         }
 
         :host([elevation="2"]) {
-          ${cssRules.get('--paper-material-elevation-2')}
+          ${this.getRule('--paper-material-elevation-2')}
         }
 
         :host([elevation="3"]) {
-          ${cssRules.get('--paper-material-elevation-3')}
+          ${this.getRule('--paper-material-elevation-3')}
         }
 
         :host([elevation="4"]) {
-          ${cssRules.get('--paper-material-elevation-4')}
+          ${this.getRule('--paper-material-elevation-4')}
         }
 
         :host([elevation="5"]) {
-          ${cssRules.get('--paper-material-elevation-5')}
+          ${this.getRule('--paper-material-elevation-5')}
         }
 
         :host([hidden]) {
@@ -91,12 +91,12 @@ class AlgPaperButton extends AlgPaperComponent {
 
         :host([raised].keyboard-focus) {
           font-weight: bold;
-          ${cssRules.get('--paper-button-raised-keyboard-focus') || '/*--paper-button-raised-keyboard-focus*/'}
+          ${this.apply('--paper-button-raised-keyboard-focus')}
         }
 
         :host(:not([raised]).keyboard-focus) {
           font-weight: bold;
-          ${cssRules.get('--paper-button-flat-keyboard-focus') || '/*--paper-button-flat-keyboard-focus*/'}
+          ${this.apply('--paper-button-flat-keyboard-focus')}
         }
 
         :host([disabled]) {
@@ -104,11 +104,11 @@ class AlgPaperButton extends AlgPaperComponent {
           color: #a8a8a8;
           cursor: auto;
           pointer-events: none;
-          ${cssRules.get('--paper-button-disabled') || '/*--paper-button-disabled*/'}
+          ${this.apply('--paper-button-disabled')}
         }
 
         :host([animated]) {
-          ${cssRules.get('--shadow-transition')}
+          ${this.getRule('--shadow-transition')}
         }
 
         paper-ripple {

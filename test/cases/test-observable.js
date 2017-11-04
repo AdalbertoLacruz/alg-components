@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 /* global mocha chai describe it before beforeEach */
 import { Observable } from '../../src/alg-components/types/observable.js';
 

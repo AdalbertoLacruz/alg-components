@@ -1,5 +1,7 @@
+// @copyright 2017 ALG
 // @ts-check
 import { BinderElement } from './binder-element.js';
+import * as css from '../util/css-style.js';
 
 /**
  * Base class for AlgComponents
@@ -16,6 +18,22 @@ class AlgComponent extends BinderElement {
   get role() { return ''; }
 
   /**
+   * The template style is dependent on css scope
+   * @return {Boolean}
+   */
+  get styleCouldBeCustom() {
+    return this.selfClass._styleCouldBeCustom || (this.selfClass._styleCouldBeCustom = false);
+  }
+  set styleCouldBeCustom(value) { this.selfClass._styleCouldBeCustom = value; }
+
+  /**
+   * The template style contains rules that depends of current css scope (--rule)
+   * @return {Boolean}
+   */
+  get styleIsCustom() { return this._styleIsCustom || (this._styleIsCustom = false); }
+  set styleIsCustom(value) { this._styleIsCustom = value; }
+
+  /**
    * Build for the class (static) templateElement, templateStyle and templateIds.
    * To @override
    * @return {HTMLTemplateElement} The template Element to be cloned in the shadow creation
@@ -24,13 +42,11 @@ class AlgComponent extends BinderElement {
     let template = this.selfClass.templateElement = document.createElement('template');
 
     // Each component must fill innerHTML
-    template.innerHTML = `
-    `;
+    template.innerHTML = ``;
 
     // Each component must search for templateIds:
     // this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
     this.selfClass.templateIds = [];
-    this.createTemplateStyle();
     return template;
   }
 
@@ -40,7 +56,7 @@ class AlgComponent extends BinderElement {
    * @return {HTMLTemplateElement} The template Element with style
    */
   createTemplateStyle() {
-    let template = this.selfClass.templateStyle = document.createElement('template');
+    let template = document.createElement('template');
 
     // Each component must fill innerHTML
     template.innerHTML = `
@@ -65,7 +81,7 @@ class AlgComponent extends BinderElement {
    */
   connectedCallback() {
     // Apply Style
-    this.shadowRoot.insertBefore(this.templateStyle.content.cloneNode(true), this.shadowRoot.firstChild);
+    this.insertStyle();
 
     super.connectedCallback();
     this.addStandardAttributes();
@@ -94,12 +110,25 @@ class AlgComponent extends BinderElement {
     return this.selfClass.templateIds;
   }
 
+  /** Template header info @return {Object} */
+  get templateInfo() {
+    return this._templateInfo || (this._templateInfo = (() => {
+      const shadow = this.shadowRoot;
+      return {
+        header: {
+          elements: shadow.childElementCount,
+          total: shadow.childNodes.length
+        }
+      };
+    })());
+  }
+
   /**
    * HTMLElement teplate for <style></style> in the component
    * @return {HTMLTemplateElement}
    */
   get templateStyle() {
-    return this.selfClass.templateStyle || this.createTemplateStyle();
+    return this.selfClass.templateStyle || (this.selfClass.templateStyle = this.createTemplateStyle());
   }
 
   /**
@@ -111,6 +140,30 @@ class AlgComponent extends BinderElement {
     }
     if (!this.hasAttribute('tabindex')) {
       this.setAttribute('tabindex', '0');
+    }
+  }
+
+  /**
+   * Recovers a css rule from the map or the css style.
+   *
+   * @param {String} id
+   * @return {String}
+   */
+  apply(id) {
+    if (this.selfClass.templateStyle) {
+      // We are creating the custom style
+      let rule = css.apply(this, id);
+      if (rule) {
+        this.styleIsCustom = true;
+        rule = `/* ${id} */ ${rule} `;
+      } else {
+        rule = css.getRule(id);
+      }
+      return rule;
+    } else {
+      // We are creating static style
+      this.styleCouldBeCustom = true;
+      return css.getRule(id);
     }
   }
 
@@ -147,6 +200,44 @@ class AlgComponent extends BinderElement {
       total[id] = this.shadowRoot.querySelector(`#${id}`);
       return total;
     }, {});
+  }
+
+  /**
+   * Recovers a css rule from the map
+   * @param {String} id
+   * @return {String}
+   */
+  getRule(id) {
+    return css.getRule(id);
+  }
+
+  /**
+   * Build the style from the template and insert it in the shadowRoot
+   */
+  insertStyle() {
+    let template = this.templateStyle; // update this.styleCouldBeCustom
+    if (this.styleCouldBeCustom) {
+      const custom = this.createTemplateStyle();
+      if (this.styleIsCustom) {
+        // Use the new style
+        template = custom;
+      }
+    }
+    this.shadowRoot.insertBefore(template.content.cloneNode(true), this.shadowRoot.firstChild);
+  }
+
+  /**
+   * Recover shadowRoot to the original element template
+   * Removes all childs except style and template
+   */
+  restoreTemplate() {
+    const nodes = this.shadowRoot.childNodes;
+    const headerLength = this.templateInfo.header.total;
+    let len = nodes.length;
+    while (len > headerLength) {
+      this.shadowRoot.removeChild(this.shadowRoot.lastChild);
+      len = nodes.length;
+    }
   }
 
   /**

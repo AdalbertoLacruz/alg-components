@@ -25,10 +25,15 @@
         text color style="margin;background-color;color:black" attr="25">OK</alg-button>
       <br><br>
       <div id="container">
-        <alg-paper-button id="btn2" class="pink">link</alg-paper-button>
-        <alg-paper-button id="btn2" raised class="indigo" on-click>raised</alg-paper-button>
-        <alg-paper-button id="btn2" toggles raised class="green" on-change>toggles</alg-paper-button>
-        <alg-paper-button id="btn2" disabled>disabled</alg-paper-button>
+        <alg-paper-button id="btn2" class="pink"><alg-iron-icon icon="check"></alg-iron-icon>link</alg-paper-button>
+        <alg-paper-button id="btn2" raised class="indigo" on-click><alg-iron-icon icon="file-download"></alg-iron-icon>raised</alg-paper-button>
+        <alg-paper-button id="btn2" toggles raised class="green" on-change>
+          <alg-iron-icon icon="favorite"></alg-iron-icon>toggles
+        </alg-paper-button>
+        <alg-paper-button id="btn2" disabled>
+          <alg-iron-icon icon="block"></alg-iron-icon>disabled
+        </alg-paper-button>
+        <alg-iron-icon icon="base64:location" style="background-color: rgb(255, 255, 255)"></alg-iron-icon>
       </div>
       <!-- <alg-show-log id="log" data></alg-show-log> -->
     </div>

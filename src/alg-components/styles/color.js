@@ -1,10 +1,9 @@
 // @copyright @polymer\paper-styles\color.js
 // @copyright 2017 ALG
 
-const templateStyle = document.createElement('Style');
-templateStyle.setAttribute('type', 'text/css');
-templateStyle.setAttribute('id', 'color');
-templateStyle.innerHTML = `
+import * as css from '../util/css-style.js';
+
+css.style('color', `
   html {
     /* Material Design color palette for Google products */
 
@@ -319,6 +318,5 @@ templateStyle.innerHTML = `
     --light-disabled-opacity: 0.3; /* or hint text or icon */
     --light-secondary-opacity: 0.7;
     --light-primary-opacity: 1.0;
-  }`;
-
-document.head.appendChild(templateStyle);
+  }
+`);

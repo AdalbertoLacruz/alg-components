@@ -1,3 +1,4 @@
+// @copyright 2017 ALG
 /* global mocha chai describe it before beforeEach */
 import { AlgComponent } from '../../src/alg-components/components/alg-component.js';
 import { AlgController } from '../../src/alg-components/controllers/alg-controller.js';

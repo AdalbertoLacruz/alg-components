@@ -8,9 +8,11 @@ body {
   background-color: #eeeeee;
   /* box-sizing: border-box; */
   display: grid;
-  grid-template-rows: 100px auto 100px;
+  grid-template-rows: 50px auto 50px;
   grid-row-gap: 5px;
   --paper-button-ink-color: var(--paper-pink-900);
+
+
 }
 
 .header {
