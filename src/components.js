@@ -8,4 +8,5 @@ import './alg-components/icons/alg-base64-icons.js';
 import { AlgIronIcon } from './alg-components/iron/alg-iron-icon.js';
 import { AlgButton } from './alg-components/components/alg-button.js';
 import { AlgPaperButton } from './alg-components/paper/alg-paper-button.js';
+import { AlgPaperFab } from './alg-components/paper/alg-paper-fab.js';
 import { AlgShowLog } from './alg-components/components/alg-show-log.js';

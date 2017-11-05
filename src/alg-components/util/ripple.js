@@ -156,10 +156,10 @@ class Ripple {
       this.yStart = yCenter;
       this.slideDistance = Utility.distance(this.xStart, this.yStart, this.xEnd, this.yEnd);
     } else {
-      this.xStart = event
+      this.xStart = (event && event.x)
         ? event.x - this.containerMetrics.boundingRect.left
         : this.containerMetrics.width / 2;
-      this.yStart = event
+      this.yStart = (event && event.y)
         ? event.y - this.containerMetrics.boundingRect.top
         : this.containerMetrics.height / 2;
     }

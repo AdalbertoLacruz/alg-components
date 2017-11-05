@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-fab\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>alg-paper-fab</title>
+    <script type="module" src="components.js"></script>
+  </head>
+  <body style="visibility: hidden">
+    <h1 class="centered">alg-paper-fab</h1>
+    <div class="vertical-section-container centered">
+      <h3>FABs can be enabled or disabled</h3>
+      <div class="demo-snipped">
+        <alg-paper-fab icon="favorite" title="heart"></alg-paper-fab>
+        <alg-paper-fab disabled="" icon="reply" title="reply"></alg-paper-fab>
+        <alg-paper-fab class="label" label="😻" title="heart eyes cat"></alg-paper-fab>
+      </div>
+
+      <h3>FABs can be made smaller using the <i>mini</i> attribute</h3>
+      <div class="demo-snipped">
+        <alg-paper-fab mini="" icon="favorite" title="heart"></alg-paper-fab>
+        <alg-paper-fab mini="" disabled="" icon="reply" title="reply"></alg-paper-fab>
+        <alg-paper-fab mini="" class="label" label="😻" title="heart eyes cat"></alg-paper-fab>
+      </div>
+
+      <h3>FABs can hide the ripple effect using the <i>noink</i> attribute</h3>
+      <div class="demo-snipped">
+        <alg-paper-fab noink="" icon="favorite" title="heart"></alg-paper-fab>
+      </div>
+
+      <h3>FABs can be styled using custom properties</h3>
+      <div class="demo-snipped">
+        <alg-paper-fab icon="favorite" title="heart" class="blue"></alg-paper-fab>
+        <alg-paper-fab icon="favorite" title="heart" class="orange"></alg-paper-fab>
+      </div>
+    </div>
+  </body>
+</html>

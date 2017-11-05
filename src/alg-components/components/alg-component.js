@@ -172,19 +172,20 @@ class AlgComponent extends BinderElement {
    * If force is null, set the attribute if not exist and vice versa
    * @param {String} attrName
    * @param {Boolean} force
+   * @param {HTMLElement} element
    */
-  attributeToggle(attrName, force) {
+  attributeToggle(attrName, force, element = this) {
     if (force !== null) {
       if (force) {
-        this.setAttribute(attrName, '');
+        element.setAttribute(attrName, '');
       } else {
-        this.removeAttribute(attrName);
+        element.removeAttribute(attrName);
       }
     } else {
-      if (this.hasAttribute(attrName)) {
-        this.removeAttribute(attrName);
+      if (element.hasAttribute(attrName)) {
+        element.removeAttribute(attrName);
       } else {
-        this.setAttribute(attrName, '');
+        element.setAttribute(attrName, '');
       }
     }
   }
