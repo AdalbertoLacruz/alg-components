@@ -15,7 +15,7 @@ import * as Str from '../util/util-str.js';
 class AlgController {
   /**
    * controllerName, to @override
-   * @return {String}
+   * @type {String}
    */
   get name() {
     return '';
@@ -29,19 +29,20 @@ class AlgController {
 
   /**
    * Assosiate channel - variable
-   * @return {Map}
+   * @type {Map}
    */
   get bindings() {
     return this._bindings || (this._bindings = this.defineBindings());
   }
 
+  /** @type {ObsString} */
   get bus() {
     return this._bus || (this._bus = new ObsString());
   }
 
   /**
    * Storage for controller defined in the application. {"controllerName" : classInstance}
-   * @return {Map<String, *>}
+   * @type {Map<String, *>}
    */
   static get controllers() {
     return this._controllers || (this._controllers = new Map());
@@ -96,6 +97,7 @@ class AlgController {
    * The controller receives (up) a message from the bus
    *
    * @param {String} channel - channel
+   * @param {*} message
    */
   fire(channel, message) {
     // TODO: message

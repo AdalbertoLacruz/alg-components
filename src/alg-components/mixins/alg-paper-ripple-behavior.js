@@ -1,53 +1,53 @@
-// @copyright @polymer\paper-behaviors\paper-ripple-behavior.js
+// @copyright @polymer\iron-behaviors\iron-button-state.js
 // @copyright 2017 ALG
 // @ts-check
 
-import { AlgPaperComponent } from '../paper/alg-paper-component.js';
-import { AlgPaperRipple } from './alg-paper-ripple.js';
+import { AlgPaperRipple } from '../paper/alg-paper-ripple.js';
 import { ObsBoolean } from '../types/obs-boolean.js';
 
 /**
+ * Mixin behavior
+ *
  * Append `alg-paper-ripple` for ripple effect in component
  *
  * Attribute: `noink` (add to observedAttributes)
  * Properties: .rippleContainer = HTMLElement
  * Methods: .getRipple()
+ *
+ * @param {*} base
  */
-class AlgPaperRippleBehavior {
-  /**
-   * @param {*} item - AlgPaperButton, ...
-   * @constructor
-   */
-  constructor(item) {
-    this.item = item;
-
-    // -----------------------------        handlers
-
-    const eventManager = item.eventManager;
-    eventManager
-      .on('focused', this.ensureRipple.bind(this))
-      .on('pressed', this.ensureRipple.bind(this)) // mouse, space
-      .subscribe();
-
-    // -----------------------------        properties
+export const AlgPaperRippleBehavior = (base) => class extends base {
+  constructor() {
+    // @ts-ignore
+    super();
 
     // If true, the button toggles the active state with each tap or press of the spacebar.
-    item.noink = new ObsBoolean('noink', false)
-      .onChangeReflectToAttribute(item)
+    this.eventManager.define('noink', new ObsBoolean('noink', false))
+      .onChangeReflectToAttribute(this)
       .observe((value) => {
         if (this.hasRipple()) this._ripple.noink = value;
       });
 
-    // -----------------------------        Attribute change management
+    this.eventManager
+      .on('down', this.ensureRipple.bind(this)) // a mouse event has x,y
+      .on('focused', this.ensureRipple.bind(this))
+      .subscribe();
+  }
 
-    item.bindedNoink = this.bindedNoink;
+  /**
+   * Attributes managed by the component
+   * @override
+   * @type {Array<String>}
+   */
+  static get observedAttributes() {
+    return super.observedAttributes.concat(['noink']);
   }
 
   /**
    * Where to add the ripple component
-   * @return {*}
+   * @type {Node}
    */
-  get rippleContainer() { return this._rippleContainer || (this._rippleContainer = this.item.shadowRoot); }
+  get rippleContainer() { return this._rippleContainer || (this._rippleContainer = this.shadowRoot); }
   set rippleContainer(value) { this._rippleContainer = value; }
 
   /**
@@ -57,10 +57,9 @@ class AlgPaperRippleBehavior {
    * @param {String} value
    */
   bindedNoink(attrName, value) {
-    // @ts-ignore
     if (this.bindedAttributeSuper(attrName, value)) return;
-    // @ts-ignore
-    this.noink.update(this.toBoolean(value));
+
+    this.eventManager.getObservable('noink').update(this.toBoolean(value));
   }
 
   /**
@@ -71,7 +70,7 @@ class AlgPaperRippleBehavior {
   _createRipple() {
     const element = /** @type {AlgPaperRipple} */ (document.createElement('alg-paper-ripple'));
     if (element.controller == null) element.controller = '';
-    element.noink = this.item.noink.value;
+    element.noink = this.eventManager.getObservable('noink').value;
     return element;
   }
 
@@ -80,12 +79,13 @@ class AlgPaperRippleBehavior {
    * the ripple effect is dynamically on demand when needed.
    * @param {UIEvent=} optTriggeringEvent (optional) event that triggered the action
    */
-  ensureRipple(optTriggeringEvent) {
+  ensureRipple(optTriggeringEvent = null, event = null) {
+    const triggeringEvent = optTriggeringEvent instanceof Event ? optTriggeringEvent : event;
     if (!this.hasRipple()) {
       this._ripple = this._createRipple();
       if (this.rippleContainer) this.rippleContainer.appendChild(this._ripple);
-      if (optTriggeringEvent) {
-        if (!this._ripple.noink) this._ripple.uiDownAction(optTriggeringEvent);
+      if (triggeringEvent) {
+        if (!this._ripple.noink) this._ripple.uiDownAction(triggeringEvent);
       }
     }
   }
@@ -109,6 +109,4 @@ class AlgPaperRippleBehavior {
   hasRipple() {
     return Boolean(this._ripple);
   }
-}
-
-export { AlgPaperRippleBehavior };
+};

@@ -2,9 +2,10 @@
 // @copyright 2017 ALG
 // @ts-check
 
-import { AlgIronButtonState } from '../iron/alg-iron-button-state.js';
+import { AlgIronButtonState } from '../mixins/alg-iron-button-state.js';
 import { AlgPaperComponent } from './alg-paper-component.js';
-import { AlgPaperRippleBehavior } from './alg-paper-ripple-behavior.js';
+import { AlgPaperRippleBehavior } from '../mixins/alg-paper-ripple-behavior.js';
+import { mixinFactory } from '../util/mixins.js';
 import { ObsBoolean } from '../types/obs-boolean.js'; // eslint-disable-line
 import { ObsNumber } from '../types/obs-number.js';
 
@@ -14,14 +15,18 @@ import { ObsNumber } from '../types/obs-number.js';
  * Event handlers
  *  on-click
  *  on-change (toggles)
+ *  on-action (pressed = click or space)
  *
  * @type {class}
  */
-class AlgPaperButtonBehavior extends AlgPaperComponent {
+class AlgPaperButtonBehavior extends
+  mixinFactory(AlgPaperComponent, AlgIronButtonState, AlgPaperRippleBehavior) {
+  //
   constructor() {
+    // @ts-ignore
     super();
-    this.ironButtonState = new AlgIronButtonState(this); // mixin. Order is important
-    this.AlgPaperRippleBehavior = new AlgPaperRippleBehavior(this);
+
+    this.fireHandlers.add('action'); // fire with pressed true
 
     const eventManager = this.eventManager;
     eventManager
@@ -29,6 +34,7 @@ class AlgPaperButtonBehavior extends AlgPaperComponent {
       .onCustom('disabled', this._calculateElevation.bind(this))
       .onCustom('focused', this._calculateElevation.bind(this))
       .onCustom('pressed', this._calculateElevation.bind(this))
+      .onChangeFireMessage('pressed', this, 'action', null, true)
       .onCustom('receivedFocusFromKeyboard', this._calculateElevation.bind(this))
       .onChangeReflectToClass('receivedFocusFromKeyboard', this, 'keyboard-focus', true)
       .subscribe();
@@ -37,22 +43,19 @@ class AlgPaperButtonBehavior extends AlgPaperComponent {
   /**
    * Attributes managed by the component
    * @override
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   static get observedAttributes() {
-    return super.observedAttributes.concat(['noink', 'toggles', 'on-change', 'on-click']);
+    return super.observedAttributes.concat(['on-click', 'on-action']);
   }
 
-  get active() {
-    return this._active ||
-      (this._active = /** @type {ObsBoolean} */ (this.eventManager.getObservable('active')));
-  }
+  /** @type {ObsBoolean} */
+  get active() { return this.eventManager.getObservable('active'); }
 
-  get disabled() {
-    return this._pressed ||
-      (this._disabled = /** @type {ObsBoolean} */ (this.eventManager.getObservable('disabled')));
-  }
+  /** @type {ObsBoolean} */
+  get disabled() { return this.eventManager.getObservable('disabled'); }
 
+  /** @type {ObsNumber} */
   get elevation() {
     return this._elevation || (this._elevation = new ObsNumber('elevation', 0)
       .onChangeReflectToAttribute(this));
@@ -60,23 +63,17 @@ class AlgPaperButtonBehavior extends AlgPaperComponent {
 
   /**
    * If true, the user is currently holding down the button.
-   * @return {ObsBoolean}
+   * @type {ObsBoolean}
    */
-  get pressed() {
-    return this._pressed ||
-      (this._pressed = /** @type {ObsBoolean} */ (this.eventManager.getObservable('pressed')));
-  }
+  get pressed() { return this.eventManager.getObservable('pressed'); }
 
   /**
    * True if the input device that caused the element to receive focus was a keyboard.
-   * @return {ObsBoolean}
+   * @type {ObsBoolean}
    */
-  get receivedFocusFromKeyboard() {
-    return this._receivedFocusFromKeyboard || (this._receivedFocusFromKeyboard =
-      /** @type {ObsBoolean} */ (this.eventManager.getObservable('receivedFocusFromKeyboard')));
-  }
+  get receivedFocusFromKeyboard() { return this.eventManager.getObservable('receivedFocusFromKeyboard'); }
 
-  /** For Aria @override @return {String} */
+  /** For Aria @override @type {String} */
   get role() { return 'button'; }
 
   /**

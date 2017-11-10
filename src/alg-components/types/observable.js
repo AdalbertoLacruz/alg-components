@@ -27,47 +27,54 @@ class Observable {
 
   /*  ___________________________________________ properties _____ */
 
-  /** Function called by init(value) @param {Function} handler */
+  /** Function called by init(value) @type {Function} handler */
   set initHandler(handler) { this._initHandler = handler; }
   get initHandler() { return this._initHandler; }
 
   /**
    * If true, value changes must be logged
-   * @return {Boolean}
+   * @type {Boolean}
    */
   get isLog() {
     if (this._isLog == null) this._isLog = false;
     return this._isLog;
   }
 
-  /** internal name used in logs, attributes, ... @param {String} value */
+  /**
+   * Linkers are like observers but the value is transmited faster.
+   * Necessary for integrity in events.
+   * @type {Set}
+   */
+  get linkers() { return this._linkers || (this._linkers = new Set()); }
+
+  /** internal name used in logs, attributes, ... @type {String} */
   set name(value) { this._name = value; }
   get name() { return this._name; }
 
   /**
    * Observers are Functions defined at controller level
-   * @return {Set}
+   * @type {Set}
    */
-  get observers() {
-    return this._observers || (this._observers = new Set());
-  }
+  get observers() { return this._observers || (this._observers = new Set()); }
+
+  /**
+   * Auxiliary data related to value
+   * @type {*}
+   */
+  set raw(value) { this._raw = value; }
+  get raw() { return this._raw; }
 
   /**
    * Subscribers are function used by components to know a change
-   * @return {Set}
+   * @type {Set}
    */
-  get subscribers() {
-    return this._subscribers || (this._subscribers = new Set());
-  }
+  get subscribers() { return this._subscribers || (this._subscribers = new Set()); }
 
   /**
    * The object value. All is around this.
-   * @return {*}
+   * @type {*}
    */
-  get value() {
-    return this._value;
-  }
-
+  get value() { return this._value; }
   set value(value) {
     this._value = value;
     // @ts-ignore
@@ -99,18 +106,23 @@ class Observable {
   }
 
   /**
-   * Call the observers and subscribers
+   * Call async the observers and subscribers
    * @param {*} data
    * @return {*} Observable
    */
   dispatch(data = null) {
     if (data === null) data = this.value;
+
+    this.linkers.forEach((handler) => {
+      handler(data, this.raw);
+    });
+
     this.observers.forEach((handler) => {
-      handler(data);
+      setTimeout(() => handler(data, this.raw), 0);
     });
 
     this.subscribers.forEach((handler) => {
-      handler(data);
+      setTimeout(() => handler(data), 0);
     });
 
     return this;
@@ -122,6 +134,16 @@ class Observable {
    */
   get() {
     return this.value;
+  }
+
+  /**
+   * Add a Function to be execued inmediatly at once in value change. Used at eventManager level.
+   * @param  {Function} handler
+   * @return {*} Observable
+   */
+  link(handler) {
+    this.linkers.add(handler);
+    return this;
   }
 
   /**
@@ -145,14 +167,21 @@ class Observable {
   }
 
   /**
-   * Send a custom event on value change
+   * Send a custom event on value change, or value objective
    * @param {*} item
    * @param {String} event - name
+   * @param {*} to - value to trigger the change (true, a number, ...)
    */
-  onChangeFireMessage(item, event) {
-    this.observe((value) => {
-      item.fire(event, this.value);
-    });
+  onChangeFireMessage(item, event, to = null) {
+    if (to == null) {
+      this.observe((value) => {
+        item.fire(event, this.value);
+      });
+    } else {
+      this.observe((value) => {
+        if (value === to) item.fire(event, this.value);
+      });
+    }
     return this;
   }
 

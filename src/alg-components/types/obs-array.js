@@ -17,7 +17,7 @@ class ObsArray extends Observable {
 
   /**
    * Prepares the value for display
-   * @return {Object}
+   * @type {Object}
    */
   get value() {
     return {

@@ -13,13 +13,13 @@ import * as css from '../util/css-style.js';
 class AlgComponent extends BinderElement {
   /**
    * Component standar role (ex: button). To @override.
-   * @return {String}
+   * @type {String}
    */
   get role() { return ''; }
 
   /**
    * The template style is dependent on css scope
-   * @return {Boolean}
+   * @type {Boolean}
    */
   get styleCouldBeCustom() {
     return this.selfClass._styleCouldBeCustom || (this.selfClass._styleCouldBeCustom = false);
@@ -28,7 +28,7 @@ class AlgComponent extends BinderElement {
 
   /**
    * The template style contains rules that depends of current css scope (--rule)
-   * @return {Boolean}
+   * @type {Boolean}
    */
   get styleIsCustom() { return this._styleIsCustom || (this._styleIsCustom = false); }
   set styleIsCustom(value) { this._styleIsCustom = value; }
@@ -96,7 +96,7 @@ class AlgComponent extends BinderElement {
 
   /**
    * HTMLElement template for the component
-   * @return {HTMLTemplateElement}
+   * @type {HTMLTemplateElement}
    */
   get template() {
     return this.selfClass.templateElement || this.createTemplate();
@@ -104,13 +104,13 @@ class AlgComponent extends BinderElement {
 
   /**
    * id names in template = ["id1", ... "idn"], static bridge
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   get templateIds() {
     return this.selfClass.templateIds;
   }
 
-  /** Template header info @return {Object} */
+  /** Template header info @type {Object} */
   get templateInfo() {
     return this._templateInfo || (this._templateInfo = (() => {
       const shadow = this.shadowRoot;
@@ -125,7 +125,7 @@ class AlgComponent extends BinderElement {
 
   /**
    * HTMLElement teplate for <style></style> in the component
-   * @return {HTMLTemplateElement}
+   * @type {HTMLTemplateElement}
    */
   get templateStyle() {
     return this.selfClass.templateStyle || (this.selfClass.templateStyle = this.createTemplateStyle());

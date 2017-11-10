@@ -18,7 +18,7 @@ class AlgLog {
 
   /**
    * Global storage
-   * @return {*}
+   * @type {*}
    */
   static get register() {
     return this._register || (this._register = new ObsArray('log'));

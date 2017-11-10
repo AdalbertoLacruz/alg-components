@@ -50,6 +50,7 @@ class AppController extends AlgController {
         this.btn1.relax();
         break;
       case 'BTN2_CLICK':
+      case 'BTN2_ACTION':
         this.btn1.push();
         this.btn2.relax();
         break;

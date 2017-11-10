@@ -42,7 +42,7 @@ class BinderElement extends HTMLElement {
 
   /**
    * Contains the functions to update the binded attributes. To @override.
-   * @return {Map<String, Function>}
+   * @type {Map<String, Function>}
    */
   get attributeHandlers() {
     return this._attributeHandlers || (this._attributeHandlers = new Map()
@@ -51,7 +51,7 @@ class BinderElement extends HTMLElement {
 
   /**
    * Attributes managed by the component. To @override.
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   static get observedAttributes() {
     return ['style'];
@@ -118,7 +118,7 @@ class BinderElement extends HTMLElement {
 
   /**
    * Contains the last value from an attribute. This meaning that has been checked for binding
-   * @return {Map<String, String>}
+   * @type {Map<String, String>}
    */
   get attributeRegister() {
     return this._attributeRegister || (this._attributeRegister = new Map());
@@ -126,35 +126,38 @@ class BinderElement extends HTMLElement {
 
   /**
    * Store the list of attributes what must be synchronize with html {{}}
-   * @return {Set<String>}
+   * @type {Set<String>}
    */
   get attributeSync() {
     return this._attributeSync || (this._attributeSync = new Set());
   }
 
-  /** Controller Name associate to the component @param  {String} value */
+  /** Controller Name associate to the component @type  {String} value */
   set controller(value) { this._controller = value; }
   get controller() { return this._controller; }
 
-  /** eventHandlers that don't addEventListener @return {Set} */
+  /** eventHandlers that don't addEventListener @type {Set} */
   get customHandlers() { return this._customHandlers || (this._customHandlers = new Set()); }
 
   /**
    * Attributes that define a handler as:<br>
    *     on-click="[[app-controller:BTN2_CLICK]]"
    *
-   * @return {Map<String, Object>} - handlerName, {controller, channel}
+   * @type {Map<String, Object>} - handlerName, {controller, channel}
    */
   get eventHandlers() {
     return this._eventHandlers || (this._eventHandlers = new Map());
   }
 
-  /** @return {EventManager} */
+  /** @type {EventManager} */
   get eventManager() { return this._eventManager || (this._eventManager = new EventManager(this)); }
+
+  /** eventHandlers that don't add to eventManager, only fire messages. @type {Set} */
+  get fireHandlers() { return this._fireHandlers || (this._fireHandlers = new Set()); }
 
   /**
    * List of Functions pending execution.
-   * @Return {Set<Function>}
+   * @type {Set<Function>}
    */
   get taskQueue() {
     return this._taskQueue || (this._taskQueue = new Set());
@@ -162,7 +165,7 @@ class BinderElement extends HTMLElement {
 
   /**
    * List of handlers to unsubscribe from the controller (attribute, style)
-   * @return {Set<Function>}
+   * @type {Set<Function>}
    */
   get unsubscribeHandlers() {
     return this._unsubscribeHandlers || (this._unsubscribeHandlers = new Set());
@@ -176,7 +179,8 @@ class BinderElement extends HTMLElement {
     this.eventHandlers.forEach((value, key) => {
       const controller = AlgController.controllers.get(value.controller);
       const channel = value.channel;
-      if (controller && channel) {
+      const isFire = this.fireHandlers.has(key);
+      if (!isFire && controller && channel) {
         const custom = this.customHandlers.has(key);
         const handler = (value) => { controller.fire(channel, value); };
         this.eventManager.on(key, handler, custom);

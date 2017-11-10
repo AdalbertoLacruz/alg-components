@@ -14,7 +14,7 @@ class AlgIronComponent extends AlgComponent {
   /**
    * Attributes managed by the component
    * @override
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   static get observedAttributes() {
     return super.observedAttributes.concat(['disabled']);

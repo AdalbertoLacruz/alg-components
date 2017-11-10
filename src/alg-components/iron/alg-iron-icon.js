@@ -46,7 +46,7 @@ class AlgIronIcon extends AlgPaperComponent {
   /**
    * Attributes managed by the component
    * @override
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   static get observedAttributes() {
     return super.observedAttributes.concat(['icon', 'src']);

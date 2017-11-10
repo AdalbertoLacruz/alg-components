@@ -27,33 +27,33 @@ class Ripple {
     this.resetInteractionState();
   }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get center() { return this.element.center; }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get initialOpacity() { return this.element.initialOpacity; }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get isAnimationComplete() {
     return this.mouseUpStart ? this.isOpacityFullyDecayed : this.isRestingAtMaxRadius;
   }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get isMouseDown() { return this.mouseDownStart && !this.mouseUpStart; }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get isOpacityFullyDecayed() {
     return this.opacity < 0.01 &&
       this.radius >= Math.min(this.maxRadius, RIPPLE_MAX_RADIUS);
   }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get isRestingAtMaxRadius() {
     return this.opacity >= this.initialOpacity &&
       this.radius >= Math.min(this.maxRadius, RIPPLE_MAX_RADIUS);
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get mouseDownElapsed() {
     if (!this.mouseDownStart) return 0;
 
@@ -65,23 +65,23 @@ class Ripple {
     return elapsed;
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get mouseDownElapsedSeconds() { return this.mouseDownElapsed / 1000; }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get mouseInteractionSeconds() {
     return this.mouseDownElapsedSeconds + this.mouseUpElapsedSeconds;
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get mouseUpElapsed() {
     return this.mouseUpStart ? Utility.now() - this.mouseUpStart : 0;
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get mouseUpElapsedSeconds() { return this.mouseUpElapsed / 1000; }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get opacity() {
     if (!this.mouseUpStart) return this.initialOpacity;
 
@@ -91,10 +91,10 @@ class Ripple {
     );
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get opacityDecayVelocity() { return this.element.opacityDecayVelocity; }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get outerOpacity() {
     // Linear increase in background opacity, capped at the opacity
     // of the wavefront (waveOpacity).
@@ -104,7 +104,7 @@ class Ripple {
     return Math.max(0, Math.min(outerOpacity, waveOpacity));
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get radius() {
     const width2 = this.containerMetrics.width * this.containerMetrics.width;
     const height2 = this.containerMetrics.height * this.containerMetrics.height;
@@ -117,15 +117,15 @@ class Ripple {
     return Math.abs(size);
   }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get recenters() { return this.element.recenters; }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get translationFraction() {
     return Math.min(1, this.radius / this.containerMetrics.size * 2 / Math.sqrt(2));
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get xNow() {
     if (this.xEnd) {
       return this.xStart + this.translationFraction * (this.xEnd - this.xStart);
@@ -134,7 +134,7 @@ class Ripple {
     return this.xStart;
   }
 
-  /** @return {Number} */
+  /** @type {Number} */
   get yNow() {
     if (this.yEnd) {
       return this.yStart + this.translationFraction * (this.yEnd - this.yStart);
@@ -236,7 +236,7 @@ class ElementMetrics {
   }
 
   /**
-   * @return {ClientRect}
+   * @type {ClientRect}
    */
   get boundingRect() {
     return this.element.getBoundingClientRect();

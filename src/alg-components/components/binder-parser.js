@@ -45,13 +45,13 @@ class BinderParser {
     }
   }
 
-  /** attrName="*" @param {String} value */
-  set attrName(value) { this._attrName = value; }
+  /** attrName = "*" @type {String} */
   get attrName() { return this._attrName; }
+  set attrName(value) { this._attrName = value; }
 
   /**
    * Get channel in attrName="[[:channel:]]"" binding or guest a channel from id
-   * @return {String} Null if not possible
+   * @type {String} Null if not possible
    */
   get autoChannel() {
     if (!this.id) return null;
@@ -70,72 +70,73 @@ class BinderParser {
 
   /**
    * Get defaultValue in attrName="[[:channel:defaultValue]]"" binding or value in attrName="value"
-   * @return {String}
+   * @type {String}
    */
   get autoValue() {
     return this.channel !== '' ? this.defaultValue : this.value;
   }
 
-  /** attr="[[*:channel:*]]" @param {String} value */
+  /** attr="[[*:channel:*]]" @type {String} */
   set channel(value) { this.data.set(CHANNEL, value); }
   get channel() { return this.data.get(CHANNEL); }
 
-  /** attr="[[controller:*:*]]" @param {String} value */
+  /** attr="[[controller:*:*]]" @type {String} */
   set controller(value) { this.data.set(CONTROLLER, value); }
   get controller() { return this.data.get(CONTROLLER); }
 
   /**
    * Set of parsed data. In style, each one of styleProperty data stored in datas.
-   * @param {Map} value
+   * @type {Map}
    * */
   set data(value) { this._data = value; }
   get data() { return this._data || this.createData(); }
 
+  /** @type {Array} */
   get datas() {
     return this._datas || (this._datas = []);
   }
 
-  /** Default controller @param {String} value */
+  /** Default controller @type {String} */
   set defaultController(value) { this._defaultController = value; }
   get defaultController() { return this._defaultController; }
 
-  /** attr="[[*:*:default-value]]" @param {String} value */
+  /** attr="[[*:*:default-value]]" @type {String} */
   set defaultValue(value) { this.data.set(DEFAULT_VALUE, value); }
   get defaultValue() { return this.data.get(DEFAULT_VALUE); }
 
-  /** on-handler="*" @param {String} value */
+  /** on-handler="*" @type {String} */
   set handler(value) { this._handler = value; }
   get handler() { return this._handler || ''; }
 
-  /** component id @param {String} value */
+  /** component id @type {String} */
   set id(value) { this._id = value; }
   get id() { return this._id || ''; }
 
-  /** data index in datas @param {Number} value */
+  /** data index in datas @type {Number} */
   set index(value) { this._index = value; }
   get index() { return this._index || (this._index = 0); }
 
-  /** attr="[[*]]" @parama {Boolean} value */
+  /** attr="[[*]]" @type {Boolean} */
   set isAttributeBinder(value) { this._isAttributeBinder = value; }
   get isAttributeBinder() { return this._isAttributeBinder || false; }
 
-  /** on-handler="[[*]]" @parama {Boolean} value */
+  /** on-handler="[[*]]" @type {Boolean} */
   set isEventBinder(value) { this._isEventBinder = value; }
   get isEventBinder() { return this._isEventBinder || false; }
 
-  /** style="*" @parama {Boolean} value */
+  /** style="*" @type {Boolean} */
   set isStyleBinder(value) { this._isStyleBinder = value; }
   get isStyleBinder() { return this._isStyleBinder || false; }
 
-  /** ={{*}} @parama {Boolean} value */
+  /** ={{*}} @type {Boolean} */
   set isSync(value) { this._isSync = value; }
   get isSync() { return this._isSync || false; }
 
-  /** style="property:[[*]]"" @param {String} value */
+  /** style="property:[[*]]"" @type {String} */
   set styleProperty(value) { this.data.set(PROPERTY, value); }
   get styleProperty() { return this.data.get(PROPERTY); }
 
-  /** attr="value" @param {String} value */
+  /** attr="value" @type {String} */
   set value(value) { this.data.set(VALUE, value); }
   get value() { return this.data.get(VALUE); }
 

@@ -140,7 +140,7 @@ class AlgPaperButton extends AlgPaperButtonBehavior {
 
   /**
    * Attribute, if true, the button should be styled with a shadow.
-   * @return {ObsBoolean}
+   * @type {ObsBoolean}
    */
   get raised() {
     return this._raised || (this._raised = new ObsBoolean('raised', false)

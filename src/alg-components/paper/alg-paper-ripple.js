@@ -122,52 +122,49 @@ class AlgPaperRipple extends AlgPaperComponent {
 
   /**
    * True when there are visible ripples animating within the element.
-   * @return {ObsBoolean}
+   * @type {ObsBoolean}
    */
   get animating() {
     return this._animating || (this._animating = new ObsBoolean('animating', false)
       .onChangeReflectToAttribute(this.keyEventTarget));
   }
 
-  /** If true, ripples will center inside its container. Used by Ripple(). @return {Boolean} */
+  /** If true, ripples will center inside its container. Used by Ripple(). @type {Boolean} */
   get center() { return this._center || (this._center = false); }
 
-  /** The initial opacity set on the wave. Used by Ripple(). @return {Number} */
+  /** The initial opacity set on the wave. Used by Ripple(). @type {Number} */
   get initialOpacity() { return this._initialOpacity || (this._initialOpacity = 0.25); }
 
   /**
    * If true, the ripple will remain in the "down" state until `holdDown` is set to false again.
    * holdDown does not respect noink since it can be a focus based effect.
    * Changed outside the component.
-   * @return {ObsBoolean}
+   * @type {ObsBoolean}
    */
-  get holdDown() {
-    return this._holdDown ||
-      (this._holdDown = /** @type {ObsBoolean} */ (this.eventManager.getObservable('mousehold')));
-  }
+  get holdDown() { return this._parentEventManager.getObservable('holdDown'); }
 
   /**
    * If true, the ripple will not generate a ripple effect via pointer interaction.
    * Calling ripple's imperative api like `simulatedRipple` will still generate the ripple effect.
-   * @return {Boolean}
+   * @type {Boolean}
    */
   get noink() { return this._noink || (this._noink = false); }
   set noink(value) { this._noink = value; }
 
-  /** How fast (opacity per second) the wave fades out. @return {Number} */
+  /** How fast (opacity per second) the wave fades out. @type {Number} */
   get opacityDecayVelocity() { return this._opacityDecayVelocity || (this._opacityDecayVelocity = 0.8); }
 
   /**
    * If true, ripples will exhibit a gravitational pull towards the center of
    * their container as they fade away.
-   * @return {Boolean}
+   * @type {Boolean}
    */
   get recenters() { return this._recenters || (this._recenters = false); }
 
-  /** A list of the visual ripples. @return {Array} */
+  /** A list of the visual ripples. @type {Array} */
   get ripples() { return this._ripples || (this._ripples = []); }
 
-  /** @return {Boolean} */
+  /** @type {Boolean} */
   get shouldKeepAnimating() {
     for (let index = 0; index < this.ripples.length; ++index) {
       if (!this.ripples[index].isAnimationComplete) {
@@ -177,7 +174,7 @@ class AlgPaperRipple extends AlgPaperComponent {
     return false;
   }
 
-  /** @return {EventTarget} */
+  /** @type {EventTarget} */
   get target() { return this.keyEventTarget; }
 
   /**
@@ -201,9 +198,9 @@ class AlgPaperRipple extends AlgPaperComponent {
       : new EventManager(keyEventTarget); // Not alg-component (div, ...)
 
     parentEventManager
-      .on('mousedown', this.uiDownAction.bind(this))
-      .on('mouseup', this.uiUpAction.bind(this))
-      .onCustom('mousehold') // For action, used mousedown and mouseup, we need the event
+      .on('down', this.uiDownAction.bind(this))
+      .on('up', this.uiUpAction.bind(this))
+      .onCustom('holdDown') // For action, used mousedown and mouseup, we need the event
       .onKey('enter:keydown', () => {
         this.uiDownAction();
         this.async(this.uiUpAction, 1);

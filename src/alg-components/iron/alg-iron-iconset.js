@@ -6,12 +6,12 @@
  * Storage and management for icons
  */
 class AlgIronIconset {
-  /** Iconset by default @return {String} */
+  /** Iconset by default @type {String} */
   static get defaultIconSet() { return 'icons'; }
 
   /**
    * iconset storage
-   * @return {Map<String, Object>};
+   * @type {Map<String, Object>};
    */
   static get register() {
     return this._register || (this._register = new Map());

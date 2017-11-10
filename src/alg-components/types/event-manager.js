@@ -20,7 +20,7 @@ class EventManager {
   /**
    * Storage for key events definition.
    * 'ctrl+shift+enter:keypress': Set<handlers>
-   * @return {Map<String, Set>}
+   * @type {Map<String, Set>}
    */
   get keyRegister() {
     return this._keyRegister || (this._keyRegister = new Map());
@@ -28,7 +28,7 @@ class EventManager {
 
   /**
    * Table for key code change. First numeric, then by text
-   * @return {Object<(Number | String), String>}
+   * @type {Object<(Number | String), String>}
    */
   get keyNormalizer() {
     return this._normalizer || (this._normalizer = {
@@ -52,12 +52,16 @@ class EventManager {
    *    handler: event function, (item == value definition object associate with that eventName)
    *    listener: handler function binded for unsubscribe
    * }
-   * @return {Map<String, Object>}
+   * @type {Map<String, Object>}
    */
   get register() {
     return this._register || (this._register = new Map()
       .set('default', {
         init: (item) => { item.data = new Observable('', null); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('blur', {
+        init: (item) => { item.data = new Observable('blur', null); },
         handler: (item, e) => { item.data.update(e); }
       })
       .set('click', {
@@ -68,11 +72,30 @@ class EventManager {
         init: (item) => { item.data = new ObsBoolean('disabled', false); },
         handler: null
       })
+      .set('down', {
+        init: (item) => {
+          item.data = new Observable('down', null);
+          this.on('mousedown', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
+        },
+        handler: null
+      })
+      .set('focus', {
+        init: (item) => { item.data = new Observable('focus', null); },
+        handler: (item, e) => { item.data.update(e); }
+      })
       .set('focused', {
         init: (item) => {
           item.data = new ObsBoolean('focused', false);
-          this.on('focus', () => { item.data.update(true); });
-          this.on('blur', () => { item.data.update(false); });
+          this.on('focus', (event) => { item.data.raw = event; item.data.update(true); }, null, true);
+          this.on('blur', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
+        },
+        handler: null
+      })
+      // mouse or touch is pressed. TODO: touch events
+      .set('holdDown', {
+        init: (item) => {
+          item.data = new ObsBoolean('holdDown', false);
+          this.on('mousehold', (value, raw) => { item.data.raw = event; item.data.update(value); }, null, true);
         },
         handler: null
       })
@@ -100,8 +123,8 @@ class EventManager {
       .set('mousehold', {
         init: (item) => {
           item.data = new ObsBoolean('mousehold', false);
-          this.on('mousedown', () => { item.data.update(true); });
-          this.on('mouseup', () => { item.data.update(false); });
+          this.on('mousedown', (event) => { item.data.raw = event; item.data.update(true); }, null, true);
+          this.on('mouseup', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
         },
         handler: null
       })
@@ -110,7 +133,7 @@ class EventManager {
       .set('pointerDown', {
         init: (item) => {
           item.data = new ObsBoolean('pointerDown', false);
-          this.on('mousehold', (value) => { item.data.update(value); });
+          this.on('mousehold', (value, raw) => { item.data.raw = raw; item.data.update(value); }, null, true);
         },
         handler: null
       })
@@ -118,15 +141,18 @@ class EventManager {
       .set('pressed', {
         init: (item) => {
           item.data = new ObsBoolean('pressed', false);
-          this.on('blur', () => { item.data.update(false); });
-          this.on('mousehold', (value) => { item.data.update(value); });
+          this.on('blur', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
+          this.on('mousehold', (value, event) => { item.data.raw = event; item.data.update(value); }, null, true);
           this.onKey('space:keydown', (event) => {
             const keyboardEvent = event.keyboardEvent;
             keyboardEvent.preventDefault();
             keyboardEvent.stopImmediatePropagation();
+            item.data.raw = keyboardEvent;
             item.data.update(true);
-          });
-          this.onKey('space:keyup', () => { item.data.update(false); });
+          }, true);
+          this.onKey('space:keyup', (event) => {
+            item.data.raw = event.keyboardEvent; item.data.update(false);
+          }, true);
         },
         handler: null
       })
@@ -136,14 +162,30 @@ class EventManager {
           item.data = new ObsBoolean('receivedFocusFromKeyboard', false);
           item.focused = false;
           item.pointerDown = false;
-          this.on('focused', (value) => {
+          this.on('focused', (value, event) => {
             item.focused = value;
+            item.data.raw = event;
             item.data.update(!item.pointerDown && item.focused);
-          });
-          this.on('pointerDown', (value) => {
+          }, null, true);
+          this.on('pointerDown', (value, event) => {
             item.pointerDown = value;
+            item.data.raw = event;
             item.data.update(!item.pointerDown && item.focused);
-          });
+          }, null, true);
+        },
+        handler: null
+      })
+      .set('tap', {
+        init: (item) => {
+          item.data = new Observable('tap', null);
+          this.on('click', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
+        },
+        handler: null
+      })
+      .set('up', {
+        init: (item) => {
+          item.data = new Observable('up', null);
+          this.on('mouseup', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
         },
         handler: null
       });
@@ -166,7 +208,27 @@ class EventManager {
     item.init(item);
     item.data.name = eventName;
     if (custom) item.handler = null;
+    this[this.cachedName(eventName)] = item.data;
     return item;
+  }
+
+  /**
+   * Cache name for data in event
+   * @param {String} eventName
+   * @return {String}
+   */
+  cachedName(eventName) { return '__' + eventName; }
+
+  /**
+   * Add an item to the register
+   * @param {String} eventName
+   * @param {*} data
+   * @return {*}
+   */
+  define(eventName, data) {
+    this.register.set(eventName, {data: data});
+    this[this.cachedName(eventName)] = data;
+    return data;
   }
 
   /**
@@ -189,10 +251,15 @@ class EventManager {
    * @return {Observable}
    */
   getObservable(eventName, custom = null) {
+    let cache = this[this.cachedName(eventName)];
+    if (cache != null) return cache;
+
     this.on(eventName, null, custom); // create if don't exist
     const item = this.register.get(eventName);
     if (!item) return; // ?
-    return item.data;
+    cache = item.data;
+    this[this.cachedName(eventName)] = cache;
+    return cache;
   }
 
   /**
@@ -261,12 +328,15 @@ class EventManager {
    * @param {String} eventName - click, ...
    * @param {Function} handler - code to execute on event
    * @param {Boolean} custom
+   * @param {Boolean} link
    * @return {EventManager}
    */
-  on(eventName, handler = null, custom = null) {
+  on(eventName, handler = null, custom = null, link = false) {
     const item = this._assureRegisterDefinition(eventName, custom);
     if (!item.data) item.init(item);
-    if (handler != null) item.data.observe(handler);
+    if (handler != null) {
+      if (!link) item.data.observe(handler); else item.data.link(handler);
+    }
 
     return this;
   }
@@ -311,13 +381,16 @@ class EventManager {
    * @param {*} target
    * @param {String} channel
    * @param {Boolean} custom
+   * @param {*} to - objetive to trigger the message
+   * @return {EventManager}
    */
-  onChangeFireMessage(eventName, target, channel, custom = null) {
-    const item = this._assureRegisterDefinition(eventName, custom);
-    if (!item.data) { // is predefined
-      item.init(item);
-    }
-    item.data.onChangeFireMessage(target, channel);
+  onChangeFireMessage(eventName, target, channel, custom = null, to = null) {
+    // const item = this._assureRegisterDefinition(eventName, custom);
+    // if (!item.data) { // is predefined
+    //   item.init(item);
+    // }
+    const item = this.getObservable(eventName, custom);
+    item.onChangeFireMessage(target, channel, to);
     return this;
   }
 
@@ -340,9 +413,9 @@ class EventManager {
    * @param {Function} handler
    * @return {EventManager}
    */
-  onKey(events, handler) {
+  onKey(events, handler, link = false) {
     const eventsList = events.split(' ');
-    eventsList.forEach((eventName) => { this._onKeySingle(eventName, handler); });
+    eventsList.forEach((eventName) => { this._onKeySingle(eventName, handler, link); });
     return this;
   }
 
@@ -351,7 +424,7 @@ class EventManager {
    * @param {String} eventName
    * @param {Function} handler
    */
-  _onKeySingle(eventName, handler) {
+  _onKeySingle(eventName, handler, link = false) {
     const parts = eventName.split(':');
     const keys = parts[0];
     let event = parts[1];
@@ -363,7 +436,7 @@ class EventManager {
     const registerItem = this.register.get(event);
     if (registerItem.key == null) {
       registerItem.key = true;
-      this.on(event, this._keyHandler.bind(this));
+      this.on(event, this._keyHandler.bind(this), null, link);
     }
   }
 

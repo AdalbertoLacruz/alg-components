@@ -6,18 +6,18 @@ class AlgDataComponent extends AlgComponent {
   /**
    * Attributes managed by the component
    * @override
-   * @return {Array<String>}
+   * @type {Array<String>}
    */
   static get observedAttributes() {
     return super.observedAttributes.concat(['data']);
   }
 
-  /** Template for rows. @return {HTMLTemplateElement} */
+  /** Template for rows. @type {HTMLTemplateElement} */
   get rowElement() {
     return this._rowElement || (this._rowElement = this.createRowTemplate());
   }
 
-  /** Template header and row child length @return {Object} */
+  /** Template header and row child length @type {Object} */
   get templateInfo() {
     return this._templateInfo || (this._templateInfo = (() => {
       const shadow = this.shadowRoot;
