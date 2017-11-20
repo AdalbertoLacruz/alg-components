@@ -15,20 +15,21 @@ import { ObsBoolean } from '../types/obs-boolean.js';
  * Methods: .getRipple()
  *
  * @param {*} base
+ * @mixin
  */
 export const AlgPaperRippleBehavior = (base) => class extends base {
   constructor() {
     // @ts-ignore
     super();
 
-    // If true, the button toggles the active state with each tap or press of the spacebar.
-    this.eventManager.define('noink', new ObsBoolean('noink', false))
-      .onChangeReflectToAttribute(this)
-      .observe((value) => {
-        if (this.hasRipple()) this._ripple.noink = value;
-      });
-
     this.eventManager
+      // If true, the button toggles the active state with each tap or press of the spacebar.
+      .define('noink', new ObsBoolean('noink', false)
+        .onChangeReflectToAttribute(this)
+        .observe((value) => {
+          if (this.hasRipple()) this._ripple.noink = value;
+        })
+      )
       .on('down', this.ensureRipple.bind(this)) // a mouse event has x,y
       .on('focused', this.ensureRipple.bind(this))
       .subscribe();

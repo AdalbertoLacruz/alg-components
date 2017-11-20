@@ -51,6 +51,7 @@ class EventManager {
    *    key: null/true
    *    handler: event function, (item == value definition object associate with that eventName)
    *    listener: handler function binded for unsubscribe
+   *    switch: null/true, subscribe/unsubscribe specific for this event (mousemove)
    * }
    * @type {Map<String, Object>}
    */
@@ -86,19 +87,19 @@ class EventManager {
       .set('focused', {
         init: (item) => {
           item.data = new ObsBoolean('focused', false);
-          this.on('focus', (event) => { item.data.raw = event; item.data.update(true); }, null, true);
-          this.on('blur', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
+          this.on('focus', (event) => { item.data.copy(event, true); }, null, true);
+          this.on('blur', (event) => { item.data.copy(event, false); }, null, true);
         },
         handler: null
       })
-      // mouse or touch is pressed. TODO: touch events
-      .set('holdDown', {
-        init: (item) => {
-          item.data = new ObsBoolean('holdDown', false);
-          this.on('mousehold', (value, raw) => { item.data.raw = event; item.data.update(value); }, null, true);
-        },
-        handler: null
-      })
+      // mouse or touch is pressed.
+      // .set('holdDown', {
+      //   init: (item) => {
+      //     item.data = new ObsBoolean('holdDown', null);
+      //     this.on('mousehold', (value, raw) => { item.data.raw = event; item.data.update(value); }, null, true);
+      //   },
+      //   handler: null
+      // })
       .set('keydown', {
         init: (item) => { item.data = new Observable('keydown', null); },
         handler: (item, e) => { item.data.update(e); }
@@ -112,19 +113,19 @@ class EventManager {
         handler: (item, e) => { item.data.update(e); }
       })
       .set('mousedown', {
-        init: (item) => { item.data = new Observable('mousedown', null); },
+        init: (item) => { item.data = new Observable('mousedown', null, item); },
         handler: (item, e) => { item.data.update(e); }
       })
       .set('mouseup', {
-        init: (item) => { item.data = new Observable('mouseup', null); },
+        init: (item) => { item.data = new Observable('mouseup', null, item); },
         handler: (item, e) => { item.data.update(e); }
       })
       // true if mouse button is pressed
       .set('mousehold', {
         init: (item) => {
-          item.data = new ObsBoolean('mousehold', false);
-          this.on('mousedown', (event) => { item.data.raw = event; item.data.update(true); }, null, true);
-          this.on('mouseup', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
+          item.data = new ObsBoolean('mousehold', null);
+          this.on('mousedown', (event) => { item.data.copy(event, true); }, null, true);
+          this.on('mouseup', (event) => { item.data.copy(event, false); }, null, true);
         },
         handler: null
       })
@@ -132,45 +133,43 @@ class EventManager {
       // defined as mouse or touch input (but specifically excluding keyboard input).
       .set('pointerDown', {
         init: (item) => {
-          item.data = new ObsBoolean('pointerDown', false);
-          this.on('mousehold', (value, raw) => { item.data.raw = raw; item.data.update(value); }, null, true);
+          item.data = new ObsBoolean('pointerDown', null);
+          this.on('mousehold', (value, event) => { item.data.copy(event, value); }, null, true);
         },
         handler: null
       })
       // If true, the user is currently holding down the button (mouse down or spaceKey).
       .set('pressed', {
         init: (item) => {
-          item.data = new ObsBoolean('pressed', false);
-          this.on('blur', (event) => { item.data.raw = event; item.data.update(false); }, null, true);
-          this.on('mousehold', (value, event) => { item.data.raw = event; item.data.update(value); }, null, true);
+          item.data = new ObsBoolean('pressed', null);
+          this.on('blur', (event) => { item.data.copy(event, false); }, null, true);
+          this.on('mousehold', (value, event) => { item.data.copy(event, value); }, null, true);
           this.onKey('space:keydown', (event) => {
             const keyboardEvent = event.keyboardEvent;
             keyboardEvent.preventDefault();
             keyboardEvent.stopImmediatePropagation();
-            item.data.raw = keyboardEvent;
-            item.data.update(true);
+            item.data.copy(keyboardEvent, true);
           }, true);
-          this.onKey('space:keyup', (event) => {
-            item.data.raw = event.keyboardEvent; item.data.update(false);
-          }, true);
+          this.onKey('space:keyup', (event) => { item.data.copy(event.keyboardEvent, false); }, true);
         },
         handler: null
       })
       // True if the input device that caused the element to receive focus was a keyboard.
       .set('receivedFocusFromKeyboard', {
         init: (item) => {
-          item.data = new ObsBoolean('receivedFocusFromKeyboard', false);
+          item.data = new ObsBoolean('receivedFocusFromKeyboard', null, item);
           item.focused = false;
           item.pointerDown = false;
+          item.isLastEventPointer = false;
           this.on('focused', (value, event) => {
             item.focused = value;
-            item.data.raw = event;
-            item.data.update(!item.pointerDown && item.focused);
+            item.isLastEventPointer = false;
+            item.data.copy(event, !item.pointerDown && item.focused);
           }, null, true);
           this.on('pointerDown', (value, event) => {
             item.pointerDown = value;
-            item.data.raw = event;
-            item.data.update(!item.pointerDown && item.focused);
+            item.isLastEventPointer = true;
+            item.data.copy(event, !item.pointerDown && item.focused);
           }, null, true);
         },
         handler: null
@@ -225,10 +224,13 @@ class EventManager {
    * @param {*} data
    * @return {*}
    */
-  define(eventName, data) {
-    this.register.set(eventName, {data: data});
+  define(eventName, data, visibility = null) {
+    const item = { data: data };
+    this.register.set(eventName, item);
+    item.data.context = item;
     this[this.cachedName(eventName)] = data;
-    return data;
+    if (visibility != null) this.visibleTo(eventName, visibility);
+    return this;
   }
 
   /**
@@ -260,6 +262,15 @@ class EventManager {
     cache = item.data;
     this[this.cachedName(eventName)] = cache;
     return cache;
+  }
+
+  /**
+   * True if eventName is defined in register
+   * @param {String} eventName
+   * @return {Boolean}
+   */
+  isDefined(eventName) {
+    return this.register.has(eventName);
   }
 
   /**
@@ -375,6 +386,13 @@ class EventManager {
     return this;
   }
 
+  onChangeReflectToEvent(eventName, target) {
+    const item = this.getObservable(eventName);
+    const reflected = this.getObservable(target);
+    item.link((value, raw) => { reflected.copy(raw, value); });
+    return this;
+  }
+
   /**
    * Send a custom event on value change
    * @param {String} eventName
@@ -447,11 +465,29 @@ class EventManager {
   subscribe() {
     const target = this.target;
     for (const [event, item] of this.register) {
-      if (item.data != null && item.handler != null && item.listener == null) {
+      if (item.data != null && item.handler != null && item.listener == null && item.switch == null) {
         item.listener = item.handler.bind(this, item);
         target.addEventListener(event, item.listener);
       }
     }
+    return this;
+  }
+
+  /**
+   * Subscribe only the eventName
+   * @param {String} eventName
+   * @return {EventManager}
+   */
+  subscribeSwitch(eventName) {
+    let item = this.register.get(eventName);
+    if (item == null || item.switch == null) return;
+
+    if (item.data == null) {
+      item.init(item);
+      this[this.cachedName(eventName)] = item.data;
+    }
+    item.switchListener = item.handler.bind(this, item);
+    this.target.addEventListener(eventName, item.switchListener);
     return this;
   }
 
@@ -465,6 +501,36 @@ class EventManager {
         this.target.removeEventListener(event, item.listener);
         item.listener = null;
       }
+    }
+    return this;
+  }
+
+  /**
+   * Unsubscribe only eventName
+   * @param {*} eventName
+   * @return {EventManager}
+   */
+  unsubscribeSwitch(eventName) {
+    let item = this.register.get(eventName);
+    if (item == null || item.switchListener == null) return;
+    this.target.removeEventListener(eventName, item.switchListener);
+    item.switchListener = null;
+    return this;
+  }
+
+  /**
+   * The eventName is visible in the targets items
+   * ex. visibleTo('mouseup', ['trackEnd']) => in trackEnd item._mouseup = observable
+   * @param {String} eventName
+   * @param {Array<String>} targets
+   * @return {EventManager}
+   */
+  visibleTo(eventName, targets) {
+    const item = this.getObservable(eventName);
+    for (const target of targets) {
+      const targetItem = this._assureRegisterDefinition(target);
+      if (!targetItem.data) targetItem.init(targetItem);
+      targetItem['_' + eventName] = item;
     }
     return this;
   }

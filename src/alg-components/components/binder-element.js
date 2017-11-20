@@ -152,6 +152,13 @@ class BinderElement extends HTMLElement {
   /** @type {EventManager} */
   get eventManager() { return this._eventManager || (this._eventManager = new EventManager(this)); }
 
+  /**
+   * If true, the component don't fire any message to the controller
+   * @type {Boolean}
+   */
+  get fireDisabled() { return this._fireDisabled || (this._fireDisabled = false); }
+  set fireDisabled(value) { this._fireDisabled = value; }
+
   /** eventHandlers that don't add to eventManager, only fire messages. @type {Set} */
   get fireHandlers() { return this._fireHandlers || (this._fireHandlers = new Set()); }
 
@@ -386,6 +393,7 @@ class BinderElement extends HTMLElement {
    * @param {String} message
    */
   fire(customEvent, message) {
+    if (this.fireDisabled) return;
     const handler = this.eventHandlers.get(customEvent);
     if (handler == null) return;
     const controller = AlgController.controllers.get(handler.controller);

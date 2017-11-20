@@ -20,16 +20,28 @@ class Observable {
   /**
    * @param {String} name - Used to identify the variable in logs
    */
-  constructor(name = '', value = null) {
+  constructor(name = '', value = null, context = null) {
     this._name = name;
     this._value = value;
+    this._context = context;
   }
 
   /*  ___________________________________________ properties _____ */
 
+  /** Where the observable is defined (this, item, ...) @type {*} */
+  set context(value) { this._context = value; }
+  get context() { return this._context; }
+
+  /**
+   * true, avoid update
+   * @type {Boolean}
+   */
+  get disabled() { return this._disabled || (this._disabled = false); }
+  set disabled(value) { this._disabled = value; }
+
   /** Function called by init(value) @type {Function} handler */
-  set initHandler(handler) { this._initHandler = handler; }
   get initHandler() { return this._initHandler; }
+  set initHandler(handler) { this._initHandler = handler; }
 
   /**
    * If true, value changes must be logged
@@ -84,6 +96,49 @@ class Observable {
   /* ____________________________________________ methods _____ */
 
   /**
+   * Copy values (from other observer) and trigger the notification process
+   * @param {*} raw
+   * @param {*} value
+   * @return {Observable}
+   */
+  copy(raw, value) {
+    this.raw = raw;
+    this.update(value);
+    return this;
+  }
+
+  /**
+   * Call async the observers and subscribers
+   * @param {*} data
+   * @return {*} Observable
+   */
+  dispatch(data = null) {
+    if (data === null) data = this.value;
+
+    this.linkers.forEach((handler) => {
+      handler(data, this.raw, this.context);
+    });
+
+    this.observers.forEach((handler) => {
+      setTimeout(() => handler(data, this.raw, this.context), 0);
+    });
+
+    this.subscribers.forEach((handler) => {
+      setTimeout(() => handler(data), 0);
+    });
+
+    return this;
+  }
+
+  /**
+   * get the value.
+   * @return {*}
+   */
+  get() {
+    return this.value;
+  }
+
+  /**
    * Changes the internal value, trigger the initHandler and the subscribers/observers
    *
    * @param  {*} value
@@ -103,37 +158,6 @@ class Observable {
   initializer(handler) {
     this.initHandler = handler;
     return this;
-  }
-
-  /**
-   * Call async the observers and subscribers
-   * @param {*} data
-   * @return {*} Observable
-   */
-  dispatch(data = null) {
-    if (data === null) data = this.value;
-
-    this.linkers.forEach((handler) => {
-      handler(data, this.raw);
-    });
-
-    this.observers.forEach((handler) => {
-      setTimeout(() => handler(data, this.raw), 0);
-    });
-
-    this.subscribers.forEach((handler) => {
-      setTimeout(() => handler(data), 0);
-    });
-
-    return this;
-  }
-
-  /**
-   * get the value.
-   * @return {*}
-   */
-  get() {
-    return this.value;
   }
 
   /**
@@ -189,11 +213,26 @@ class Observable {
    * Set attribute in a value change
    * @param {*} item - Element to set attribute
    * @param {String} attrName - // TODO:
+   * @return {Observable}
    */
   onChangeReflectToAttribute(item, attrName = null) {
     this.observe((value) => {
       item.setAttribute(this.name, value.toString());
     });
+    return this;
+  }
+
+  /**
+   * If value is null/undefined changes to newValue
+   * @param {*} newValue
+   * @return {Observable}
+   */
+  onNullSet(newValue) {
+    this.observe((value) => {
+      if (value === null || value === undefined) this.update(newValue);
+    });
+    const handlers = Array.from(this.observers.values());
+    handlers[handlers.length - 1](); // execute the handler just defined
     return this;
   }
 
@@ -239,11 +278,14 @@ class Observable {
 
   /**
    * Changes a value and trigger the suscriptors and observers
+   * Options: force = true, dispatch any case
    * @param  {*} value
+   * @param  {Object} options
    * @return {*} Observable
    */
-  update(value) {
-    if (this.value !== value) {
+  update(value, options = {}) {
+    if (this.disabled) return this;
+    if (this.value !== value || options.force) {
       this.value = value;
       this.dispatch();
     }

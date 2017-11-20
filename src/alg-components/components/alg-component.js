@@ -249,7 +249,7 @@ class AlgComponent extends BinderElement {
    */
   searchTemplateIds(html) {
     let result = [];
-    let re = / id="([a-z]*)"/g;
+    let re = / id="([a-z]*)"/ig;
 
     let match = re.exec(html);
     while (match) {

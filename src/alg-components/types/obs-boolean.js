@@ -18,6 +18,7 @@ class ObsBoolean extends Observable {
     this.observe((value) => {
       item.attributeToggle(attrName, value);
     });
+    if (this.value != null) item.attributeToggle(attrName, this.value);
     return this;
   }
 

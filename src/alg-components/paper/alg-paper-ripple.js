@@ -126,11 +126,12 @@ class AlgPaperRipple extends AlgPaperComponent {
    */
   get animating() {
     return this._animating || (this._animating = new ObsBoolean('animating', false)
-      .onChangeReflectToAttribute(this.keyEventTarget));
+      .onChangeReflectToAttribute(this));
   }
 
   /** If true, ripples will center inside its container. Used by Ripple(). @type {Boolean} */
   get center() { return this._center || (this._center = false); }
+  set center(value) { this._center = value; }
 
   /** The initial opacity set on the wave. Used by Ripple(). @type {Number} */
   get initialOpacity() { return this._initialOpacity || (this._initialOpacity = 0.25); }
@@ -141,7 +142,18 @@ class AlgPaperRipple extends AlgPaperComponent {
    * Changed outside the component.
    * @type {ObsBoolean}
    */
-  get holdDown() { return this._parentEventManager.getObservable('holdDown'); }
+  // get holdDown() { return this._parentEventManager.getObservable('holdDown'); }
+  get holdDown() {
+    return this._holdDown || (this._holdDown = new ObsBoolean('holdDown', false)
+      .observe((value, event) => {
+        if (value) {
+          this.async(this.downAction.bind(this, event), 200);
+        } else {
+          this.async(this.upAction.bind(this, event), 200);
+        }
+      })
+    );
+  }
 
   /**
    * If true, the ripple will not generate a ripple effect via pointer interaction.
@@ -150,6 +162,15 @@ class AlgPaperRipple extends AlgPaperComponent {
    */
   get noink() { return this._noink || (this._noink = false); }
   set noink(value) { this._noink = value; }
+
+  /**
+   * Attributes managed by the component
+   * @override
+   * @type {Array<String>}
+   */
+  static get observedAttributes() {
+    return super.observedAttributes.concat(['center', 'recenters']);
+  }
 
   /** How fast (opacity per second) the wave fades out. @type {Number} */
   get opacityDecayVelocity() { return this._opacityDecayVelocity || (this._opacityDecayVelocity = 0.8); }
@@ -160,6 +181,7 @@ class AlgPaperRipple extends AlgPaperComponent {
    * @type {Boolean}
    */
   get recenters() { return this._recenters || (this._recenters = false); }
+  set recenters(value) { this._recenters = value; }
 
   /** A list of the visual ripples. @type {Array} */
   get ripples() { return this._ripples || (this._ripples = []); }
@@ -198,9 +220,11 @@ class AlgPaperRipple extends AlgPaperComponent {
       : new EventManager(keyEventTarget); // Not alg-component (div, ...)
 
     parentEventManager
-      .on('down', this.uiDownAction.bind(this))
-      .on('up', this.uiUpAction.bind(this))
-      .onCustom('holdDown') // For action, used mousedown and mouseup, we need the event
+      .on('down', (value) => { this.uiDownAction(value); })
+      .on('up', (value) => { this.uiUpAction(value); })
+      // .onCustom('holdDown', (value, event) => {
+      //   if (value) this.downAction(event); else this.upAction(event);
+      // })
       .onKey('enter:keydown', () => {
         this.uiDownAction();
         this.async(this.uiUpAction, 1);
@@ -232,7 +256,7 @@ class AlgPaperRipple extends AlgPaperComponent {
     this.ids['background'].style.backgroundColor = ripple.color;
     this.ripples.push(ripple);
 
-    this.animating.update(true);
+    // this.animating.update(true);
 
     return ripple;
   }
@@ -261,6 +285,26 @@ class AlgPaperRipple extends AlgPaperComponent {
     } else {
       window.requestAnimationFrame(this._boundAnimate());
     }
+  }
+
+  /**
+   * Set center property
+   * @param {String} attrName - Attribute Name
+   * @param {String} value
+   */
+  bindedCenter(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
+    this.center = this.toBoolean(value);
+  }
+
+  /**
+   * Set Recenters property
+   * @param {String} attrName - Attribute Name
+   * @param {String} value
+   */
+  bindedRecenters(attrName, value) {
+    if (this.bindedAttributeSuper(attrName, value)) return;
+    this.recenters = this.toBoolean(value);
   }
 
   _boundAnimate() {

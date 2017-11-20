@@ -9,5 +9,5 @@ import { AlgIronIcon } from './alg-components/iron/alg-iron-icon.js';
 import { AlgButton } from './alg-components/components/alg-button.js';
 import { AlgPaperButton } from './alg-components/paper/alg-paper-button.js';
 import { AlgPaperFab } from './alg-components/paper/alg-paper-fab.js';
-// import { AlgPaperToggleButton } from './alg-components/paper/alg-paper-toggle-button.js';
+import { AlgPaperToggleButton } from './alg-components/paper/alg-paper-toggle-button.js';
 import { AlgShowLog } from './alg-components/components/alg-show-log.js';

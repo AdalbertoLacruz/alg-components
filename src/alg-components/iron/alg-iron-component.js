@@ -39,7 +39,7 @@ class AlgIronComponent extends AlgComponent {
   bindedDisabled(attrName, value) { // iron-control-state: _disabledChanged
     if (this.bindedAttributeSuper(attrName, value)) return;
 
-    const disabled = value != null;
+    const disabled = this.toBoolean(value);
     this.setAttribute('aria-disabled', disabled ? 'true' : 'false');
     this.style.pointerEvents = disabled ? 'none' : '';
 
@@ -58,6 +58,27 @@ class AlgIronComponent extends AlgComponent {
       this.classList.remove('disabled');
     }
     this.eventManager.fire('disabled', disabled);
+  }
+
+  /**
+   * Helper for setting an element's CSS `transform` property
+   * @param {String} transformText Transform setting.
+   * @param {HTMLElement=} node node Element to apply the transform to.
+   */
+  transform(transformText, node = this) {
+    node.style.webkitTransform = transformText;
+    node.style.transform = transformText;
+  }
+
+  /**
+   * Helper for setting an element's CSS `translate3d` property.
+   * @param {Number | String} x X offset.
+   * @param {Number | String} y Y offset.
+   * @param {Number | String} z Z offset.
+   * @param {HTMLElement} node Element to apply the transform to.
+   */
+  translate3d(x, y, z, node = this) {
+    this.transform(`translate3d(${x}, ${y}, ${z})`, node);
   }
 }
 

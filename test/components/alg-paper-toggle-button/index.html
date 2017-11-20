@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-toggle-button\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>alg-paper-toggle-button</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="visibility: hidden">
+  <h1 class="centered">alg-paper-toggle-button</h1>
+  <div class="vertical-section-container centered">
+    <h3>Toggle buttons can be checked and disabled</h3>
+    <div class="demo-snipped">
+      <alg-paper-toggle-button>Toggle</alg-paper-toggle-button>
+      <alg-paper-toggle-button checked="">Toggle</alg-paper-toggle-button>
+      <alg-paper-toggle-button disabled="">Disabled</alg-paper-toggle-button>
+      <alg-paper-toggle-button invalid="">Invalid</alg-paper-toggle-button>
+    </div>
+    <h3>Toggle buttons can hide the ripple effect using the <i>noink</i> attribute</h3>
+    <div class="demo-snipped">
+      <alg-paper-toggle-button noink="">Toggle</alg-paper-toggle-button>
+    </div>
+    <h3>Toggle buttons can be styled using custom properties</h3>
+    <div class="demo-snipped">
+      <alg-paper-toggle-button class="green">Toggle</alg-paper-toggle-button>
+      <alg-paper-toggle-button checked="" class="pink">Toggle</alg-paper-toggle-button>
+    </div>
+  </div>
+</body>
+</html>

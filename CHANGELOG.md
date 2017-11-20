@@ -1,4 +1,5 @@
-## v0.0.11 (2017-11-10) class mixins, review eventManager
+## v0.0.12 (2017-11-20) paper-toggle-button
+## v0.0.11 (2017-11-10) class mixins, review EventManager
 ## v0.0.10 (2017-11-05) paper-fab
 ## v0.0.9 (2017-11-04) icons
 ## v0.0.8 (2017-10-24) keyboard events in EventManager

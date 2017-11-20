@@ -9,6 +9,10 @@ import { ObsBoolean } from '../types/obs-boolean.js';
  * Manages active state if present toggles attribute
  * Attribute: toggles
  * Fire: change
+ *
+ * active ⛳(active, aria-pressed) 🔥change
+ * tap, enter, space ⛳pressed -> toggles ⛳
+ *
  * @param {*} base
  */
 export const AlgIronButtonState = (base) => class extends base {
@@ -18,17 +22,17 @@ export const AlgIronButtonState = (base) => class extends base {
 
     this.fireHandlers.add('change'); // fire with toggles
 
-    this.eventManager.define('active', new ObsBoolean('active', false))
-      .onChangeReflectToAttribute(this)
-      .onChangeFireMessage(this, 'change')
-      .observe(() => this._activeChanged());
-
-    // If true, the button toggles the active state with each tap or press of the spacebar.
-    this.eventManager.define('toggles', new ObsBoolean('toggles', false))
-      .onChangeReflectToAttribute(this)
-      .observe(() => this._activeChanged());
-
     this.eventManager
+      .define('active', new ObsBoolean('active', false).log(true)
+        .onChangeReflectToAttribute(this)
+        .onChangeFireMessage(this, 'change')
+        .observe(() => this._activeChanged())
+      )
+      // If true, the button toggles the active state with each tap or press of the spacebar.
+      .define('toggles', new ObsBoolean('toggles', false)
+        .onChangeReflectToAttribute(this)
+        .observe(() => this._activeChanged())
+      )
       .on('tap', this._tapHandler.bind(this))
       .onChangeReflectToAttribute('pressed', this, 'pressed', true)
       .onKey('enter:keydown', this._tapHandler.bind(this))
