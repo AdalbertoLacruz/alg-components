@@ -3,6 +3,7 @@
 // @ts-check
 
 import '../styles/default-theme.js';
+import * as FHtml from '../util/f-html.js';
 import { AlgIronIcon } from '../iron/alg-iron-icon.js';
 import { AlgPaperButtonBehavior } from './alg-paper-button-behavior.js';
 
@@ -186,8 +187,8 @@ class AlgPaperFab extends AlgPaperButtonBehavior {
   _computeIsIconFab() {
     const spanHiden = Boolean(this.attributeRegister.get('icon') || this.attributeRegister.get('src'));
 
-    this.attributeToggle('hidden', spanHiden, this.ids['span']);
-    this.attributeToggle('hidden', !spanHiden, this.ids['icon']);
+    FHtml.attributeToggle(this.ids['span'], 'hidden', spanHiden);
+    FHtml.attributeToggle(this.ids['icon'], 'hidden', !spanHiden);
   }
 }
 

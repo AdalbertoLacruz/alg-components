@@ -1,14 +1,14 @@
 // @copyright @polymer\iron-behaviors\iron-control-state.js
 // @copyright 2017 ALG
 // @ts-check
-import '../styles/iron-flex-layout.js';
 
+import '../styles/iron-flex-layout.js';
 import { AlgComponent } from '../components/alg-component.js';
 
 class AlgIronComponent extends AlgComponent {
   constructor() {
     super();
-    this.eventManager.onCustom('disabled');
+    this.eventManager.on('disabled');
   }
 
   /**
@@ -58,27 +58,6 @@ class AlgIronComponent extends AlgComponent {
       this.classList.remove('disabled');
     }
     this.eventManager.fire('disabled', disabled);
-  }
-
-  /**
-   * Helper for setting an element's CSS `transform` property
-   * @param {String} transformText Transform setting.
-   * @param {HTMLElement=} node node Element to apply the transform to.
-   */
-  transform(transformText, node = this) {
-    node.style.webkitTransform = transformText;
-    node.style.transform = transformText;
-  }
-
-  /**
-   * Helper for setting an element's CSS `translate3d` property.
-   * @param {Number | String} x X offset.
-   * @param {Number | String} y Y offset.
-   * @param {Number | String} z Z offset.
-   * @param {HTMLElement} node Element to apply the transform to.
-   */
-  translate3d(x, y, z, node = this) {
-    this.transform(`translate3d(${x}, ${y}, ${z})`, node);
   }
 }
 

@@ -2,7 +2,7 @@
 // @copyright 2017 ALG
 // @ts-check
 
-import { ObsBoolean } from '../types/obs-boolean.js';
+import * as FHtml from '../util/f-html.js';
 
 /**
  * Mixin behavior
@@ -20,23 +20,23 @@ export const AlgIronButtonState = (base) => class extends base {
     // @ts-ignore
     super();
 
-    this.fireHandlers.add('change'); // fire with toggles
+    this.fireHandlers.add('change'); // fire with toggles active
 
     this.eventManager
-      .define('active', new ObsBoolean('active', false).log(true)
-        .onChangeReflectToAttribute(this)
-        .onChangeFireMessage(this, 'change')
-        .observe(() => this._activeChanged())
-      )
-      // If true, the button toggles the active state with each tap or press of the spacebar.
-      .define('toggles', new ObsBoolean('toggles', false)
-        .onChangeReflectToAttribute(this)
-        .observe(() => this._activeChanged())
-      )
+      .on('active', this._activeChanged.bind(this)) // updated by tap
+      .onChangeReflectToAttribute('active', this)
+      .onChangeFireMessage('active', this, 'change')
+
+      .onChangeReflectToAttribute('pressed', this)
+
       .on('tap', this._tapHandler.bind(this))
-      .onChangeReflectToAttribute('pressed', this, 'pressed', true)
+
+      .on('toggles', this._activeChanged.bind(this))
+      .onChangeReflectToAttribute('toggles', this)
+
       .onKey('enter:keydown', this._tapHandler.bind(this))
       .onKey('space:keyup', this._tapHandler.bind(this))
+
       .subscribe(); // always, last
   }
 
@@ -56,7 +56,7 @@ export const AlgIronButtonState = (base) => class extends base {
     const active = this.eventManager.getObservable('active').value;
     const toggles = this.eventManager.getObservable('toggles').value;
     if (toggles) {
-      this.setAttribute('aria-pressed', active ? 'true' : 'false');
+      FHtml.attributeToggle(this, 'aria-pressed', active, { type: 'true-false'});
     } else {
       this.removeAttribute('aria-pressed');
     }
@@ -70,7 +70,7 @@ export const AlgIronButtonState = (base) => class extends base {
   bindedToggles(attrName, value) {
     if (this.bindedAttributeSuper(attrName, value)) return;
 
-    this.eventManager.getObservable('toggles').update(value !== null);
+    this.eventManager.getObservable('toggles').update(this.toBoolean(value));
   }
 
   /**

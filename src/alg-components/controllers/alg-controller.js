@@ -1,7 +1,7 @@
 // @copyright 2017 ALG
 // @ts-check
 
-import { ObsString } from '../types/obs-string.js';
+import { Observable } from '../types/observable.js';
 import * as Str from '../util/util-str.js';
 
 // TODO: controller and page association?
@@ -35,9 +35,9 @@ class AlgController {
     return this._bindings || (this._bindings = this.defineBindings());
   }
 
-  /** @type {ObsString} */
+  /** @type {Observable} */
   get bus() {
-    return this._bus || (this._bus = new ObsString());
+    return this._bus || (this._bus = new Observable().setType('string'));
   }
 
   /**

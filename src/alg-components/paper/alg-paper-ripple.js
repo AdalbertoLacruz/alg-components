@@ -1,11 +1,10 @@
 // @copyright @polymer\paper-ripple\paper-ripple.js
 // @copyright 2017 ALG
 // @ts-check
-/* global cssRules */
 
 import { AlgPaperComponent } from './alg-paper-component.js';
 import { EventManager } from '../types/event-manager.js';
-import { ObsBoolean } from '../types/obs-boolean.js';
+import { ObservableEvent } from '../types/observable-event.js';
 import { Ripple } from '../util/ripple.js';
 
 /**
@@ -122,10 +121,10 @@ class AlgPaperRipple extends AlgPaperComponent {
 
   /**
    * True when there are visible ripples animating within the element.
-   * @type {ObsBoolean}
+   * @type {ObservableEvent}
    */
   get animating() {
-    return this._animating || (this._animating = new ObsBoolean('animating', false)
+    return this._animating || (this._animating = new ObservableEvent('animating').setType('boolean')
       .onChangeReflectToAttribute(this));
   }
 
@@ -140,16 +139,16 @@ class AlgPaperRipple extends AlgPaperComponent {
    * If true, the ripple will remain in the "down" state until `holdDown` is set to false again.
    * holdDown does not respect noink since it can be a focus based effect.
    * Changed outside the component.
-   * @type {ObsBoolean}
+   *
+   * @type {ObservableEvent}
    */
-  // get holdDown() { return this._parentEventManager.getObservable('holdDown'); }
   get holdDown() {
-    return this._holdDown || (this._holdDown = new ObsBoolean('holdDown', false)
-      .observe((value, event) => {
+    return this._holdDown || (this._holdDown = new ObservableEvent('holdDown').setType('boolean')
+      .observe((value, context) => {
         if (value) {
-          this.async(this.downAction.bind(this, event), 200);
+          this.async(this.downAction.bind(this, context.event), 200);
         } else {
-          this.async(this.upAction.bind(this, event), 200);
+          this.async(this.upAction.bind(this, context.event), 200);
         }
       })
     );
@@ -222,15 +221,14 @@ class AlgPaperRipple extends AlgPaperComponent {
     parentEventManager
       .on('down', (value) => { this.uiDownAction(value); })
       .on('up', (value) => { this.uiUpAction(value); })
-      // .onCustom('holdDown', (value, event) => {
-      //   if (value) this.downAction(event); else this.upAction(event);
-      // })
       .onKey('enter:keydown', () => {
         this.uiDownAction();
         this.async(this.uiUpAction, 1);
-      }).onKey('space:keydown', () => {
+      })
+      .onKey('space:keydown', () => {
         this.uiDownAction(); // don't pass event argument
-      }).onKey('space:keyup', () => {
+      })
+      .onKey('space:keyup', () => {
         this.uiUpAction(); // don't pass event argument
       })
       .subscribe();
@@ -333,7 +331,7 @@ class AlgPaperRipple extends AlgPaperComponent {
     this.ids['background'].style.backgroundColor = null;
 
     // 'transitionend' is a dom (transition) event.
-    // Use eventManager.onCustom to receive it, else we receive it twice
+    // Use eventManager.on to receive it, else we receive it twice
     this._parentEventManager.fire('transitionend', { node: this });
   }
 

@@ -1,10 +1,10 @@
 // @copyright 2017 ALG
 // @ts-check
-import { ObsBoolean } from './obs-boolean.js';
-import { Observable } from './observable.js';
+
+import { ObservableEvent } from './observable-event.js';
 
 /**
- * Let subscribe to mouse and keyboard events
+ * Let subscribe to mouse and keyboard events and state variables
  *
  * @class
  */
@@ -15,6 +15,194 @@ class EventManager {
    */
   constructor(target) {
     this.target = target;
+  }
+
+  /**
+   * Global definitions for events
+   * 'eventName': {
+   *    data: Observable,
+   *    init(item, evm): function to create data. item => local object, evm = this eventManager
+   *    handler: event function, (item == value definition object associate with that eventName)
+   *    switch: null/true, subscribe/unsubscribe specific for this event (mousemove)
+   * }
+   * @type {Map<String, Object>}
+   */
+  static get definitions() {
+    return this._definitions || (this._definitions = new Map()
+      .set('default', {
+        init: (item, evm) => { item.data = new ObservableEvent().setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      // active state, for buttons (associate to toggle)
+      .set('active', {
+        init: (item, evm) => { item.data = new ObservableEvent('active').setType('boolean').setContext(item); },
+        handler: null
+      })
+      .set('blur', {
+        init: (item, evm) => { item.data = new ObservableEvent('blur').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('checked', {
+        init: (item, evm) => { item.data = new ObservableEvent('checked').setType('boolean').setContext(item); },
+        handler: null
+      })
+      .set('click', {
+        init: (item, evm) => { item.data = new ObservableEvent('click').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      }))
+      .set('disabled', {
+        init: (item, evm) => { item.data = new ObservableEvent('disabled').setType('boolean').setContext(item); },
+        handler: null
+      })
+      .set('down', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('down').setContext(item);
+          evm.on('mousedown', (value) => { item.data.update(value); }, { link: true }); // TODO: other touchs
+        },
+        handler: null
+      })
+      .set('focus', {
+        init: (item, evm) => { item.data = new ObservableEvent('focus').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('focused', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('focused').setType('boolean').setContext(item);
+          item.event = null;
+          evm.on('focus', (event) => {
+            item.event = event;
+            item.data.update(true);
+          }, { link: true });
+          evm.on('blur', (event) => {
+            item.event = event;
+            item.data.update(false);
+          }, { link: true });
+        },
+        handler: null
+      })
+      .set('keydown', {
+        init: (item, evm) => { item.data = new ObservableEvent('keydown').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('keypress', {
+        init: (item, evm) => { item.data = new ObservableEvent('keypress').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('keyup', {
+        init: (item, evm) => { item.data = new ObservableEvent('keyup').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('mousedown', {
+        init: (item, evm) => { item.data = new ObservableEvent('mousedown').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      .set('mousemove', {
+        init: (item, evm) => { item.data = new ObservableEvent('mousemove').setContext(item); },
+        handler: (item, e) => { item.data.update(e); },
+        switch: true
+      })
+      .set('mouseup', {
+        init: (item, evm) => { item.data = new ObservableEvent('mouseup').setContext(item); },
+        handler: (item, e) => { item.data.update(e); }
+      })
+      // true if mouse button is pressed
+      .set('mousehold', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('mousehold').setType('boolean').setContext(item);
+          item.event = null;
+          evm.on('mousedown', (event) => {
+            item.event = event;
+            item.data.update(true);
+          }, { link: true });
+          evm.on('mouseup', (event) => {
+            item.event = event;
+            item.data.update(false);
+          }, { link: true });
+        },
+        handler: null
+      })
+      // True if the element is currently being pressed by a "pointer," which is loosely
+      // defined as mouse or touch input (but specifically excluding keyboard input).
+      .set('pointerDown', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('pointerDown').setType('boolean').setContext(item);
+          item.event = null;
+          evm.on('mousehold', (value, context) => {
+            item.event = context.event;
+            item.data.update(value);
+          }, { link: true });
+        },
+        handler: null
+      })
+      // If true, the user is currently holding down the button (mouse down or spaceKey).
+      .set('pressed', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('pressed').setType('boolean').setContext(item);
+          item.event = null;
+          evm.on('blur', (event) => {
+            item.event = event;
+            item.data.update(false);
+          }, { link: true });
+          evm.on('mousehold', (value, context) => {
+            item.event = context.event;
+            item.data.update(value);
+          }, { link: true });
+          evm.onKey('space:keydown', (event) => {
+            const keyboardEvent = event.keyboardEvent;
+            keyboardEvent.preventDefault();
+            keyboardEvent.stopImmediatePropagation();
+            item.event = keyboardEvent;
+            item.data.update(true);
+          }, true);
+          evm.onKey('space:keyup', (event) => {
+            item.event = event.keyboardEvent;
+            item.data.update(false);
+          }, true);
+        },
+        handler: null
+      })
+      // True if the input device that caused the element to receive focus was a keyboard.
+      .set('receivedFocusFromKeyboard', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('receivedFocusFromKeyboard').setType('boolean').setContext(item);
+          item.focused = false;
+          item.pointerDown = false;
+          item.isLastEventPointer = false;
+          item.event = null;
+          evm.on('focused', (value, context) => {
+            item.focused = value;
+            item.event = context.event;
+            item.isLastEventPointer = false;
+            item.data.update(!item.pointerDown && item.focused);
+          }, { link: true });
+          evm.on('pointerDown', (value, context) => {
+            item.pointerDown = value;
+            item.event = context.event;
+            item.isLastEventPointer = true;
+            item.data.update(!item.pointerDown && item.focused);
+          }, { link: true });
+        },
+        handler: null
+      })
+      .set('tap', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('tap').setContext(item);
+          evm.on('click', (value) => { item.data.update(value); }, { link: true }); // TODO: other touchs
+        },
+        handler: null
+      })
+      // for buttons that change the active state with toggles
+      .set('toggles', {
+        init: (item, evm) => { item.data = new ObservableEvent('toggles').setType('boolean').setContext(item); },
+        handler: null
+      })
+      .set('up', {
+        init: (item, evm) => {
+          item.data = new ObservableEvent('up').setContext(item);
+          evm.on('mouseup', (value) => { item.data.update(value); }, { link: true }); // TODO: other touchs
+        },
+        handler: null
+      });
   }
 
   /**
@@ -43,7 +231,7 @@ class EventManager {
   }
 
   /**
-   * Storage for event definition and data.
+   * Active storage for event definition and data.
    * 'eventName': {
    *    custom: null/true for custom event
    *    data: Observable,
@@ -51,163 +239,40 @@ class EventManager {
    *    key: null/true
    *    handler: event function, (item == value definition object associate with that eventName)
    *    listener: handler function binded for unsubscribe
+   *    reflectToAttribute: Set(Attribute names)
    *    switch: null/true, subscribe/unsubscribe specific for this event (mousemove)
    * }
    * @type {Map<String, Object>}
    */
   get register() {
-    return this._register || (this._register = new Map()
-      .set('default', {
-        init: (item) => { item.data = new Observable('', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('blur', {
-        init: (item) => { item.data = new Observable('blur', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('click', {
-        init: (item) => { item.data = new Observable('click', null); },
-        handler: (item, e) => { item.data.update(e); }
-      }))
-      .set('disabled', {
-        init: (item) => { item.data = new ObsBoolean('disabled', false); },
-        handler: null
-      })
-      .set('down', {
-        init: (item) => {
-          item.data = new Observable('down', null);
-          this.on('mousedown', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
-        },
-        handler: null
-      })
-      .set('focus', {
-        init: (item) => { item.data = new Observable('focus', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('focused', {
-        init: (item) => {
-          item.data = new ObsBoolean('focused', false);
-          this.on('focus', (event) => { item.data.copy(event, true); }, null, true);
-          this.on('blur', (event) => { item.data.copy(event, false); }, null, true);
-        },
-        handler: null
-      })
-      // mouse or touch is pressed.
-      // .set('holdDown', {
-      //   init: (item) => {
-      //     item.data = new ObsBoolean('holdDown', null);
-      //     this.on('mousehold', (value, raw) => { item.data.raw = event; item.data.update(value); }, null, true);
-      //   },
-      //   handler: null
-      // })
-      .set('keydown', {
-        init: (item) => { item.data = new Observable('keydown', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('keypress', {
-        init: (item) => { item.data = new Observable('keypress', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('keyup', {
-        init: (item) => { item.data = new Observable('keyup', null); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('mousedown', {
-        init: (item) => { item.data = new Observable('mousedown', null, item); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      .set('mouseup', {
-        init: (item) => { item.data = new Observable('mouseup', null, item); },
-        handler: (item, e) => { item.data.update(e); }
-      })
-      // true if mouse button is pressed
-      .set('mousehold', {
-        init: (item) => {
-          item.data = new ObsBoolean('mousehold', null);
-          this.on('mousedown', (event) => { item.data.copy(event, true); }, null, true);
-          this.on('mouseup', (event) => { item.data.copy(event, false); }, null, true);
-        },
-        handler: null
-      })
-      // True if the element is currently being pressed by a "pointer," which is loosely
-      // defined as mouse or touch input (but specifically excluding keyboard input).
-      .set('pointerDown', {
-        init: (item) => {
-          item.data = new ObsBoolean('pointerDown', null);
-          this.on('mousehold', (value, event) => { item.data.copy(event, value); }, null, true);
-        },
-        handler: null
-      })
-      // If true, the user is currently holding down the button (mouse down or spaceKey).
-      .set('pressed', {
-        init: (item) => {
-          item.data = new ObsBoolean('pressed', null);
-          this.on('blur', (event) => { item.data.copy(event, false); }, null, true);
-          this.on('mousehold', (value, event) => { item.data.copy(event, value); }, null, true);
-          this.onKey('space:keydown', (event) => {
-            const keyboardEvent = event.keyboardEvent;
-            keyboardEvent.preventDefault();
-            keyboardEvent.stopImmediatePropagation();
-            item.data.copy(keyboardEvent, true);
-          }, true);
-          this.onKey('space:keyup', (event) => { item.data.copy(event.keyboardEvent, false); }, true);
-        },
-        handler: null
-      })
-      // True if the input device that caused the element to receive focus was a keyboard.
-      .set('receivedFocusFromKeyboard', {
-        init: (item) => {
-          item.data = new ObsBoolean('receivedFocusFromKeyboard', null, item);
-          item.focused = false;
-          item.pointerDown = false;
-          item.isLastEventPointer = false;
-          this.on('focused', (value, event) => {
-            item.focused = value;
-            item.isLastEventPointer = false;
-            item.data.copy(event, !item.pointerDown && item.focused);
-          }, null, true);
-          this.on('pointerDown', (value, event) => {
-            item.pointerDown = value;
-            item.isLastEventPointer = true;
-            item.data.copy(event, !item.pointerDown && item.focused);
-          }, null, true);
-        },
-        handler: null
-      })
-      .set('tap', {
-        init: (item) => {
-          item.data = new Observable('tap', null);
-          this.on('click', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
-        },
-        handler: null
-      })
-      .set('up', {
-        init: (item) => {
-          item.data = new Observable('up', null);
-          this.on('mouseup', (value) => { item.data.update(value); }, null, true); // TODO: other touchs
-        },
-        handler: null
-      });
+    return this._register || (this._register = new Map());
   }
 
   /**
-   * Add a event definition on register if not exist
+   * Add a event definition on register if not exist, and initialize it.
+   *
+   * options
+   *  custom: true/false. false => addEventHandler
+   *
    * @param {String} eventName
-   * @param {Boolean} custom
+   * @param {Object} options
    * @return {Object}
    */
-  _assureRegisterDefinition(eventName, custom = null) {
+  _assureRegisterDefinition(eventName, options = {}) {
     let item = this.register.get(eventName);
     if (item) return item;
 
-    const proto = this.register.get('default');
+    let proto = EventManager.definitions.get(eventName);
+    const generic = proto != null;
+    if (!proto) proto = EventManager.definitions.get('default');
+
     item = Object.assign({}, proto);
     this.register.set(eventName, item);
-
-    item.init(item);
-    item.data.name = eventName;
-    if (custom) item.handler = null;
+    item.init(item, this);
+    if (generic) item.data.name = eventName;
+    if (options.custom) item.handler = null;
     this[this.cachedName(eventName)] = item.data;
+
     return item;
   }
 
@@ -234,31 +299,34 @@ class EventManager {
   }
 
   /**
-   * Trigger async an event if exist
+   * Trigger async an event
    * @param {String} eventName
    * @param {*} event
    * @return {EventManager}
    */
   fire(eventName, event = {}) {
-    const item = this.register.get(eventName);
-    if (!item) return;
+    const data = this.getObservable(eventName);
+    setTimeout(() => data.update(event), 0);
 
-    setTimeout(() => item.data.update(event), 0);
     return this;
   }
 
   /**
-   * Return the Storage for the event. If not exist then create
+   * Return the Storage for the event. If not exist then create it.
+   *
+   * options
+   *  custom: true/false
+   *  link: true/false
+   *
    * @param {String} eventName
-   * @return {Observable}
+   * @param {Object} options
+   * @return {ObservableEvent}
    */
-  getObservable(eventName, custom = null) {
+  getObservable(eventName, options = {}) {
     let cache = this[this.cachedName(eventName)];
     if (cache != null) return cache;
 
-    this.on(eventName, null, custom); // create if don't exist
-    const item = this.register.get(eventName);
-    if (!item) return; // ?
+    const item = this._assureRegisterDefinition(eventName, options);
     cache = item.data;
     this[this.cachedName(eventName)] = cache;
     return cache;
@@ -336,90 +404,109 @@ class EventManager {
 
   /**
    * External subscription to the event
+   *
+   * options
+   *   custom: true/false
+   *   link: true/false
+   *
    * @param {String} eventName - click, ...
-   * @param {Function} handler - code to execute on event
-   * @param {Boolean} custom
-   * @param {Boolean} link
+   * @param {Function} handler - code to execute on event. If hander == null, only forces event definition
+   * @param {Object} options
    * @return {EventManager}
    */
-  on(eventName, handler = null, custom = null, link = false) {
-    const item = this._assureRegisterDefinition(eventName, custom);
-    if (!item.data) item.init(item);
+  on(eventName, handler = null, options = {}) {
+    const data = this.getObservable(eventName, options);
     if (handler != null) {
-      if (!link) item.data.observe(handler); else item.data.link(handler);
+      if (options.link) data.link(handler); else data.observe(handler);
     }
 
     return this;
   }
 
   /**
-   * Set Attrbute on Event
+   * Set Attrbute on Event. Assure only one handler for attribute name.
+   *
+   * options
+   *  attribute: attribute to change
+   *  custom: true is a custom event if we need initialize
+   *
    * @param {String} eventName
    * @param {*} target - HTML element
-   * @param {String} attrName - attribute to change
-   * @param {Boolean} custom - true is a custom event if we need initialize
+   * @param {Object} options
    * @return {EventManager}
    */
-  onChangeReflectToAttribute(eventName, target, attrName, custom = null) {
-    const item = this._assureRegisterDefinition(eventName, custom);
-    if (!item.data) { // is predefined
-      item.init(item);
+  onChangeReflectToAttribute(eventName, target, options = {}) {
+    const item = this._assureRegisterDefinition(eventName, options);
+    const itemReflectToAttribute = item.reflectToAttribute || (item.reflectToAttribute = new Set());
+    const attribute = options.attribute || eventName;
+    if (!itemReflectToAttribute.has(attribute)) { // We assume target is always the same
+      itemReflectToAttribute.add(attribute);
+      item.data.onChangeReflectToAttribute(target, options);
     }
-    item.data.onChangeReflectToAttribute(target, attrName);
+
     return this;
   }
 
   /**
    * Set Class on Event
+   *
+   * options
+   *  custom: true is a custom event if we need initialize
+   *
    * @param {String} eventName
    * @param {*} target - HTML element
    * @param {String} className - attribute to change
-   * @param {Boolean} custom - true is a custom event if we need initialize
+   * @param {Object} options
    * @return {EventManager}
    */
-  onChangeReflectToClass(eventName, target, className, custom = null) {
-    const item = this._assureRegisterDefinition(eventName, custom);
-    if (!item.data) { // is predefined
-      item.init(item);
+  onChangeReflectToClass(eventName, target, className, options = {}) {
+    const item = this._assureRegisterDefinition(eventName, options);
+    const itemReflectToClass = item.reflectToClass || (item.reflectToClass = new Set());
+    if (!itemReflectToClass.has(className)) {
+      itemReflectToClass.add(className);
+      item.data.onChangeReflectToClass(target, className);
     }
-    item.data.onChangeReflectToClass(target, className);
+
     return this;
   }
 
+  /**
+   * Copy from event
+   *
+   * @param {String} eventName
+   * @param {*} target - HTML element
+   */
   onChangeReflectToEvent(eventName, target) {
     const item = this.getObservable(eventName);
     const reflected = this.getObservable(target);
-    item.link((value, raw) => { reflected.copy(raw, value); });
+    item.link((value, context) => {
+      reflected.context.event = context.event;
+      reflected.update(value);
+    });
     return this;
   }
 
   /**
    * Send a custom event on value change
+   *
+   * options
+   *  custom: true/false
+   *  to: objetive to trigger the message
+   *
    * @param {String} eventName
    * @param {*} target
    * @param {String} channel
-   * @param {Boolean} custom
-   * @param {*} to - objetive to trigger the message
+   * @param {Object} options
    * @return {EventManager}
    */
-  onChangeFireMessage(eventName, target, channel, custom = null, to = null) {
-    // const item = this._assureRegisterDefinition(eventName, custom);
-    // if (!item.data) { // is predefined
-    //   item.init(item);
-    // }
-    const item = this.getObservable(eventName, custom);
-    item.onChangeFireMessage(target, channel, to);
+  onChangeFireMessage(eventName, target, channel, options = {}) {
+    const item = this._assureRegisterDefinition(eventName, options);
+    const itemFireMessage = item.fireMessage || (item.fireMessage = new Set());
+    if (!itemFireMessage.has(channel)) {
+      itemFireMessage.add(channel);
+      item.data.onChangeFireMessage(target, channel, options.to);
+    }
     return this;
-  }
-
-  /**
-   * Subscription to a custom event. Don't attach on subscribe
-   * @param {String} eventName
-   * @param {Function} handler
-   * @return {EventManager}
-   */
-  onCustom(eventName, handler = null) {
-    return this.on(eventName, handler, true);
   }
 
   /**
@@ -451,10 +538,10 @@ class EventManager {
     const item = this._keyDefinition(_eventName);
     item.add(handler);
 
-    const registerItem = this.register.get(event);
+    const registerItem = this._assureRegisterDefinition(event);
     if (registerItem.key == null) {
       registerItem.key = true;
-      this.on(event, this._keyHandler.bind(this), null, link);
+      this.on(event, this._keyHandler.bind(this), { link: true });
     }
   }
 
@@ -479,13 +566,9 @@ class EventManager {
    * @return {EventManager}
    */
   subscribeSwitch(eventName) {
-    let item = this.register.get(eventName);
+    let item = this.register.get(eventName); // We must have a active handler
     if (item == null || item.switch == null) return;
 
-    if (item.data == null) {
-      item.init(item);
-      this[this.cachedName(eventName)] = item.data;
-    }
     item.switchListener = item.handler.bind(this, item);
     this.target.addEventListener(eventName, item.switchListener);
     return this;
@@ -529,7 +612,6 @@ class EventManager {
     const item = this.getObservable(eventName);
     for (const target of targets) {
       const targetItem = this._assureRegisterDefinition(target);
-      if (!targetItem.data) targetItem.init(targetItem);
       targetItem['_' + eventName] = item;
     }
     return this;

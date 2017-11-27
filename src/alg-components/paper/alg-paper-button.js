@@ -3,7 +3,7 @@
 // @ts-check
 
 import { AlgPaperButtonBehavior } from './alg-paper-button-behavior.js';
-import { ObsBoolean } from '../types/obs-boolean.js';
+import { ObservableEvent } from '../types/observable-event.js';
 
 /**
  * Definition for alg-paper-button component
@@ -140,10 +140,10 @@ class AlgPaperButton extends AlgPaperButtonBehavior {
 
   /**
    * Attribute, if true, the button should be styled with a shadow.
-   * @type {ObsBoolean}
+   * @type {ObservableEvent}
    */
   get raised() {
-    return this._raised || (this._raised = new ObsBoolean('raised', false)
+    return this._raised || (this._raised = new ObservableEvent('raised').setType('boolean')
       .observe(this._calculateElevation.bind(this)));
   }
 

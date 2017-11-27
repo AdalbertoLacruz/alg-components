@@ -4,15 +4,13 @@
 /**
  * Common code for observable types
  * <br>
- * set(value) => subscribers and observers
+ * update(value) => trigger linkers and observers handlers
  * <br>
- * init(value) => initHandler
+ * init(value) => initHandler and update. init is used to sync with other variable.
  * <br>
- * suscribers is a list of components methods
+ * linkers is a list of handlers executed inmediatly in a value change
  * <br>
- * observers is a list of controller methods
- * <br>
- * init is used to sync with other variable
+ * observers is a list of handlers executed async
  *
  * @class
  */
@@ -20,17 +18,31 @@ class Observable {
   /**
    * @param {String} name - Used to identify the variable in logs
    */
-  constructor(name = '', value = null, context = null) {
+  constructor(name = '') {
     this._name = name;
-    this._value = value;
-    this._context = context;
+    this._context = {};
+
+    this._isLogHandler = false; // true => a log handler is defined
+    this._isLogActive = false; // true =>  log is active
   }
 
   /*  ___________________________________________ properties _____ */
 
-  /** Where the observable is defined (this, item, ...) @type {*} */
-  set context(value) { this._context = value; }
+  /**
+   * Where the observable is defined (this, item, ...)
+   * @type {*}
+   */
   get context() { return this._context; }
+  set context(value) { this._context = value; }
+
+  /**
+   * @param {*} value
+   * @return {Observable}
+   */
+  setContext(value) {
+    this._context = value;
+    return this;
+  }
 
   /**
    * true, avoid update
@@ -39,18 +51,12 @@ class Observable {
   get disabled() { return this._disabled || (this._disabled = false); }
   set disabled(value) { this._disabled = value; }
 
-  /** Function called by init(value) @type {Function} handler */
+  /**
+   * Function called by init(value)
+   * @type {Function} handler
+   */
   get initHandler() { return this._initHandler; }
   set initHandler(handler) { this._initHandler = handler; }
-
-  /**
-   * If true, value changes must be logged
-   * @type {Boolean}
-   */
-  get isLog() {
-    if (this._isLog == null) this._isLog = false;
-    return this._isLog;
-  }
 
   /**
    * Linkers are like observers but the value is transmited faster.
@@ -59,9 +65,12 @@ class Observable {
    */
   get linkers() { return this._linkers || (this._linkers = new Set()); }
 
-  /** internal name used in logs, attributes, ... @type {String} */
-  set name(value) { this._name = value; }
+  /**
+   * internal name used in logs, attributes, ...
+   * @type {String}
+   */
   get name() { return this._name; }
+  set name(value) { this._name = value; }
 
   /**
    * Observers are Functions defined at controller level
@@ -70,79 +79,56 @@ class Observable {
   get observers() { return this._observers || (this._observers = new Set()); }
 
   /**
-   * Auxiliary data related to value
-   * @type {*}
-   */
-  set raw(value) { this._raw = value; }
-  get raw() { return this._raw; }
-
-  /**
-   * Subscribers are function used by components to know a change
-   * @type {Set}
-   */
-  get subscribers() { return this._subscribers || (this._subscribers = new Set()); }
-
-  /**
    * The object value. All is around this.
    * @type {*}
    */
   get value() { return this._value; }
-  set value(value) {
+  set value(value) { this._value = value; }
+
+  /**
+   * @param {*} value
+   */
+  setValue(value) {
     this._value = value;
-    // @ts-ignore
-    if (this.isLog && window.AlgLog) window.AlgLog.add(null, `${this.name}: ${this.value}`);
+    return this;
   }
 
   /* ____________________________________________ methods _____ */
 
   /**
-   * Copy values (from other observer) and trigger the notification process
-   * @param {*} raw
-   * @param {*} value
-   * @return {Observable}
-   */
-  copy(raw, value) {
-    this.raw = raw;
-    this.update(value);
+  * add value to number observable
+  * @param  {*} value - to add to number value
+  * @return {Observable}
+  */
+  add(value) {
+    if (this._type === 'number') this.update(this.value + value);
     return this;
   }
 
   /**
    * Call async the observers and subscribers
    * @param {*} data
-   * @return {*} Observable
+   * @return {Observable}
    */
   dispatch(data = null) {
     if (data === null) data = this.value;
 
     this.linkers.forEach((handler) => {
-      handler(data, this.raw, this.context);
+      handler(data, this.context);
     });
 
     this.observers.forEach((handler) => {
-      setTimeout(() => handler(data, this.raw, this.context), 0);
-    });
-
-    this.subscribers.forEach((handler) => {
-      setTimeout(() => handler(data), 0);
+      setTimeout(() => handler(data, this.context), 0);
     });
 
     return this;
   }
 
   /**
-   * get the value.
-   * @return {*}
-   */
-  get() {
-    return this.value;
-  }
-
-  /**
    * Changes the internal value, trigger the initHandler and the subscribers/observers
    *
    * @param  {*} value
-   * @return {*} Observable
+   * @return {Observable}
    */
   init(value) {
     if (this.initHandler) this.initHandler(value);
@@ -153,7 +139,7 @@ class Observable {
   /**
    * Function used to sync with other variables
    * @param  {Function} handler
-   * @return {*} Observable
+   * @return {Observable}
    */
   initializer(handler) {
     this.initHandler = handler;
@@ -163,7 +149,7 @@ class Observable {
   /**
    * Add a Function to be execued inmediatly at once in value change. Used at eventManager level.
    * @param  {Function} handler
-   * @return {*} Observable
+   * @return {Observable}
    */
   link(handler) {
     this.linkers.add(handler);
@@ -171,54 +157,12 @@ class Observable {
   }
 
   /**
-   * enable/disable logging in value change
-   * @param  {Boolean} flag true, log is enabled
-   * @return {*} Observable
-   */
-  log(flag = true) {
-    this._isLog = Boolean(flag);
-    return this;
-  }
-
-  /**
    * Add a Function to be execued in value change. Used at controller level.
    * @param  {Function} handler
-   * @return {*} Observable
+   * @return {Observable}
    */
   observe(handler) {
     this.observers.add(handler);
-    return this;
-  }
-
-  /**
-   * Send a custom event on value change, or value objective
-   * @param {*} item
-   * @param {String} event - name
-   * @param {*} to - value to trigger the change (true, a number, ...)
-   */
-  onChangeFireMessage(item, event, to = null) {
-    if (to == null) {
-      this.observe((value) => {
-        item.fire(event, this.value);
-      });
-    } else {
-      this.observe((value) => {
-        if (value === to) item.fire(event, this.value);
-      });
-    }
-    return this;
-  }
-
-  /**
-   * Set attribute in a value change
-   * @param {*} item - Element to set attribute
-   * @param {String} attrName - // TODO:
-   * @return {Observable}
-   */
-  onChangeReflectToAttribute(item, attrName = null) {
-    this.observe((value) => {
-      item.setAttribute(this.name, value.toString());
-    });
     return this;
   }
 
@@ -228,51 +172,84 @@ class Observable {
    * @return {Observable}
    */
   onNullSet(newValue) {
-    this.observe((value) => {
+    let handler;
+    this.observe(handler = (value) => {
       if (value === null || value === undefined) this.update(newValue);
     });
-    const handlers = Array.from(this.observers.values());
-    handlers[handlers.length - 1](); // execute the handler just defined
+    handler(this._value);
+    return this;
+  }
+
+  /**
+   * enable/disable logging in value change
+   * @param  {Boolean} flag true, log is enabled
+   * @return {Observable}
+   */
+  setLog(flag = true) {
+    this._isLogActive = flag;
+
+    if (flag && !this._isLogHandler) {
+      this.link((value) => {
+        // @ts-ignore
+        if (this._isLogActive && window.AlgLog) window.AlgLog.add(null, `${this.name}: ${this.value}`);
+      });
+    }
+
     return this;
   }
 
   /**
    * Change the name used in log
    * @param {String} value
-   * @return {*} Observable
+   * @return {Observable}
    */
   setName(value) {
     this.name = value;
     return this;
   }
 
-  // stop logging
-  // silence() {
-
-  // }
+  /**
+   * Initialize type = boolean | string | number
+   * Initialize value = false for boolean
+   * @param {string} value
+   */
+  setType(value) {
+    this._type = value.toLowerCase();
+    if (this._type === 'boolean') this._value = false;
+    return this;
+  }
 
   /**
-   * A value change execute the subscriber functions
+   * A value change execute the subscriber functions. Used by bindind system
    * @param {String} channel - For internal subscription inside complex objects
    * @param {*} defaultValue
    * @param {Function} handler
    * @param {Object} status
-   * @return {*} observable
+   * @return {Observable}
    */
   subscribe(channel, defaultValue, handler, status) {
     status.hasChannel = true;
-    this.subscribers.add(handler);
+    this.observers.add(handler);
     if (defaultValue != null) this.init(defaultValue);
     return this.value;
   }
 
   /**
+   * If value is true, set to false and vice versa
+   * @return {Observable}
+   */
+  toggle() {
+    if (this._type === 'boolean') this.update(!this.value);
+    return this;
+  }
+
+  /**
    * Remove the susbscriber
    * @param {Function} handler
-   * @return {*} observable
+   * @return {Observable}
    */
   unSubscribe(handler) {
-    this.subscribers.delete(handler);
+    this.observers.delete(handler); // Same for linkers ?
     return this;
   }
 
@@ -281,7 +258,7 @@ class Observable {
    * Options: force = true, dispatch any case
    * @param  {*} value
    * @param  {Object} options
-   * @return {*} Observable
+   * @return {Observable}
    */
   update(value, options = {}) {
     if (this.disabled) return this;

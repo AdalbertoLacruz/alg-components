@@ -7,8 +7,8 @@ import { AlgIronCheckedElementBehavior } from '../mixins/alg-iron-checked-elemen
 import { AlgPaperComponent } from './alg-paper-component.js';
 import { AlgPaperInkyFocusBehavior } from '../mixins/alg-paper-inky-focus-behavior.js';
 import { AlgPaperRippleBehavior } from '../mixins/alg-paper-ripple-behavior.js';
-import { EventManager } from '../types/event-manager.js'; // eslint-disable-line
 import { mixinFactory } from '../util/mixins.js';
+import * as FHtml from '../util/f-html.js';
 
 /**
  * active -> [checked] -> 💢ripple (⛳checked)
@@ -27,7 +27,7 @@ class AlgPaperCheckedElementBehavior extends
       .onChangeReflectToEvent('active', 'checked')
       .on('checked', (value) => {
         // @ts-ignore
-        if (this.hasRipple()) this._ripple.attributeToggle('checked', value);
+        if (this.hasRipple()) FHtml.attributeToggle(this._ripple, 'checked', value);
       });
   }
 

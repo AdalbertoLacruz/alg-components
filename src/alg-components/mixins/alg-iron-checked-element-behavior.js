@@ -2,9 +2,7 @@
 // @copyright 2017 ALG
 // @ts-check
 
-import { EventManager } from '../types/event-manager.js'; // eslint-disable-line
-import { ObsBoolean } from '../types/obs-boolean.js';
-import { ObsString } from '../types/obs-string.js';
+import { ObservableEvent } from '../types/observable-event.js';
 
 // TODO: validate, form. Review active/check relation
 /**
@@ -22,32 +20,19 @@ export const AlgIronCheckedElementBehavior = (base) => class extends base {
 
     this.fireHandlers.add('change'); // fire with checked
 
-    const eventManager = /** @type {EventManager} */ (this.eventManager);
+    this.eventManager
+      // If true, the button toggles the active state with each tap or press of the spacebar.
+      .onChangeReflectToAttribute('toggles', this)
+      .fire('toggles', true)
 
-    // If true, the button toggles the active state with each tap or press of the spacebar.
-    if (eventManager.isDefined('toggles')) {
-      eventManager.getObservable('toggles').update(true);
-    } else {
-      eventManager.define('toggles', new ObsBoolean('toggles', true)
-        .onChangeReflectToAttribute(this)
-      );
-    }
+      .onChangeReflectToAttribute('checked', this)
+      // .onChangeFireMessage('checked', this, 'change')
 
-    eventManager
-      // Gets or sets the state, `true` is checked and `false` is unchecked.
-      .define('checked', new ObsBoolean('checked', false)
-        .onChangeReflectToAttribute(this)
-        // .onChangeFireMessage(this, 'change') // in active
+      .define('required', new ObservableEvent('required').setType('boolean')
+        .onChangeReflectToAttribute(this, { attribute: 'aria-required', type: 'true-remove'})
       )
-      .define('required', new ObsBoolean('required', false)
-        // TODO: review
-        .observe((value) => {
-          if (value) this.setAttribute('aria-required', 'true'); else this.removeAttribute('aria-required');
-        })
-      )
-      .define('value', new ObsString('value', null)
-        .onNullSet('on')
-      );
+      .define('value', new ObservableEvent('value').setType('string')
+        .onNullSet('on'));
   }
 
   /**

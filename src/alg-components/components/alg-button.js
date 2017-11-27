@@ -1,5 +1,6 @@
 // @copyright 2017 ALG
 // @ts-check
+
 import { AlgComponent } from './alg-component.js';
 
 /**
@@ -21,7 +22,7 @@ class AlgButton extends AlgComponent {
 
   /**
    * For Aria
-   * @type @return {String}
+   * @type {String}
    */
   get role() { return 'button'; }
 

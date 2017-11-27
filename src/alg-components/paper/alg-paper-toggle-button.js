@@ -4,7 +4,9 @@
 
 import '../styles/color.js';
 import '../styles/default-theme.js';
+import * as FHtml from '../util/f-html.js';
 import { mixinFactory } from '../util/mixins.js';
+
 import { AlgGestures } from '../mixins/alg-gestures.js';
 import { AlgPaperCheckedElementBehavior } from './alg-paper-checked-element-behavior.js';
 
@@ -233,24 +235,24 @@ class AlgPaperToggleButton extends mixinFactory(AlgPaperCheckedElementBehavior, 
       .visibleTo('checked', ['trackStart', 'trackMove'])
       .visibleTo('active', ['trackEnd'])
       .visibleTo('tap', ['trackStart', 'trackEnd'])
-      .on('trackStart', (tEvent, raw, context) => {
+      .on('trackStart', (tEvent, context) => {
         tEvent.width = this.ids['toggleBar'].offsetWidth / 2;
         this.ids['toggleButton'].classList.add('dragging');
         tEvent.trackChecked = context._checked.value;
         context._tap.disabled = true;
         // this.fireDisabled = true;
       })
-      .on('trackMove', (tEvent, raw, context) => {
+      .on('trackMove', (tEvent, context) => {
         const dx = tEvent.posX;
         const x = Math.min(tEvent.width,
           Math.max(0, tEvent.trackChecked ? tEvent.width + dx : dx));
-        this.translate3d(x + 'px', 0, 0, this.ids['toggleButton']);
+        FHtml.translate3d(this.ids['toggleButton'], x + 'px', 0, 0);
         tEvent.trackChecked = Boolean(x > (tEvent.width / 2));
         context._checked.update(tEvent.trackChecked);
       })
-      .on('trackEnd', (tEvent, raw, context) => {
+      .on('trackEnd', (tEvent, context) => {
         this.ids['toggleButton'].classList.remove('dragging');
-        this.transform('', this.ids['toggleButton']);
+        FHtml.transform(this.ids['toggleButton'], '');
         if (!tEvent.hasMoved) tEvent.trackChecked = !tEvent.trackChecked; // toggle
         // this.fireDisabled = false;
         context._active.update(tEvent.trackChecked);

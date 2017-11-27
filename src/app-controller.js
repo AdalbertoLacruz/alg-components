@@ -2,8 +2,7 @@
 // @ts-check
 
 import { AlgController } from './alg-components/controllers/alg-controller.js';
-import { ObsNumber } from './alg-components/types/obs-number.js';
-import { ObsString } from './alg-components/types/obs-string.js';
+import { Observable } from './alg-components/types/observable.js';
 import * as Str from './alg-components/util/util-str.js';
 
 class AppController extends AlgController {
@@ -74,24 +73,29 @@ class ButtonObservable {
   }
 
   get btnColor() {
-    return this._btnColor || (this._btnColor = new ObsString(`${this._name}Color`).log(this._isLog));
+    return this._btnColor || (this._btnColor = new Observable(`${this._name}Color`)
+      .setType('string').setLog(this._isLog));
   }
 
   get btnTextValue() {
-    return this._btnTextValue || (this._btnTextValue = new ObsNumber(`${this._name}TextValue`).log(this._isLog));
+    return this._btnTextValue || (this._btnTextValue = new Observable(`${this._name}TextValue`)
+      .setType('number').setLog(this._isLog));
   }
 
   get btnText() {
-    return this._btnText || (this._btnText = new ObsString(`${this._name}Text`).log(this._isLog));
+    return this._btnText || (this._btnText = new Observable(`${this._name}Text`)
+      .setType('string').setLog(this._isLog));
   }
 
   get btnStyleMargin() {
-    return this._btnStyleMargin || (this._btnStyleMargin = new ObsString(`${this._name}StyleMargin`).log(this._isLog));
+    return this._btnStyleMargin || (this._btnStyleMargin = new Observable(`${this._name}StyleMargin`)
+      .setType('string').setLog(this._isLog));
   }
 
   get btnStyleBackgroundColor() {
     return this._btnStyleBackgroundColor ||
-      (this._btnStyleBackgroundColor = new ObsString(`${this._name}StyleBackgroundColor`).log(this._isLog));
+      (this._btnStyleBackgroundColor = new Observable(`${this._name}StyleBackgroundColor`)
+        .setType('string').setLog(this._isLog));
   }
 
   get bindings() {

@@ -2,7 +2,7 @@
 /* global mocha chai describe it before beforeEach */
 import { AlgComponent } from '../../src/alg-components/components/alg-component.js';
 import { AlgController } from '../../src/alg-components/controllers/alg-controller.js';
-import { ObsString } from '../../src/alg-components/types/obs-string.js';
+import { Observable } from '../../src/alg-components/types/observable.js';
 
 let assert = chai.assert;
 
@@ -18,11 +18,11 @@ class Controller extends AlgController {
   }
 
   get componentText() {
-    return this._componentText || (this._componentText = new ObsString('componentText'));
+    return this._componentText || (this._componentText = new Observable('componentText').setType('string'));
   }
 
   get componentColor() {
-    return this._componentColor || (this._componentColor = new ObsString('componentColor'));
+    return this._componentColor || (this._componentColor = new Observable('componentColor').setType('string'));
   }
 }
 

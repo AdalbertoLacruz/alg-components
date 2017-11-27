@@ -6,8 +6,7 @@ import { AlgIronButtonState } from '../mixins/alg-iron-button-state.js';
 import { AlgPaperComponent } from './alg-paper-component.js';
 import { AlgPaperRippleBehavior } from '../mixins/alg-paper-ripple-behavior.js';
 import { mixinFactory } from '../util/mixins.js';
-import { ObsBoolean } from '../types/obs-boolean.js'; // eslint-disable-line
-import { ObsNumber } from '../types/obs-number.js';
+import { ObservableEvent } from '../types/observable-event.js';
 
 /**
  * Definition for alg-paper-button-behavior
@@ -30,13 +29,13 @@ class AlgPaperButtonBehavior extends
 
     const eventManager = this.eventManager;
     eventManager
-      .onCustom('active', this._calculateElevation.bind(this))
-      .onCustom('disabled', this._calculateElevation.bind(this))
-      .onCustom('focused', this._calculateElevation.bind(this))
-      .onCustom('pressed', this._calculateElevation.bind(this))
-      .onChangeFireMessage('pressed', this, 'action', null, true)
-      .onCustom('receivedFocusFromKeyboard', this._calculateElevation.bind(this))
-      .onChangeReflectToClass('receivedFocusFromKeyboard', this, 'keyboard-focus', true)
+      .on('active', this._calculateElevation.bind(this))
+      .on('disabled', this._calculateElevation.bind(this))
+      .on('focused', this._calculateElevation.bind(this))
+      .on('pressed', this._calculateElevation.bind(this))
+      .onChangeFireMessage('pressed', this, 'action', { to: true })
+      .on('receivedFocusFromKeyboard', this._calculateElevation.bind(this))
+      .onChangeReflectToClass('receivedFocusFromKeyboard', this, 'keyboard-focus')
       .subscribe();
   }
 
@@ -49,27 +48,27 @@ class AlgPaperButtonBehavior extends
     return super.observedAttributes.concat(['on-click', 'on-action']);
   }
 
-  /** @type {ObsBoolean} */
+  /** @type {ObservableEvent} */
   get active() { return this.eventManager.getObservable('active'); }
 
-  /** @type {ObsBoolean} */
+  /** @type {ObservableEvent} */
   get disabled() { return this.eventManager.getObservable('disabled'); }
 
-  /** @type {ObsNumber} */
+  /** @type {ObservableEvent} */
   get elevation() {
-    return this._elevation || (this._elevation = new ObsNumber('elevation', 0)
+    return this._elevation || (this._elevation = new ObservableEvent('elevation').setType('number').setValue(0)
       .onChangeReflectToAttribute(this));
   }
 
   /**
    * If true, the user is currently holding down the button.
-   * @type {ObsBoolean}
+   * @type {ObservableEvent}
    */
   get pressed() { return this.eventManager.getObservable('pressed'); }
 
   /**
    * True if the input device that caused the element to receive focus was a keyboard.
-   * @type {ObsBoolean}
+   * @type {ObservableEvent}
    */
   get receivedFocusFromKeyboard() { return this.eventManager.getObservable('receivedFocusFromKeyboard'); }
 

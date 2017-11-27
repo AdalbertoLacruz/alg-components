@@ -1,5 +1,6 @@
 // @copyright 2017 ALG
 // @ts-check
+
 import { AlgComponent } from './alg-component.js';
 
 class AlgDataComponent extends AlgComponent {

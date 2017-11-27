@@ -14,18 +14,18 @@ export const AlgPaperInkyFocusBehavior = (base) => class extends base {
     // @ts-ignore
     super();
     this.eventManager
-      .on('receivedFocusFromKeyboard', (value, event, context) => {
+      .on('receivedFocusFromKeyboard', (value, context) => {
         if (value) this.ensureRipple();
-
-        // if (this.hasRipple() && !this._ripple.noink) {
-        //   this._ripple.holdDown.copy(event, value);
-        // }
 
         if (this.hasRipple() &&
           (!this._ripple.noink ||
             !context.isLastEventPointer || // no mouse
             (context.isLastEventPointer && !value))) { // to remove ripple
-          setTimeout(() => this._ripple.holdDown.copy(event, value), 1);
+          setTimeout(() => {
+            const holdDown = this._ripple.holdDown;
+            holdDown.context.event = event;
+            holdDown.update(value);
+          }, 1);
         }
       });
   }

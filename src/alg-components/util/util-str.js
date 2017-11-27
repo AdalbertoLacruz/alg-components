@@ -33,7 +33,7 @@ export const dashToCamelString = (dash) =>
 
 /**
  * converts str1-str2-str3 to str1Str2Str3
- * @param {String} value
+ * @param {String} dash
  * @return {Array<String>}
  */
 export const dashToCamelList = (dash) =>

@@ -3,7 +3,7 @@
 // @ts-check
 
 import { AlgPaperRipple } from '../paper/alg-paper-ripple.js';
-import { ObsBoolean } from '../types/obs-boolean.js';
+import { ObservableEvent } from '../types/observable-event.js';
 
 /**
  * Mixin behavior
@@ -24,7 +24,7 @@ export const AlgPaperRippleBehavior = (base) => class extends base {
 
     this.eventManager
       // If true, the button toggles the active state with each tap or press of the spacebar.
-      .define('noink', new ObsBoolean('noink', false)
+      .define('noink', new ObservableEvent('noink').setType('boolean')
         .onChangeReflectToAttribute(this)
         .observe((value) => {
           if (this.hasRipple()) this._ripple.noink = value;

@@ -190,7 +190,7 @@ class BinderElement extends HTMLElement {
       if (!isFire && controller && channel) {
         const custom = this.customHandlers.has(key);
         const handler = (value) => { controller.fire(channel, value); };
-        this.eventManager.on(key, handler, custom);
+        this.eventManager.on(key, handler, {custom: custom});
       }
     });
     this.eventManager.subscribe();
@@ -312,24 +312,6 @@ class BinderElement extends HTMLElement {
     if (this.attributeSync.has(attrName)) this.setAttribute(attrName, value);
     return false;
   }
-
-  // /**
-  //  * Set Disabled attribute
-  //  *
-  //  * @param {String} attrName - Attribute Name
-  //  * @param {*} value    - true => set, false => remove
-  //  */
-  // bindedDisabled(attrName, value) {
-  //   if (this.bindedAttributeSuper(attrName, value)) return;
-
-  //   if (value) {
-  //     this.disabled = true;
-  //     this.setAttribute('disabled', '');
-  //   } else {
-  //     this.disabled = false;
-  //     this.removeAttribute('disabled');
-  //   }
-  // }
 
   /**
    * Hide/Unhide the component

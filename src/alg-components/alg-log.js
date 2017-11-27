@@ -1,6 +1,7 @@
 // @copyright 2017 ALG
 // @ts-check
-import { ObsArray } from './types/obs-array.js';
+
+import { ObservableArray } from './types/observable-array.js';
 
 /**
  * Global log: AlgLog.register.
@@ -12,16 +13,19 @@ import { ObsArray } from './types/obs-array.js';
  * @type {class}
  */
 class AlgLog {
-  /** global id @param {Number} value */
-  static set id(value) { this._id = value; }
+  /**
+   * global id
+   * @type {Number}
+   */
   static get id() { return this._id || (this._id = 0); }
+  static set id(value) { this._id = value; }
 
   /**
    * Global storage
    * @type {*}
    */
   static get register() {
-    return this._register || (this._register = new ObsArray('log'));
+    return this._register || (this._register = new ObservableArray('log'));
   }
 
   /**
