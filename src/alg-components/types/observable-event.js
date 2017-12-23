@@ -36,7 +36,8 @@ class ObservableEvent extends Observable {
    *   attribute: attribute nama to set
    *   type: 'true-false', ...
    * @param {*} item - Element to set attribute
-   * @param {Object} options
+   * @param {Object} options {type: 'true-false' for attribute,
+   *    noInit: true for avoid outside attribute reflect}
    * @return {ObservableEvent}
    */
   onChangeReflectToAttribute(item, options = {}) {
@@ -46,14 +47,14 @@ class ObservableEvent extends Observable {
         this.observe((value) => {
           FHtml.attributeToggle(item, attrName, value, options);
         });
-        if (this.value != null) FHtml.attributeToggle(item, attrName, this.value, options);
+        if (this.value != null && !options.noInit) FHtml.attributeToggle(item, attrName, this.value, options);
         break;
       case 'number':
       case 'string':
         this.observe((value) => {
           item.setAttribute(attrName, value.toString());
         });
-        if (this.value != null) item.setAttribute(attrName, this.value.toString());
+        if (this.value != null && !options.noInit) item.setAttribute(attrName, this.value.toString());
         break;
 
       default:

@@ -25,7 +25,8 @@ export const AlgIronCheckedElementBehavior = (base) => class extends base {
       .onChangeReflectToAttribute('toggles', this)
       .fire('toggles', true)
 
-      .onChangeReflectToAttribute('checked', this)
+      // With noInit, avoid modify the checked initial attribute value
+      .onChangeReflectToAttribute('checked', this, { noInit: true })
       // .onChangeFireMessage('checked', this, 'change')
 
       .define('required', new ObservableEvent('required').setType('boolean')
@@ -45,14 +46,21 @@ export const AlgIronCheckedElementBehavior = (base) => class extends base {
   }
 
   /**
-   * Checked attribute change
+   * Checked attribute change.
+   * If disabled, do nothing.
+   *
    * @param {String} attrName - Attribute Name
    * @param {String} value
    */
   bindedChecked(attrName, value) {
     if (this.bindedAttributeSuper(attrName, value)) return;
 
-    this.eventManager.getObservable('active').update(this.toBoolean(value));
+    if (this.hasAttribute('disabled')) return;
+
+    const _value = this.toBoolean(value);
+    if (!_value && this.hasAttribute('frozen')) this.removeAttribute('frozen');
+
+    this.eventManager.getObservable('active').update(_value);
   }
 
   /**

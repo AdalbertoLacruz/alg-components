@@ -432,7 +432,8 @@ class EventManager {
    *
    * @param {String} eventName
    * @param {*} target - HTML element
-   * @param {Object} options
+   * @param {Object} options {type: 'true-false' for attribute,
+   *    noInit: true for avoid outside attribute reflect}
    * @return {EventManager}
    */
   onChangeReflectToAttribute(eventName, target, options = {}) {

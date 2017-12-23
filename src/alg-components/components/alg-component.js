@@ -168,6 +168,25 @@ class AlgComponent extends BinderElement {
   }
 
   /**
+   * Uses handler(id, isDefault) to define a css variable --id
+   *
+   * @param {String} id
+   * @param {Function} handler
+   * @return {String}
+   */
+  applyCustomVariable(id, handler) {
+    if (this.selfClass.templateStyle) {
+      // We are creating the custom style
+      this.styleIsCustom = true;
+      return handler(id, false);
+    } else {
+      // We are creating static style
+      this.styleCouldBeCustom = true;
+      return handler(id, true);
+    }
+  }
+
+  /**
    * Build the shadow element, and the reference to the id elements
    */
   createShadowElement() {

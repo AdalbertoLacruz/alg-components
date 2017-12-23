@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-radio-button\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>alg-iron-selector</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="visibility: hidden">
+  <h1 class="centered">alg-iron-selector</h1>
+  <div class="vertical-section-container centered">
+    <h3>Basic. Use up arrow, tap, down arrow. Could be empty</h3>
+    <div class="demo-snipped">
+      <alg-iron-selector selected="3" activate-event="tap, up, down" allow-empty-selection>
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </alg-iron-selector>
+    </div>
+    <h3>Use <code>multi</code> to enable multiple selection. No Empty</h3>
+    <div class="demo-snipped">
+      <alg-iron-selector multi selected="0, 2">
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </alg-iron-selector>
+    </div>
+    <h3>
+      Use <code>attr-for-selected</code> to specify the attribute of the selectable
+      elements containing the selection key.
+    </h3>
+    <div class="demo-snipped">
+      <alg-iron-selector selected="bar" attr-for-selected="name">
+        <div name="foo">Foo</div>
+        <div name="bar">Bar</div>
+        <div name="baz">Baz</div>
+        <div name="qux">Qux</div>
+        <div name="quux">Quux</div>
+      </alg-iron-selector>
+    </div>
+    <h3>
+       Use <code>fallback-selection</code> to provide an option to be selected
+       when all options are deselected or all selected options are invalid.
+    </h3>
+    <div class="demo-snipped">
+      <alg-iron-selector multi="" selected="an-unknown-key" attr-for-selected="name" fallback-selection="default">
+        <div name="foo">Foo</div>
+        <div name="bar">Bar</div>
+        <div name="baz">Baz</div>
+        <div name="qux">Qux</div>
+        <div name="quux">Quux</div>
+        <div name="default">Default</div>
+      </alg-iron-selector>
+    </div>
+    <h3>Select mono active components. Use left and right arrows. No empty.</h3>
+    <div class="demo-snipped">
+      <alg-iron-selector attr-for-selected="name" selected="r1"
+        selected-attribute="checked" activate-event="left, right">
+        <alg-paper-radio-button name="r0">Radio 0</alg-paper-radio-button>
+        <alg-paper-radio-button name="r1">Radio 1</alg-paper-radio-button>
+        <alg-paper-radio-button name="r2" disabled>Radio 2</alg-paper-radio-button>
+        <alg-paper-radio-button name="r3">Radio 3</alg-paper-radio-button>
+      </alg-iron-selector>
+    </div>
+    <h3>Select multi active components. Use left and right arrows. No empty.</h3>
+    <div class="demo-snipped">
+      <alg-iron-selector multi attr-for-selected="name" selected="r1, r2"
+        selected-attribute="checked" activate-event="left, right">
+        <alg-paper-radio-button name="r0">Radio 0</alg-paper-radio-button>
+        <alg-paper-radio-button name="r1">Radio 1</alg-paper-radio-button>
+        <alg-paper-radio-button name="r2">Radio 2</alg-paper-radio-button>
+        <alg-paper-radio-button name="r3">Radio 3</alg-paper-radio-button>
+      </alg-iron-selector>
+    </div>
+    <h3>Select multi active components</h3>
+    <div class="demo-snipped">
+      <alg-iron-selector attr-for-selected="name" selected="t1"
+        selected-attribute="checked">
+        <alg-paper-toggle-button name="t0">Toggle 0</alg-paper-toggle-button>
+        <alg-paper-toggle-button name="t1">Toggle 1</alg-paper-toggle-button>
+        <alg-paper-toggle-button name="t2">Toggle 2</alg-paper-toggle-button>
+        <alg-paper-toggle-button name="t3">Toggle 3</alg-paper-toggle-button>
+      </alg-iron-selector>
+    </div>
+  </div>
+</body>
+</html>

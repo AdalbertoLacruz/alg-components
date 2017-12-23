@@ -77,8 +77,11 @@ export const AlgIronButtonState = (base) => class extends base {
    * Response to a click event or enter key
    */
   _tapHandler() {
+    if (this.hasAttribute('frozen')) return; // Don't let changes
+
     const active = this.eventManager.getObservable('active');
     const toggles = this.eventManager.getObservable('toggles');
+
     if (toggles.value) {
       active.toggle();
     } else {

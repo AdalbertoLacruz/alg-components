@@ -1,3 +1,4 @@
+## v0.1.1  (2017-12-23) paper-radio-button, iron-selector, paper-radio-group
 ## v0.1.0  (2017-11-27) Observable & EventManager class refactoring
 ## v0.0.12 (2017-11-20) paper-toggle-button
 ## v0.0.11 (2017-11-10) class mixins, review EventManager

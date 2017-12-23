@@ -3,7 +3,7 @@
 import { AlgController } from '../controllers/alg-controller.js';
 import { BinderParser } from './binder-parser.js';
 import { EventManager } from '../types/event-manager.js';
-import * as Exec from '../util/util-exec.js';
+import { executeTaskQueue } from '../util/misc.js';
 import * as Str from '../util/util-str.js';
 
 /**
@@ -82,7 +82,7 @@ class BinderElement extends HTMLElement {
       return;
     }
 
-    if (newVal == null) return; // happens in attribute removal
+    if (newVal == null) return this.attributeUpdate(attrName, newVal); // happens in attribute removal
 
     if (this.attributeRegister.has(attrName)) {
       if (attrName !== 'style') this.attributeUpdate(attrName, newVal);
@@ -100,7 +100,7 @@ class BinderElement extends HTMLElement {
     this.findController();
     this.updateEventHandlersDefinition();
     this.loaded = true;
-    Exec.executeTaskQueue(this.taskQueue);
+    executeTaskQueue(this.taskQueue);
     this.addEventHandlers();
     // this.bindeddHiden(hidden, false);
   }
@@ -110,7 +110,7 @@ class BinderElement extends HTMLElement {
    * @override
    */
   disconnectedCallback() {
-    Exec.executeTaskQueue(this.unsubscribeHandlers); // controller
+    executeTaskQueue(this.unsubscribeHandlers); // controller
     this.eventManager.unsubscribe();
   }
 
@@ -310,6 +310,7 @@ class BinderElement extends HTMLElement {
     if (this.attributeRegister.has(attrName) && (this.attributeRegister.get(attrName) === value)) return true;
     this.attributeRegister.set(attrName, value);
     if (this.attributeSync.has(attrName)) this.setAttribute(attrName, value);
+
     return false;
   }
 
@@ -372,7 +373,7 @@ class BinderElement extends HTMLElement {
   /**
    * Send a message to the controller
    * @param {String} customEvent
-   * @param {String} message
+   * @param {*} message
    */
   fire(customEvent, message) {
     if (this.fireDisabled) return;

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-radio-group\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>alg-paper-radio-group</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="visibility: hidden">
+  <h1 class="centered">alg-paper-radio-group</h1>
+  <div class="vertical-section-container centered">
+    <h3>A paper-radio-group allows only one item to be selected</h3>
+    <div class="demo-snipped">
+      <label id="label1">Dinosaurs:</label>
+      <alg-paper-radio-group aria-labelledby="label1">
+        <alg-paper-radio-button name="a">allosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="b">brontosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="d" disabled="">diplodocus</alg-paper-radio-button>
+      </alg-paper-radio-group>
+    </div>
+    <h3>It can have an initial selection</h3>
+    <div class="demo-snipped">
+      <label id="label2">Dinosaurs:</label>
+      <alg-paper-radio-group selected="b" aria-labelledby="label2">
+        <alg-paper-radio-button name="a">allosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="b">brontosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="d" disabled="">diplodocus</alg-paper-radio-button>
+      </alg-paper-radio-group>
+    </div>
+    <h3>It can optionally allow items to be deselected</h3>
+    <div class="demo-snipped">
+      <label id="label3">Dinosaurs:</label>
+      <alg-paper-radio-group selected="b" allow-empty-selection="" aria-labelledby="label3">
+        <alg-paper-radio-button name="a">allosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="b">brontosaurus</alg-paper-radio-button>
+        <alg-paper-radio-button name="d" disabled="">diplodocus</alg-paper-radio-button>
+      </alg-paper-radio-group>
+    </div>
+  </div>
+</body>
+</html>

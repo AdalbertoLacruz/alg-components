@@ -23,14 +23,15 @@ export const attributeToggle = (element, attrName, force, options = {}) => {
   const on = types[0].trim().toLowerCase();
   const off = types[1].trim().toLowerCase();
   const value = force != null ? force : !element.hasAttribute(attrName);
+  const attrValue = element.getAttribute(attrName);
 
   if (value) {
-    element.setAttribute(attrName, on);
+    if (attrValue !== on) element.setAttribute(attrName, on);
   } else {
     if (off === 'remove') {
-      element.removeAttribute(attrName);
+      if (element.hasAttribute(attrName)) element.removeAttribute(attrName);
     } else {
-      element.setAttribute(attrName, off);
+      if (attrValue !== off) element.setAttribute(attrName, off);
     }
   }
 };

@@ -11,8 +11,6 @@ body {
   grid-template-rows: 50px auto 50px;
   grid-row-gap: 5px;
   --paper-button-ink-color: var(--paper-pink-900);
-
-
 }
 
 .header {

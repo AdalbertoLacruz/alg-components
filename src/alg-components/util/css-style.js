@@ -18,6 +18,15 @@ export const apply = (element, id) => {
 };
 
 /**
+ * Recovers a property value in the element computed style
+ * @param {HTMLElement} element
+ * @param {String} id
+ * @return {String}
+ */
+export const getComputedProperty = (element, id) =>
+  getComputedStyle(element, null).getPropertyValue(id).trim();
+
+/**
  * Recovers a css rule from the map
  * @param {String} id
  * @return {String}

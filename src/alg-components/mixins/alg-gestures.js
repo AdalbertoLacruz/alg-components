@@ -25,6 +25,7 @@ export const AlgGestures = (base) => class extends base {
       .define('trackEnd', new ObservableEvent('trackEnd'), ['mouseup'])
       .visibleTo('mouseup', ['mousemove'])
       .on('mousedown', (event, context) => {
+        if (this.hasAttribute('frozen')) return;
         this._trackEvent = null; // reset values
         context._trackStart.update(this.trackEvent); // event
         this.eventManager.subscribeSwitch('mousemove');
