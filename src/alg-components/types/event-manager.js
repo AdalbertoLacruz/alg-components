@@ -1,5 +1,4 @@
 // @copyright 2017 ALG
-// @ts-check
 
 import { ObservableEvent } from './observable-event.js';
 
@@ -16,6 +15,12 @@ class EventManager {
   constructor(target) {
     this.target = target;
   }
+
+  /** global (ducument) eventManager  */
+  static get document() { return this._document || (this._document = new EventManager(document)); }
+
+  /** global (window) eventManager */
+  static get window() { return this._window || (this._window = new EventManager(window)); }
 
   /**
    * Global definitions for events
@@ -203,6 +208,15 @@ class EventManager {
         },
         handler: null
       });
+  }
+
+  /**
+   * Cache to let a component unsubscribe to global events
+   * Component - [{eventName, handler}, ...]
+   * @type {WeakMap<HTMLElement, Array<Object>>}
+   */
+  get handlersRegister() {
+    return this._handlersRegister || (this._handlersRegister = new WeakMap());
   }
 
   /**
@@ -408,6 +422,7 @@ class EventManager {
    * options
    *   custom: true/false
    *   link: true/false
+   *   me: this (calling component) - to store in handlers cache
    *
    * @param {String} eventName - click, ...
    * @param {Function} handler - code to execute on event. If hander == null, only forces event definition
@@ -419,7 +434,10 @@ class EventManager {
     if (handler != null) {
       if (options.link) data.link(handler); else data.observe(handler);
     }
-
+    const me = options.me;
+    if (me != null && handler != null) {
+      this.storeHandler(me, eventName, handler, options.link);
+    }
     return this;
   }
 
@@ -547,6 +565,26 @@ class EventManager {
   }
 
   /**
+   * Cache information for further component unsubscribe to global events
+   * @param {HTMLElement} me
+   * @param {String} eventName
+   * @param {Function} handler
+   * @param {Boolean} isLink - The handler is attached as link (not as observe)
+   */
+  storeHandler(me, eventName, handler, isLink) {
+    const handlersRegister = this.handlersRegister;
+
+    let register = handlersRegister.get(me);
+    if (!register) {
+      register = [];
+      handlersRegister.set(me, register);
+    }
+
+    const item = {eventName, handler, isLink};
+    register.push(item);
+  }
+
+  /**
    * After on(...), subscribe the events to the target. Supports multiple calls
    * @return {EventManager}
    */
@@ -586,6 +624,36 @@ class EventManager {
         item.listener = null;
       }
     }
+    return this;
+  }
+
+  /**
+   * Unsubscribe the component (me) in global events or partial in parents
+   * @param {HTMLElement} me
+   * @param {String} name - only unsubscribe to this event
+   * @return {EventManager}
+   */
+  unsubscribeMe(me, name = null) {
+    const register = this.handlersRegister.get(me);
+    let indexDeleted;
+
+    if (register) {
+      register.forEach((item, index) => {
+        const {eventName, handler, isLink} = item;
+        if (name == null || name === eventName) {
+          this.getObservable(eventName).unSubscribe(handler, isLink);
+          indexDeleted = index;
+        }
+      });
+    }
+
+    // delete
+    if (name == null) {
+      this.handlersRegister.delete(me);
+    } else {
+      if (indexDeleted != null) register.splice(indexDeleted, 1);
+    }
+
     return this;
   }
 

@@ -8,6 +8,7 @@ There are many components/frameworks for web development, so this is an experime
 - Javascript class mixins and properties
 - Css mixins and @apply
 - EventManager for compound events (state)
+- AttributeManager for component attribute handling
 
 ## Architecture
 
@@ -81,7 +82,7 @@ The actual version is very early. Only works in the latest vesions of Chrome.
 
 ## [License](LICENSE)
 
-Copyright (c) 2017 [Adalberto Lacruz](https://github.com/AdalbertoLacruz)
+Copyright (c) 2017-2018 [Adalberto Lacruz](https://github.com/AdalbertoLacruz)
 
 Licensed under the [Apache License](LICENSE).
 

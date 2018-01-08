@@ -2,6 +2,11 @@
 // @copyright 2017 ALG
 // @ts-check
 
+// REQUIRES: ****************
+//  alg-paper-ripple-behavior
+//  alg-iron-button-state
+//  iron-control-state
+
 /**
  * Mixin Behavior
  *

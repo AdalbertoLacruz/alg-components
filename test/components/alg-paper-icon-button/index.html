@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-button\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>alg-paper-icon-button</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="visibility: hidden">
+  <h1 class="centered">alg-paper-icon-button</h1>
+  <div class="vertical-section-container centered">
+    <h3>Buttons can use iron-icons or external images, and can be disabled</h3>
+    <div class="demo-snipped">
+      <alg-paper-icon-button icon="favorite" title="heart"></alg-paper-icon-button>
+      <alg-paper-icon-button src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+        alt="octocat" title="octocat"></alg-paper-icon-button>
+      <alg-paper-icon-button disabled="" icon="reply" title="reply"></alg-paper-icon-button>
+    </div>
+
+    <h3>Buttons can hide the ripple effect using the <i>noink</i> attribute</h3>
+    <div class="demo-snipped">
+      <alg-paper-icon-button noink="" icon="find-in-page" title="find"></alg-paper-icon-button>
+    </div>
+
+    <h3>Buttons can be styled using regular CSS and custom properties</h3>
+    <div class="demo-snipped">
+      <alg-paper-icon-button icon="favorite" title="heart" class="pink"></alg-paper-icon-button>
+      <alg-paper-icon-button icon="flight-takeoff" title="take off" class="blue"></alg-paper-icon-button>
+    </div>
+
+    <h3>Buttons can be resized</h3>
+    <div class="demo-snipped">
+      <alg-paper-icon-button icon="alarm-on" title="wake up" class="giant"></alg-paper-icon-button>
+    </div>
+
+    <h3>Buttons can be used as a link</h3>
+    <div class="demo-snipped">
+      <a href="https://www.polymer-project.org" tabindex="-1">
+        <alg-paper-icon-button icon="polymer"></alg-paper-icon-button>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

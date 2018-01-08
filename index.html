@@ -33,14 +33,15 @@
         <alg-paper-button id="btn2" disabled>
           <alg-iron-icon icon="block"></alg-iron-icon>disabled
         </alg-paper-button>
+        <alg-iron-icon icon="favorite"></alg-iron-icon>
+        <alg-paper-icon-button id="iconbut" icon="add-circle-outline" alt="circle" on-action></alg-paper-icon-button>
 
-        <alg-paper-radio-group selected="small">
-          <alg-paper-radio-button name="small">Small</alg-paper-radio-button>
-          <alg-paper-radio-button name="medium">Medium</alg-paper-radio-button>
-          <alg-paper-radio-button name="large">Large</alg-paper-radio-button>
-        </alg-paper-radio-group>
-      </div>
-      <!-- <alg-show-log id="log" data></alg-show-log> -->
+        <div>
+          <alg-iron-dropdown horizontal-align="right" vertical-align="top">
+            <div slot="dropdown-content">Hello!</div>
+          </alg-iron-dropdown>
+        </div>
+        <!-- <alg-show-log id="log" data></alg-show-log> -->
     </div>
     <div class="footer">
       Footer

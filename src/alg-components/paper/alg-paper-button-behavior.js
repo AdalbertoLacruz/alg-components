@@ -1,7 +1,7 @@
 // @copyright @polymer\paper-behaviors\paper-button-behavior.js
 // @copyright 2017 ALG
-// @ts-check
 
+import { AlgActionBehavior } from '../mixins/alg-action-behavior.js';
 import { AlgIronButtonState } from '../mixins/alg-iron-button-state.js';
 import { AlgPaperComponent } from './alg-paper-component.js';
 import { AlgPaperRippleBehavior } from '../mixins/alg-paper-ripple-behavior.js';
@@ -19,13 +19,11 @@ import { ObservableEvent } from '../types/observable-event.js';
  * @type {class}
  */
 class AlgPaperButtonBehavior extends
-  mixinFactory(AlgPaperComponent, AlgIronButtonState, AlgPaperRippleBehavior) {
+  mixinFactory(AlgPaperComponent, AlgIronButtonState, AlgPaperRippleBehavior, AlgActionBehavior) {
   //
   constructor() {
     // @ts-ignore
     super();
-
-    this.fireHandlers.add('action'); // fire with pressed true
 
     const eventManager = this.eventManager;
     eventManager
@@ -33,7 +31,6 @@ class AlgPaperButtonBehavior extends
       .on('disabled', this._calculateElevation.bind(this))
       .on('focused', this._calculateElevation.bind(this))
       .on('pressed', this._calculateElevation.bind(this))
-      .onChangeFireMessage('pressed', this, 'action', { to: true })
       .on('receivedFocusFromKeyboard', this._calculateElevation.bind(this))
       .onChangeReflectToClass('receivedFocusFromKeyboard', this, 'keyboard-focus')
       .subscribe();
@@ -45,7 +42,7 @@ class AlgPaperButtonBehavior extends
    * @type {Array<String>}
    */
   static get observedAttributes() {
-    return super.observedAttributes.concat(['on-click', 'on-action']);
+    return super.observedAttributes.concat(['on-click']);
   }
 
   /** @type {ObservableEvent} */

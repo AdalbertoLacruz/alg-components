@@ -52,7 +52,11 @@ class ObservableEvent extends Observable {
       case 'number':
       case 'string':
         this.observe((value) => {
-          item.setAttribute(attrName, value.toString());
+          if (value != null) {
+            item.setAttribute(attrName, value.toString());
+          } else {
+            if (item.hasAttribute(attrName)) item.removeAttribute(attrName);
+          }
         });
         if (this.value != null && !options.noInit) item.setAttribute(attrName, this.value.toString());
         break;

@@ -135,7 +135,7 @@ class AlgComponent extends BinderElement {
    * check for tabIndex, role, and add them if not defined
    */
   addStandardAttributes() {
-    if (!this.hasAttribute('role')) {
+    if (!this.hasAttribute('role') && this.role) {
       this.setAttribute('role', this.role);
     }
     if (!this.hasAttribute('tabindex')) {

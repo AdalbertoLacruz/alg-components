@@ -36,6 +36,17 @@ export const attributeToggle = (element, attrName, force, options = {}) => {
   }
 };
 
+/**
+ * Defines a custom event and fire it over node
+ * @param {HTMLElement} node
+ * @param {String} name
+ * @param {Object} message
+ */
+export function fireEvent(node, name, message) {
+  const event = new CustomEvent(name, message);
+  node.dispatchEvent(event);
+};
+
 // export const reflectToAttribute = (element, attribute, options, value) => {
 //   attributeToggle(element, attribute, value, options);
 // };
@@ -59,4 +70,21 @@ export const transform = (node, transformText) => {
  */
 export const translate3d = (node, x, y, z) => {
   transform(node, `translate3d(${x}, ${y}, ${z})`);
+};
+
+/**
+ * Promise that wait until document is in 'complete' state.
+ * document.readyState cicles: 'loading', 'interactive', 'complete.
+ * Calling from connectedCallback assure 'interactive' state at less, so the next state is the searched.
+ */
+export function waitUntilDocumentReady() {
+  return new Promise((resolve) => {
+    if (document.readyState === 'complete') {
+      resolve();
+    } else {
+      document.addEventListener('readystatechange', () => {
+        resolve();
+      }, { once: true }); // automatic remove
+    }
+  });
 };

@@ -12,6 +12,11 @@ export function executeTaskQueue(taskQueue) {
   });
 }
 
+export function executeDelayedTaskQueue(taskQueue) {
+  // Promise.resolve().then(() => executeTaskQueue(taskQueue));
+  setTimeout(() => executeTaskQueue(taskQueue), 0);
+};
+
 /**
  * Encadena llamadas a funciones:
  *   result = pipe(2, incrementar, doblar);

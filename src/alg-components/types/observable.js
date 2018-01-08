@@ -24,6 +24,12 @@ class Observable {
 
     this._isLogHandler = false; // true => a log handler is defined
     this._isLogActive = false; // true =>  log is active
+
+    /**
+     * new value = transformer(value)
+     * @type {Function}
+     */
+    this.transformer = null; // set value transformer handler
   }
 
   /*  ___________________________________________ properties _____ */
@@ -37,7 +43,6 @@ class Observable {
 
   /**
    * @param {*} value
-   * @return {Observable}
    */
   setContext(value) {
     this._context = value;
@@ -83,13 +88,17 @@ class Observable {
    * @type {*}
    */
   get value() { return this._value; }
-  set value(value) { this._value = value; }
+  set value(value) {
+    this._value = (this.transformer == null)
+      ? value
+      : this.transformer(value);
+  }
 
   /**
    * @param {*} value
    */
   setValue(value) {
-    this._value = value;
+    this.value = value;
     return this;
   }
 
@@ -167,7 +176,7 @@ class Observable {
   }
 
   /**
-   * If value is null/undefined changes to newValue
+   * If value is null/undefined changes to newValue // TODO: as transformer
    * @param {*} newValue
    * @return {Observable}
    */
@@ -246,10 +255,15 @@ class Observable {
   /**
    * Remove the susbscriber
    * @param {Function} handler
+   * @param {Boolean} isLink - True if the handler is in the link list
    * @return {Observable}
    */
-  unSubscribe(handler) {
-    this.observers.delete(handler); // Same for linkers ?
+  unSubscribe(handler, isLink = false) {
+    if (isLink) {
+      this.linkers.delete(handler);
+    } else {
+      this.observers.delete(handler);
+    }
     return this;
   }
 

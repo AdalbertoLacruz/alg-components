@@ -1,9 +1,14 @@
 interface AlgIronComponent {
 }
 
+interface Event {
+  path: Array<HTMLElements>
+}
+
 interface EventTarget {
   eventManager: EventManager;
 }
+
 interface HTMLElement {
   center: boolean;
   controller: string;

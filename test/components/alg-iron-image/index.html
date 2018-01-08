@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-radio-button\demo\index.html
+@copyright 2017 ALG
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>alg-iron-selector</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="visibility: hidden">
+  <h1 class="centered">alg-iron-image</h1>
+  <div class="vertical-section-container centered">
+    <h3>A plain <code>iron-image</code>.</h3>
+    <div class="demo-snipped">
+      <alg-iron-image alt="The Polymer logo." src="./polymer.svg"></alg-iron-image>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3><code>sizing="cover"</code> expands the image to cover all of its specified size.</h3>
+    <div class="demo-snipped">
+      <alg-iron-image sizing="cover" id="example-sizing-cover" alt="The Polymer logo." src="./polymer.svg">
+      </alg-iron-image>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3><code>sizing="contain"</code> expands the image to fit within its specified size.</h3>
+    <div class="demo-snipped">
+      <alg-iron-image sizing="contain" id="example-sizing-contain" alt="The Polymer logo." src="./polymer.svg">
+      </alg-iron-image>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3>Use the <code>--iron-image-width</code> property to set the width of the image wrapped by the
+      <code>iron-image</code>.</h3>
+    <div class="demo-snipped">
+      <div id="example-full-width-container">
+        <alg-iron-image id="example-full-width" alt="The Polymer logo." src="./polymer.svg"></alg-iron-image>
+        <alg-iron-image id="example-half-width" alt="The Polymer logo." src="./polymer.svg"></alg-iron-image>
+      </div>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3>Use the <code>--iron-image-height</code> property to set the height of the image wrapped by the
+      <code>iron-image</code>.</h3>
+    <div class="demo-snipped">
+      <div id="example-full-height-container">
+        <alg-iron-image id="example-full-height" alt="The Polymer logo." src="./polymer.svg"></alg-iron-image>
+        <alg-iron-image id="example-half-height" alt="The Polymer logo." src="./polymer.svg"></alg-iron-image>
+      </div>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3>No placeholder is shown by default.</h3>
+    <div class="demo-snipped">
+      <div class="example without-preload">
+        <button onclick="load('example-without-preload-1')">Load image</button>
+        <br>
+        <alg-iron-image sizing="contain" alt="The Polymer logo." id="example-without-preload-1"></alg-iron-image>
+      </div>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3>
+      The <code>preload</code> attribute shows a placeholder element in front of the image
+      before it has loaded. Use the <code>--iron-image-placeholder</code> CSS mixin to style it.
+    </h3>
+
+    <div class="demo-snipped">
+      <div class="example preload">
+        <button onclick="load('example-preload-1')">Load image</button>
+        <br>
+        <alg-iron-image preload="" id="example-preload-1" alt="The Polymer logo." class="sized" sizing="contain">
+        </alg-iron-image>
+        <br> Without the <code>fade</code> attribute, the placeholder element is hidden with no transition when the image loads.
+      </div>
+      <div class="example preload">
+        <button onclick="load('example-preload-2')">Load image</button>
+        <br>
+        <alg-iron-image preload="" fade="" id="example-preload-2" alt="The Polymer logo." class="sized"
+          sizing="contain"></alg-iron-image>
+        <br> With the <code>fade</code> attribute, the placeholder element is fades away when the image loads.
+      </div>
+    </div>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3>
+      Use the <code>placeholder</code> attribute to specify a background image for the placeholder element.
+    </h3>
+    <div class="demo-snipped">
+      <div class="example preload-image">
+        <button onclick="load('example-preload-image-1')">Load image</button>
+        <br>
+        <alg-iron-image preload="" placeholder="./loading.png" id="example-preload-image-1"
+          alt="The Polymer logo." class="sized" sizing="contain"></alg-iron-image>
+        <br> (without <code>fade</code> attribute)
+      </div>
+      <div class="example preload-image">
+        <button onclick="load('example-preload-image-2')">Load image</button>
+        <br>
+        <alg-iron-image preload="" placeholder="./loading.png" fade="" id="example-preload-image-2"
+          alt="The Polymer logo." class="sized" sizing="contain"></alg-iron-image>
+        <br> (with <code>fade</code> attribute)
+      </div>
+    </div>
+  </div>
+</body>
+</html>

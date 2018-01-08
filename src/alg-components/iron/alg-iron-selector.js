@@ -1,7 +1,6 @@
 // @copyright @polymer\iron-selector\iron-selector.js
 // @copyright 2017 ALG
 
-// import { AlgIronMultiSelectableBehavior } from './alg-iron-multi-selectable-behavior.js';
 import { AlgIronSelectableBehavior } from './alg-iron-selectable-behavior.js';
 
 class AlgIronSelector extends AlgIronSelectableBehavior {

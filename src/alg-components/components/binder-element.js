@@ -1,6 +1,7 @@
 // @copyright 2017 ALG
 // @ts-check
 import { AlgController } from '../controllers/alg-controller.js';
+import { AttributeManager } from '../types/attribute-manager.js';
 import { BinderParser } from './binder-parser.js';
 import { EventManager } from '../types/event-manager.js';
 import { executeTaskQueue } from '../util/misc.js';
@@ -99,7 +100,7 @@ class BinderElement extends HTMLElement {
   connectedCallback() {
     this.findController();
     this.updateEventHandlersDefinition();
-    this.loaded = true;
+    this.loaded = true; // rename to isAttached ?
     executeTaskQueue(this.taskQueue);
     this.addEventHandlers();
     // this.bindeddHiden(hidden, false);
@@ -115,6 +116,9 @@ class BinderElement extends HTMLElement {
   }
 
   // ******************* own class members **********************
+
+  /** @type {AttributeManager} */
+  get attributeManager() { return this._attributeManager || (this._attributeManager = new AttributeManager(this)); }
 
   /**
    * Contains the last value from an attribute. This meaning that has been checked for binding
@@ -297,6 +301,7 @@ class BinderElement extends HTMLElement {
   attributeUpdate(attrName, value) {
     const attributeHandler = this.getAttributeHandler(attrName);
     if (attributeHandler != null) attributeHandler.bind(this, attrName)(value);
+    this.attributeManager.change(attrName, value);
   }
 
   /**
@@ -357,8 +362,14 @@ class BinderElement extends HTMLElement {
         if (element.hasAttribute('controller')) {
           controllerName = element.getAttribute('controller');
         } else {
+          // element = element.parentElement;
+
           // @ts-ignore
-          element = element.parentElement;
+          element = element.parentNode;
+          if (element && element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            // @ts-ignore
+            element = element.host;
+          }
         }
       }
     }
