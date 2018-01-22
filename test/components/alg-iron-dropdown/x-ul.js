@@ -1,7 +1,7 @@
 // @copyright @polymer
-// @copyright 2017-2018 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import { AlgPaperComponent } from '../../../src/alg-components/paper/alg-paper-component.js';
+import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
 
 /**
  *

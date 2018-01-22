@@ -1,6 +1,7 @@
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global mocha chai describe it before beforeEach */
-import * as Str from '../../src/alg-components/util/util-str.js';
+
+import * as Str from '../../lib/src/util/util-str.js';
 
 let assert = chai.assert;
 

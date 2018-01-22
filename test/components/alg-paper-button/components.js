@@ -1,9 +1,7 @@
-import '../../../src/alg-components/icons/alg-iron-icons.js';
+import '../../../lib/icons/alg-iron-icons.js';
 import '../demo-pages.js';
 import './style.js';
-import { AlgIronIcon } from '../../../src/alg-components/iron/alg-iron-icon.js';
-import { AlgPaperButton } from '../../../src/alg-components/paper/alg-paper-button.js';
+import { AlgIronIcon } from '../../../lib/components/alg-iron-icon.js';
+import { AlgPaperButton } from '../../../lib/components/alg-paper-button.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('body').style.visibility = '';
-});
+document.body.style.opacity = null;

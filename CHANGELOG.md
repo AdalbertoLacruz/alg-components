@@ -1,4 +1,5 @@
-## v0.1.3  (2018-01-xx) iron-dropdown,
+## v0.x.x  (2018-01-xx) iron-dropdown,
+## v0.2.0  (2018-01-xx) Directories shuffle
 ## v0.1.2  (2018-01-08) AttributeManager, paper-icon-button, iron-image, iron-resizable-behavior
 ## v0.1.1  (2017-12-23) paper-radio-button, iron-selector, paper-radio-group
 ## v0.1.0  (2017-11-27) Observable & EventManager class refactoring

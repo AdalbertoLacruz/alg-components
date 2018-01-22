@@ -1,12 +1,12 @@
 // @copyright @polymer\paper-styles\demo-pages.js
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global cssRules */
 
-import '../../src/alg-components/styles/iron-flex-layout.js';
-import '../../src/alg-components/styles/color.js';
-import '../../src/alg-components/styles/typography.js';
-import '../../src/alg-components/styles/shadow.js';
-import * as css from '../../src/alg-components/util/css-style.js';
+import '../../lib/styles/iron-flex-layout.js';
+import '../../lib/styles/color.js';
+import '../../lib/styles/typography.js';
+import '../../lib/styles/shadow.js';
+import * as css from '../../lib/styles/css-style.js';
 
 css.setRule('--horizontal-section-container', `
     ${css.getRule('--layout-horizontal')}
@@ -16,7 +16,6 @@ css.setRule('--horizontal-section-container', `
 
 css.style('demo-pages', `
   body {
-    @apply --paper-font-common-base;
     ${css.getRule('--paper-font-common-base')}
     font-size: 14px;
     margin: 0;
@@ -63,7 +62,7 @@ css.style('demo-pages', `
   }
 
   body > div.layout.horizontal.center-justified {
-    ${cssRules.get('--layout-wrap')}
+    ${css.getRule('--layout-wrap')}
   }
 
   .demo-snipped {

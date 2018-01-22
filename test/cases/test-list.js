@@ -1,7 +1,7 @@
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global mocha chai describe it before beforeEach */
 
-import { List } from '../../src/alg-components/types/list.js';
+import { List } from '../../lib/src/types/list.js';
 
 let assert = chai.assert;
 

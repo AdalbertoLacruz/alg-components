@@ -1,8 +1,6 @@
 import '../demo-pages.js';
 import './style.js';
 
-import { AlgPaperRadioButton } from '../../../src/alg-components/paper/alg-paper-radio-button.js';
+import { AlgPaperRadioButton } from '../../../lib/components/alg-paper-radio-button.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('body').style.visibility = '';
-});
+document.body.style.opacity = null;

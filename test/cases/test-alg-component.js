@@ -1,8 +1,8 @@
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global mocha chai describe it before beforeEach */
-import { AlgComponent } from '../../src/alg-components/components/alg-component.js';
-import { AlgController } from '../../src/alg-components/controllers/alg-controller.js';
-import { Observable } from '../../src/alg-components/types/observable.js';
+import { AlgComponent } from '../../lib/src/base/alg-component.js';
+import { AlgController } from '../../lib/controller/alg-controller.js';
+import { Observable } from '../../lib/src/types/observable.js';
 
 let assert = chai.assert;
 
@@ -56,6 +56,7 @@ export function TestAlgComponent() {
     before(() => {
       appController = new Controller();
       component = document.createElement('test-component');
+      // @ts-ignore
       component.loaded = true;
       component.controller = appController.name;
     });

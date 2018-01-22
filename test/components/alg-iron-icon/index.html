@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <!--
 @copyright @polymer\iron-icon\demo\index.html
-@copyright 2017 ALG
+@copyright 2017-2018 adalberto.lacruz@gmail.com
  -->
+
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -10,8 +11,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>alg-iron-icon</title>
     <script type="module" src="components.js"></script>
+    <style>
+      body {
+        transition: opacity 0.4s linear;
+      }
+    </style>
   </head>
-  <body style="visibility: hidden">
+  <body style="opacity: 0">
     <h1 class="centered">alg-iron-icon</h1>
     <div class="horizontal-section">
       <alg-iron-icon src="location.png"></alg-iron-icon><span>location.png</span><p>

@@ -1,16 +1,16 @@
 // @copyright @polymer\iron-resizable-behavior\demo\src\x-app.js
-// @copyright 2017-2018 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import { AlgIronResizableBehavior } from '../../../src/alg-components/mixins/alg-iron-resizable-behavior.js';
-import { AlgPaperComponent } from '../../../src/alg-components/paper/alg-paper-component.js';
-import { translate3d } from '../../../src/alg-components/util/f-html.js';
-import { mixinFactory } from '../../../src/alg-components/util/mixins.js';
+import { AlgIronResizableMixin } from '../../../lib/src/mixins/alg-iron-resizable-mixin.js';
+import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+import { translate3d } from '../../../lib/src/util/f-html.js';
+import { mixinFactory } from '../../../lib/src/util/mixins.js';
 
 /**
  * @extends { AlgPaperComponent}
  * @class
  */
-class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableBehavior) {
+class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override
@@ -95,7 +95,7 @@ window.customElements.define('x-puck', XPuck);
  * @extends { AlgPaperComponent}
  * @class
  */
-class XApp extends mixinFactory(AlgPaperComponent, AlgIronResizableBehavior) {
+class XApp extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override

@@ -1,8 +1,8 @@
 // @copyright @polymer\iron-dropdown\demo\x-select.js
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import { AlgPaperComponent } from '../../../src/alg-components/paper/alg-paper-component.js';
-import * as FHtml from '../../../src/alg-components/util/f-html.js';
+import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+import * as FHtml from '../../../lib/src/util/f-html.js';
 
 /**
  * @class

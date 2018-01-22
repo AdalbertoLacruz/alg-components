@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 @copyright @polymer\iron-icons\demo\index.html
-@copyright 2017 ALG
+@copyright 2017-2018 adalberto.lacruz@gmail.com
  -->
 <html lang="en">
   <head>
@@ -9,9 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>alg-iron-icon demo iconset</title>
-    <script type="module" src="components.js"></script>
+    <script type="module" src="components.js"></script><style>
+      body {
+        transition: opacity 0.4s linear;
+      }
+    </style>
   </head>
-  <body style="visibility: hidden">
+  <body style="opacity: 0">
     <h1 class="centered">alg-iron-icon demo iconset</h1>
     <app-demo></app-demo>
   </body>

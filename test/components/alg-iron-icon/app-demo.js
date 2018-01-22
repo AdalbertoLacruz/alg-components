@@ -1,10 +1,9 @@
 // @copyright @polymer\iron-icons\demo\index.html
-// @copyright 2017 ALG
-// @ts-check
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global cssRules */
 
-import { AlgIronIconset } from '../../../src/alg-components/iron/alg-iron-iconset.js';
-import { AlgPaperComponent } from '../../../src/alg-components/paper/alg-paper-component.js';
+import { AlgIronIconset } from '../../../lib/src/base/alg-iron-iconset.js';
+import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
 
 class AppDemo extends AlgPaperComponent {
   createTemplateStyle() {

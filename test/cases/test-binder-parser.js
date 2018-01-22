@@ -1,6 +1,6 @@
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global mocha chai describe it before beforeEach */
-import { BinderParser } from '../../src/alg-components/components/binder-parser.js';
+import { BinderParser } from '../../lib/src/base/binder-parser.js';
 
 let assert = chai.assert;
 

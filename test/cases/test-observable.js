@@ -1,6 +1,6 @@
-// @copyright 2017 ALG
+// @copyright 2017-2018 adalberto.lacruz@gmail.com
 /* global mocha chai describe it before beforeEach */
-import { Observable } from '../../src/alg-components/types/observable.js';
+import { Observable } from '../../lib/src/types/observable.js';
 
 let assert = chai.assert;
 
