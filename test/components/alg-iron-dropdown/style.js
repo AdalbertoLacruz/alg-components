@@ -1,9 +1,9 @@
 // @copyright @polymer
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import * as css from '../../../lib/styles/css-style.js';
+import { Rules } from '../../../lib/styles/rules.js';
 
-css.style('style', `
+Rules.sheet('style', `
   body {
     transition: opacity 0.4s linear;
   }

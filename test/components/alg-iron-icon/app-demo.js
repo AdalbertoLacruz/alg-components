@@ -4,10 +4,12 @@
 
 import { AlgIronIconset } from '../../../lib/src/base/alg-iron-iconset.js';
 import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+// eslint-disable-next-line
+import { RulesInstance } from '../../../lib/styles/rules.js';
 
 class AppDemo extends AlgPaperComponent {
-  createTemplateStyle() {
-    let template = super.createTemplateStyle();
+  createTemplateStyle(css) {
+    let template = super.createTemplateStyle(css);
     template.innerHTML = `
       <style>
         h2 {

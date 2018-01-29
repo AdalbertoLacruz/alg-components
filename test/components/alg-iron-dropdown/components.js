@@ -5,8 +5,4 @@ import { AlgIronImage } from '../../../lib/components/alg-iron-image.js';
 import './x-select.js';
 import './x-ul.js';
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   document.querySelector('body').style.visibility = '';
-// });
-
 document.body.style.opacity = null;

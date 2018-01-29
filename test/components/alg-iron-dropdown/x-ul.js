@@ -2,6 +2,8 @@
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
 import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+// eslint-disable-next-line
+import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
  *
@@ -11,10 +13,11 @@ class XUl extends AlgPaperComponent {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override
+   * @param {RulesInstance} css
    * @return {HTMLTemplateElement} The template Element with style
    */
-  createTemplateStyle() {
-    let template = super.createTemplateStyle();
+  createTemplateStyle(css) {
+    let template = super.createTemplateStyle(css);
     template.innerHTML = `
       <style>
         ul {
@@ -56,7 +59,6 @@ class XUl extends AlgPaperComponent {
         ${this.defineLi()}
       </ul>
     `;
-    this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
 
     return template;
   }

@@ -15,6 +15,7 @@ interface HTMLElement {
   initialOpacity: number;
   opacityDecayVelocity: number;
   recenters: boolean;
+  replaceWith(HTMLElement);
 }
 
 interface Node {

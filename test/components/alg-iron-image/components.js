@@ -2,7 +2,6 @@ import '../demo-pages.js';
 import './style.js';
 
 import { AlgIronImage } from '../../../lib/components/alg-iron-image.js';
-// import { AlgPaperButton } from '../../../lib/components/alg-paper-button.js';
 
 document.body.style.opacity = null;
 

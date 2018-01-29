@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--
+@copyright @polymer\paper-button\demo\index.html
+@copyright 2017-2018 adalberto.lacruz@gmail.com
+ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>iron-flex-layout</title>
+  <script type="module" src="components.js"></script>
+</head>
+<body style="opacity: 0">
+  <h1 class="centered">iron-flex-layout</h1>
+  <div class="vertical-section-container centered">
+    <h4>Horizontal and vertical layout</h4>
+    <div class="demo-snippet">
+      <div class="container flex">
+        <div>one</div>
+        <div>two</div>
+        <div>three</div>
+      </div>
+    </div>
+
+    <h4>Flexible children</h4>
+    <div class="demo-snippet">
+      <div class="container flex-horizontal">
+        <div>one</div>
+        <div class="flexchild">two (flex)</div>
+        <div>three</div>
+      </div>
+    </div>
+
+    <h4>Flexible children in vertical layouts</h4>
+    <div class="demo-snippet">
+      <div class="container flex-vertical">
+        <div>one</div>
+        <div class="flexchild-vertical">two (flex)</div>
+        <div>three</div>
+      </div>
+    </div>
+
+    <h4>Flex ratios</h4>
+    <div class="demo-snippet">
+      <div class="container flex-horizontal-with-ratios">
+        <div class="flex3child">one</div>
+        <div class="flexchild">two</div>
+        <div class="flex2child">three</div>
+      </div>
+    </div>
+
+    <h4>Cross-axis stretch alignment (default)</h4>
+    <div class="demo-snippet">
+      <div class="container flex-stretch-align">
+        <div>stretch</div>
+      </div>
+    </div>
+
+    <h4>Cross-axis center alignment</h4>
+    <div class="demo-snippet">
+      <div class="container flex-center-align">
+        <div>center</div>
+      </div>
+    </div>
+
+    <h4>Cross-axis start alignment</h4>
+    <div class="demo-snippet">
+      <div class="container flex-start-align">
+        <div>start</div>
+      </div>
+    </div>
+
+    <h4>Cross-axis end alignment</h4>
+    <div class="demo-snippet">
+      <div class="container flex-end-align">
+        <div>end</div>
+      </div>
+    </div>
+
+    <h4>Justification, start justified</h4>
+    <div class="demo-snippet">
+      <div class="container flex-start-justified">
+        <div>start-justified</div>
+      </div>
+    </div>
+
+    <h4>Justification, center justified</h4>
+    <div class="demo-snippet">
+      <div class="container flex-center-justified">
+        <div>center-justified</div>
+      </div>
+    </div>
+
+    <h4>Justification, end justified</h4>
+    <div class="demo-snippet">
+      <div class="container flex-end-justified">
+        <div>end-justified</div>
+      </div>
+    </div>
+
+    <h4>Justification, equal space between elements</h4>
+    <div class="demo-snippet">
+      <div class="container flex-equal-justified">
+        <div>justified</div>
+        <div>justified</div>
+        <div>justified</div>
+      </div>
+    </div>
+
+    <h4>Justification, equal space around each element</h4>
+    <div class="demo-snippet">
+      <div class="container flex-equal-around-justified">
+        <div>around-justified</div>
+        <div>around-justified</div>
+      </div>
+    </div>
+
+    <h4>Self alignment</h4>
+    <div class="demo-snippet">
+      <div class="container flex-self-align">
+        <div class="child1">one</div>
+        <div class="child2">two</div>
+        <div class="child3">three</div>
+        <div class="child4">four</div>
+      </div>
+    </div>
+
+    <h4>Wrapping</h4>
+    <div class="demo-snippet">
+      <div class="container flex-wrap">
+        <div>one</div>
+        <div>two</div>
+        <div>three</div>
+        <div>four</div>
+      </div>
+    </div>
+
+    <h4>Reversed layouts</h4>
+    <div class="demo-snippet">
+      <div class="container flex-reversed">
+        <div>one</div>
+        <div>two</div>
+        <div>three</div>
+        <div>four</div>
+      </div>
+    </div>
+
+    <h4>General purpose rules</h4>
+    <div class="demo-snippet">
+      <div class="general">
+        <div>Before
+          <span>[A Span]</span> After</div>
+        <div>Before
+          <span class="block">[A Block Span]</span> After</div>
+        <div>Before invisible span
+          <span class="invisible">Not displayed</span> After invisible span</div>
+        <div class="relative" style="height: 100px;">
+          <div class="fit" style="background-color: #000;color: white">Fit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

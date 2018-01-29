@@ -3,6 +3,8 @@
 
 import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
 import * as FHtml from '../../../lib/src/util/f-html.js';
+// eslint-disable-next-line
+import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
  * @class
@@ -11,10 +13,11 @@ class XSelect extends AlgPaperComponent {
   /**
    * Build the static template for style
    * @override
+   * @param {RulesInstance} css
    * @return {HTMLTemplateElement} The template Element with style
    */
-  createTemplateStyle() {
-    let template = super.createTemplateStyle();
+  createTemplateStyle(css) {
+    let template = super.createTemplateStyle(css);
     template.innerHTML = `
       <style>
         :host {
@@ -49,16 +52,13 @@ class XSelect extends AlgPaperComponent {
     //   open-animation-config="[[openAnimationConfig]]"
     //   close-animation-config="[[closeAnimationConfig]]">
     // </alg-iron-dropdown>
-    this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
 
     return template;
   }
 
-  constructor() {
-    super();
-
-    this.eventManager
-      .on('tap', (e) => { this.ids['dropdown'].open(); });
+  /** @override */
+  deferredConstructor() {
+    super.deferredConstructor();
 
     this.attributeManager
       .define('disabled', 'boolean')
@@ -67,13 +67,24 @@ class XSelect extends AlgPaperComponent {
       })
 
       .define('horizontal-align', 'string')
-      .on((value) => { this.ids['dropdown'].setAttribute('horizontal-align', value); })
+      .on((value) => {
+        this.ids['dropdown'].setAttribute('horizontal-align', value);
+      })
 
       .define('scroll-action', 'string')
-      .on((value) => { this.ids['dropdown'].setAttribute('scroll-action', value); })
+      .on((value) => {
+        this.ids['dropdown'].setAttribute('scroll-action', value);
+      })
 
       .define('vertical-align', 'string')
-      .on((value) => { this.ids['dropdown'].setAttribute('vertical-align', value); });
+      .on((value) => {
+        this.ids['dropdown'].setAttribute('vertical-align', value);
+      });
+
+    this.eventManager
+      .on('tap', (e) => {
+        this.ids['dropdown'].open();
+      });
   }
 
   /**

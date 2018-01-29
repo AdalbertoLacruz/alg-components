@@ -1,8 +1,8 @@
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import * as css from '../lib/styles/css-style.js';
+import {Rules} from '../lib/styles/rules.js';
 
-css.style('styles', `
+Rules.sheet('styles', `
   #container {
     display: flex;
   }

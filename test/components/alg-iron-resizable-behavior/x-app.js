@@ -5,6 +5,8 @@ import { AlgIronResizableMixin } from '../../../lib/src/mixins/alg-iron-resizabl
 import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
 import { translate3d } from '../../../lib/src/util/f-html.js';
 import { mixinFactory } from '../../../lib/src/util/mixins.js';
+// eslint-disable-next-line
+import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
  * @extends { AlgPaperComponent}
@@ -14,10 +16,11 @@ class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override
+   * @param {RulesInstance} css
    * @return {HTMLTemplateElement} The template Element with style
    */
-  createTemplateStyle() {
-    let template = super.createTemplateStyle();
+  createTemplateStyle(css) {
+    let template = super.createTemplateStyle(css);
     template.innerHTML = `
       <style>
         :host {
@@ -39,13 +42,13 @@ class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
     template.innerHTML = `
       <b>I'm a resize-aware, thirdifying puck at (<span id="x"></span> x <span id ="y"></span>).</b>
     `;
-    this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
 
     return template;
   }
 
-  constructor() {
-    super();
+  /** @override */
+  deferredConstructor() {
+    super.deferredConstructor();
 
     this.attributeManager
       .define('x', 'number')
@@ -99,10 +102,11 @@ class XApp extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override
+   * @param {RulesInstance} css
    * @return {HTMLTemplateElement} The template Element with style
    */
-  createTemplateStyle() {
-    let template = super.createTemplateStyle();
+  createTemplateStyle(css) {
+    let template = super.createTemplateStyle(css);
     template.innerHTML = `
       <style>
         :host {
@@ -128,7 +132,6 @@ class XApp extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
     template.innerHTML = `
       <x-puck></x-puck>
     `;
-    this.selfClass.templateIds = this.searchTemplateIds(template.innerHTML);
 
     return template;
   }
