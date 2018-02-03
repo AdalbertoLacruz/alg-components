@@ -84,7 +84,8 @@ class XSelect extends AlgPaperComponent {
     this.eventManager
       .on('tap', (e) => {
         this.ids['dropdown'].open();
-      });
+      })
+      .subscribe();
   }
 
   /**

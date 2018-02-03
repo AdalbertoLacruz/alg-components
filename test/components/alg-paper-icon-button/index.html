@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>alg-paper-icon-button</title>
+  <link rel="stylesheet" type="text/css" href="../index.css">
   <script type="module" src="components.js"></script>
 </head>
 <body style="opacity: 0">
@@ -43,6 +44,13 @@
       <a href="https://www.polymer-project.org" tabindex="-1">
         <alg-paper-icon-button icon="polymer"></alg-paper-icon-button>
       </a>
+    </div>
+
+    <h3>Buttons can send a message to the controller</h3>
+    <div class="demo-snipped">
+      <show-msg>
+        <alg-paper-icon-button id="icon-action" icon="flight-takeoff"  on-action></alg-paper-icon-button>
+      </show-msg>
     </div>
   </div>
 </body>

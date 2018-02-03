@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>alg-paper-toggle-button</title>
+  <link rel="stylesheet" type="text/css" href="../index.css">
   <script type="module" src="components.js"></script>
 </head>
 <body style="opacity: 0">
@@ -30,6 +31,13 @@
     <div class="demo-snipped">
       <alg-paper-toggle-button class="green">Toggle</alg-paper-toggle-button>
       <alg-paper-toggle-button checked="" class="pink">Toggle</alg-paper-toggle-button>
+    </div>
+
+    <h3>Toggle buttons can send a message to the controller</h3>
+    <div class="demo-snipped">
+      <show-msg>
+        <alg-paper-toggle-button id="toggle-action" on-change>Change</alg-paper-toggle-button>
+      </show-msg>
     </div>
   </div>
 </body>

@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>alg-paper-radio-group</title>
+  <link rel="stylesheet" type="text/css" href="../index.css">
   <script type="module" src="components.js"></script>
 </head>
 <body style="opacity: 0">
@@ -40,6 +41,17 @@
         <alg-paper-radio-button name="b">brontosaurus</alg-paper-radio-button>
         <alg-paper-radio-button name="d" disabled="">diplodocus</alg-paper-radio-button>
       </alg-paper-radio-group>
+    </div>
+
+    <h3>radio-group or radio-buttons can send a message to the controller</h3>
+    <div class="demo-snipped">
+      <label id="label4">Messages:</label>
+      <show-msg>
+        <alg-paper-radio-group id="radio-group" aria-labelledby="label4" on-change>
+          <alg-paper-radio-button id="radio1-action" on-change>Change1</alg-paper-radio-button>
+          <alg-paper-radio-button id="radio2-action" on-change>Change2</alg-paper-radio-button>
+        </alg-paper-radio-group>
+      </show-msg>
     </div>
   </div>
 </body>

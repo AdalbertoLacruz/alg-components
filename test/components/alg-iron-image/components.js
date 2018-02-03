@@ -1,9 +1,8 @@
 import '../demo-pages.js';
 import './style.js';
+document.body.style.opacity = null;
 
 import { AlgIronImage } from '../../../lib/components/alg-iron-image.js';
-
-document.body.style.opacity = null;
 
 // @ts-ignore
 window.load = (id) => {

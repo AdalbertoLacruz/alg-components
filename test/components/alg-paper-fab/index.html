@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>alg-paper-fab</title>
+    <link rel="stylesheet" type="text/css" href="../index.css">
     <script type="module" src="components.js"></script>
   </head>
   <body style="opacity: 0">
@@ -37,6 +38,13 @@
       <div class="demo-snipped">
         <alg-paper-fab icon="favorite" title="heart" class="blue"></alg-paper-fab>
         <alg-paper-fab icon="favorite" title="heart" class="orange"></alg-paper-fab>
+      </div>
+
+      <h3>FABs can send a message to the controller</h3>
+      <div class="demo-snipped">
+        <show-msg>
+          <alg-paper-fab id="fab-action" label="A" on-action>action</alg-paper-fab>
+        </show-msg>
       </div>
     </div>
   </body>

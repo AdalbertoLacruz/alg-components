@@ -1,6 +1,6 @@
 import '../demo-pages.js';
 import './style.js';
+document.body.style.opacity = null;
 
 import { AlgPaperRadioButton } from '../../../lib/components/alg-paper-radio-button.js';
-
-document.body.style.opacity = null;
+import '../show-msg.js';

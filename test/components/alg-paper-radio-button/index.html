@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>alg-paper-radio-button</title>
+  <link rel="stylesheet" type="text/css" href="../index.css">
   <script type="module" src="components.js"></script>
 </head>
 <body style="opacity: 0">
@@ -28,6 +29,13 @@
     <div class="demo-snipped">
       <alg-paper-radio-button class="red">Radio</alg-paper-radio-button>
       <alg-paper-radio-button checked="" class="green">Radio</alg-paper-radio-button>
+    </div>
+
+    <h3>Radio buttons can send a message to the controller</h3>
+    <div class="demo-snipped">
+      <show-msg>
+        <alg-paper-radio-button id="radio-action" on-change>Change</alg-paper-radio-button>
+      </show-msg>
     </div>
   </div>
 </body>

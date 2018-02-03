@@ -1,5 +1,6 @@
 ## v0.x.x  (2018-01-xx) iron-dropdown,
-## v0.2.1  (2018-01-29) iron-validatable-behavior, refactor with attributeManager
+## v0.2.2  (2018-02-03) MessageManager, component lifecycle, test styles
+## v0.2.1  (2018-01-29) iron-validatable-behavior, refactor with AttributeManager
 ## v0.2.0  (2018-01-23) Directories shuffle
 ## v0.1.2  (2018-01-08) AttributeManager, paper-icon-button, iron-image, iron-resizable-behavior
 ## v0.1.1  (2017-12-23) paper-radio-button, iron-selector, paper-radio-group

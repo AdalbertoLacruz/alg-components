@@ -72,13 +72,12 @@ class SimpleCheckbox extends mixinFactory(AlgPaperComponent,
       })
       .read({alwaysUpdate: true});
 
-    this.ids['button'].eventManager
-      .on('click', () => {
+    this.ids['button'].messageManager
+      .on('action', () => {
         // @ts-ignore
         this.validate();
         label.update(invalid.value ? 'is invalid' : 'is valid');
-      })
-      .subscribe();
+      });
 
     new EventManager(this.ids['checkbox'])
       .on('tap', () => {
