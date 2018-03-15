@@ -53,11 +53,11 @@ class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
     this.attributeManager
       .define('x', 'number')
       .on((value) => { this.ids['x'].innerHTML = value.toString(); })
-      .default(0)
+      .defaultValue(0)
 
       .define('y', 'number')
       .on((value) => { this.ids['y'].innerHTML = value.toString(); })
-      .default(0);
+      .defaultValue(0);
 
     this.eventManager
       .on('resize', () => {

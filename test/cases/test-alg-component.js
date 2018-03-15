@@ -71,20 +71,20 @@ export function TestAlgComponent() {
       assert.equal(channel, 'COMPONENT_CLICK', 'channel name');
     });
 
-    it('attribute binder (text="[[controller:component-text:default-text]]")', () => {
-      component.attributeChangedCallback('text', null, '[[controller:component-text:default-text]]');
+    it('attribute binder (text="[[controller:component-text=default-text]]")', () => {
+      component.attributeChangedCallback('text', null, '[[controller:component-text=default-text]]');
       assert.equal(component._text, 'default-text');
     });
-    it('attribute binder (color="{{controller:component-color:default-color}}")', () => {
-      component.attributeChangedCallback('color', null, '{{controller:component-color:default-color}}');
+    it('attribute binder (color="{{controller:component-color=default-color}}")', () => {
+      component.attributeChangedCallback('color', null, '{{controller:component-color=default-color}}');
       assert.equal(component.getAttribute('color'), 'default-color');
     });
     it('attribute static (text="text-value")', () => {
       component.attributeChangedCallback('text', null, 'text-value');
       assert.equal(component._text, 'text-value');
     });
-    it('attribute style (style="color:[[controller:component-color:yellow]];background-color:red")', () => {
-      component.attributeChangedCallback('style', null, 'color:[[controller:component-color:yellow]];background-color:red');
+    it('attribute style (style="color:[[controller:component-color=yellow]];background-color=red")', () => {
+      component.attributeChangedCallback('style', null, 'color:[[controller:component-color=yellow]];background-color=red');
       assert.equal(component.style['color'], 'yellow', 'color style');
       assert.equal(component.style['background-color'], 'red', 'background-color style');
     });

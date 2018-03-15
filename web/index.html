@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>alg-components demo</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" apply type="text/css" href="index.css">
     <script type="module" src="components.js"></script>
   </head>
 
-  <body controller="app-controller" >
+  <body style="opacity: 0" controller="app-controller" >
     <div class="header">
       Header
     </div>
@@ -16,14 +16,14 @@
       <alg-button id="btn1"
         text="{{:btn1-text}}"
         color="[[app-controller:btn1-color]]"
-        style="margin:[[:btn1-style-margin:40px]];background-color:yellow">OK</alg-button>
+        style="margin:[[:btn1-style-margin=40px]];background-color=yellow">OK</alg-button>
       <alg-button id="btn2"
-        text="{{:btn2-text:15}}"
+        text="{{:btn2-text=15}}"
         color="[[app-controller:btn2-color]]"
         on-click="[[app-controller:BTN2_CLICK]]"
         style="background-color">&times;</alg-button>
       <alg-button id="btn1"
-        text color style="margin;background-color;color:black" attr="25">OK</alg-button>
+        text color style="margin;background-color;color=black" attr="25">OK</alg-button>
       <br><br>
       <div id="container">
         <alg-paper-button id="btn2" class="pink"><alg-iron-icon icon="check"></alg-iron-icon>link</alg-paper-button>

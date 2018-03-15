@@ -25,10 +25,10 @@ export function TestBinderParser() {
       });
     });
 
-    describe('Attribute Binder (attribute=[[app-controller:btn2-label:15]])', () => {
+    describe('Attribute Binder (attribute=[[app-controller:btn2-label=15]])', () => {
       let binder;
       before(() => {
-        binder = new BinderParser('attribute', '[[app-controller:btn2-label:15]]');
+        binder = new BinderParser('attribute', '[[app-controller:btn2-label=15]]');
       });
       it('is Attribute Binder', () => {
         assert.equal(binder.isAttributeBinder, true);
@@ -41,10 +41,10 @@ export function TestBinderParser() {
       });
     });
 
-    describe('Style Binder (Style=property1:[[:channel1:value1]];property2:[[:channel2]])', () => {
+    describe('Style Binder (Style=property1:[[:channel1=value1]];property2:[[:channel2]])', () => {
       let binder;
       beforeEach(() => {
-        binder = new BinderParser('Style', 'property1:[[:channel1:value1]];property2:[[:channel2]]', 'default-controller');
+        binder = new BinderParser('Style', 'property1:[[:channel1=value1]];property2:[[:channel2]]', 'default-controller');
       });
 
       it('is Style Binder', () => {
@@ -52,13 +52,16 @@ export function TestBinderParser() {
       });
       it('first property', () => {
         const property = binder.styleProperty;
-        assert.equal(property, 'property1');
+        assert.equal(property, 'property1'); // TODO: simplify
       });
       it('first channel', () => {
         assert.equal(binder.channel, 'channel1');
       });
       it('first value', () => {
         assert.equal(binder.defaultValue, 'value1');
+      });
+      it('default controller', () => {
+        assert.equal(binder.controller, 'default-controller');
       });
 
       it('second property', () => {
@@ -73,15 +76,12 @@ export function TestBinderParser() {
         binder.next();
         assert.equal(binder.next(), false, 'no more style properties');
       });
-      it('default controller', () => {
-        assert.equal(binder.controller, 'default-controller');
-      });
     });
 
-    describe('Style without property (style=[[:channel1:value1]])', () => {
+    describe('Style without property (style=[[:channel1=value1]])', () => {
       let binder;
       before(() => {
-        binder = new BinderParser('style', '[[:channel1:value1]]');
+        binder = new BinderParser('style', '[[:channel1=value1]]');
       });
       it('Property empty', () => {
         assert.equal(binder.styleProperty, '');
@@ -101,10 +101,10 @@ export function TestBinderParser() {
       });
     });
 
-    describe('style with value (style=property:value)', () => {
+    describe('style with value (style=property=value)', () => {
       let binder;
       before(() => {
-        binder = new BinderParser('style', 'property:value');
+        binder = new BinderParser('style', 'property=value');
       });
       it('get property/value', () => {
         assert.equal(binder.styleProperty, 'property', 'get style property');

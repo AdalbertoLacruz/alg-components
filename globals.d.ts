@@ -1,6 +1,10 @@
 interface AlgIronComponent {
 }
 
+interface Array {
+  includes(any): boolean;
+}
+
 interface Event {
   path: Array<HTMLElements>
 }
