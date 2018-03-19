@@ -1,18 +1,18 @@
 // @copyright @polymer\iron-validatable-behavior\demo\validatable-input.js
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
+import { AlgComponent } from '../../../lib/src/base/alg-component.js';
 import { AlgIronValidatableMixin } from '../../../lib/src/mixins/alg-iron-validatable-mixin.js';
-import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
-import { EventManager } from '../../../lib/src/types/event-manager.js';
+import { EventManager } from '../../../lib/src/base/event-manager.js';
 import { mixinFactory } from '../../../lib/src/util/mixins.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
- * @extends { AlgPaperComponent}
+ * @extends { AlgComponent}
  * @class
  */
-class ValidatableInput extends mixinFactory(AlgPaperComponent, AlgIronValidatableMixin) {
+class ValidatableInput extends mixinFactory(AlgComponent, AlgIronValidatableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override

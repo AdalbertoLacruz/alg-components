@@ -1,20 +1,20 @@
 // @copyright @polymer\iron-checked-element-behavior\demo\simple-checkbox.js
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
+import { AlgComponent } from '../../../lib/src/base/alg-component.js';
 import { AlgIronCheckedElementMixin } from '../../../lib/src/mixins/alg-iron-checked-element-mixin.js';
 import { AlgIronValidatableMixin } from '../../../lib/src/mixins/alg-iron-validatable-mixin.js';
 import { AlgPaperButton } from '../../../lib/components/alg-paper-button.js';
-import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
-import { EventManager } from '../../../lib/src/types/event-manager.js';
+import { EventManager } from '../../../lib/src/base/event-manager.js';
 import { mixinFactory } from '../../../lib/src/util/mixins.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
- * @extends {AlgPaperComponent}
+ * @extends {AlgComponent}
  * @class
  */
-class SimpleCheckbox extends mixinFactory(AlgPaperComponent,
+class SimpleCheckbox extends mixinFactory(AlgComponent,
   AlgIronValidatableMixin, AlgIronCheckedElementMixin) {
   //
   /**

@@ -1,17 +1,17 @@
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import { AlgPaperComponent } from '../../lib/src/base/alg-paper-component.js';
+import { AlgComponent } from '../../lib/src/base/alg-component.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../lib/styles/rules.js';
 
 // import { mixinFactory } from '../../../lib/src/util/mixins.js';
 
 /**
- * @extends { AlgPaperComponent}
+ * @extends { AlgComponent}
  * @class
  */
 // class TemplateComponent extends mixinFactory(AlgPaperComponent, mixin) {
-class ShowMsg extends AlgPaperComponent {
+class ShowMsg extends AlgComponent {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override

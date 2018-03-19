@@ -2,17 +2,17 @@
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
 import { AlgIronResizableMixin } from '../../../lib/src/mixins/alg-iron-resizable-mixin.js';
-import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+import { AlgComponent } from '../../../lib/src/base/alg-component.js';
 import { translate3d } from '../../../lib/src/util/f-html.js';
 import { mixinFactory } from '../../../lib/src/util/mixins.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
 
 /**
- * @extends { AlgPaperComponent}
+ * @extends { AlgComponent}
  * @class
  */
-class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
+class XPuck extends mixinFactory(AlgComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override
@@ -95,10 +95,10 @@ class XPuck extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
 window.customElements.define('x-puck', XPuck);
 
 /**
- * @extends { AlgPaperComponent}
+ * @extends { AlgComponent}
  * @class
  */
-class XApp extends mixinFactory(AlgPaperComponent, AlgIronResizableMixin) {
+class XApp extends mixinFactory(AlgComponent, AlgIronResizableMixin) {
   /**
    * Build the static template for style - static. this.apply let custom styles.
    * @override

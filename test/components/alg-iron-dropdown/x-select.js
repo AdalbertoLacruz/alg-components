@@ -1,7 +1,7 @@
 // @copyright @polymer\iron-dropdown\demo\x-select.js
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
 
-import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
+import { AlgComponent } from '../../../lib/src/base/alg-component.js';
 import * as FHtml from '../../../lib/src/util/f-html.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
@@ -9,7 +9,7 @@ import { RulesInstance } from '../../../lib/styles/rules.js';
 /**
  * @class
  */
-class XSelect extends AlgPaperComponent {
+class XSelect extends AlgComponent {
   /**
    * Build the static template for style
    * @override

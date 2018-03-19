@@ -1,13 +1,12 @@
 // @copyright @polymer\iron-icons\demo\index.html
 // @copyright 2017-2018 adalberto.lacruz@gmail.com
-/* global cssRules */
 
+import { AlgComponent } from '../../../lib/src/base/alg-component.js';
 import { AlgIronIconset } from '../../../lib/src/base/alg-iron-iconset.js';
-import { AlgPaperComponent } from '../../../lib/src/base/alg-paper-component.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
 
-class AppDemo extends AlgPaperComponent {
+class AppDemo extends AlgComponent {
   createTemplateStyle(css) {
     let template = super.createTemplateStyle(css);
     template.innerHTML = `
