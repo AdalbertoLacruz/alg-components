@@ -1,0 +1,74 @@
+/* @copyright @polymer */
+/* @copyright 2017-2018 adalberto.lacruz@gmail.com */
+
+body {
+  transition: opacity 0.4s linear;
+}
+
+html {
+    --horizontal-section-container: {
+        --layout-horizontal: @apply;
+        --layout-center-justified: @apply;
+        --layout-wrap: @apply;
+    }
+}
+
+body {
+    --paper-font-common-base: @apply;
+    font-size: 14px;
+    margin: 0;
+    padding: 24px;
+    background-color: var(--paper-grey-50);
+}
+
+.horizontal-section-container {
+    --layout-horizontal: @apply;
+    --layout-center-justified: @apply;
+    --layout-wrap: @apply;
+}
+
+.vertical-section-container {
+  --layout-vertical: @apply;
+  --layout-center-justified: @apply;
+}
+
+.horizontal-section {
+    background-color: white;
+    padding: 24px;
+    margin-right: 24px;
+    min-width: 200px;
+
+    --shadow-elevation-2dp: @apply;
+}
+
+.vertical-section {
+    background-color: white;
+    padding: 24px;
+    margin: 0 24px 24px 24px;
+
+    --shadow-elevation-2dp: @apply;
+}
+
+.centered {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+code {
+  color: var(--google-grey-700);
+}
+
+body > div.layout.horizontal.center-justified {
+    --layout-wrap: @apply;
+}
+
+.demo-snipped {
+    display: block;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: white;
+    padding: 20px;
+    --shadow-elevation-2dp: @apply;
+    margin-bottom: 40px;
+    --horizontal-section-container: @apply;
+}

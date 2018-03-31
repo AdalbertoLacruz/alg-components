@@ -83,7 +83,6 @@ class AppDemo extends AlgComponent {
       `).join('')}
       </div>
     `).join('');
-
     return template;
   }
 

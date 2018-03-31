@@ -1,0 +1,168 @@
+/* @copyright @polymer\iron-flex-layout\demo\index.html 3.0 20170822 */
+/* @copyright 2017-2018 adalberto.lacruz@gmail.com */
+
+.demo-snippet {
+  padding: 0;
+}
+
+.centered {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container {
+  background-color: #ccc;
+  padding: 5px;
+  margin: 0;
+}
+
+.container > div {
+  padding: 15px;
+  margin: 5px;
+  background-color: white;
+  min-height: 20px;
+}
+
+.flex {
+  --layout-horizontal: @apply;
+}
+
+.flex-horizontal {
+  --layout-horizontal: @apply;
+}
+
+.flexchild {
+  --layout-flex: @apply;
+}
+
+.flex-vertical {
+  --layout-vertical: @apply;
+  height: 220px;
+}
+
+.flexchild-vertical {
+  --layout-flex: @apply;
+}
+
+.flex-horizontal-with-ratios {
+  --layout-horizontal: @apply;
+}
+
+.flex2child {
+  --layout-flex-2: @apply;
+}
+
+.flex3child {
+  --layout-flex-3: @apply;
+}
+
+.flex-stretch-align {
+  --layout-horizontal: @apply;
+  height: 120px;
+}
+
+.flex-center-align {
+  --layout-horizontal: @apply;
+  --layout-center: @apply;
+  height: 120px;
+}
+
+.flex-start-align {
+  --layout-horizontal: @apply;
+  --layout-start: @apply;
+  height: 120px;
+}
+
+.flex-end-align {
+  --layout-horizontal: @apply;
+  --layout-end: @apply;
+  height: 120px;
+}
+
+.flex-start-justified {
+  --layout-horizontal: @apply;
+  --layout-start-justified: @apply;
+}
+
+.flex-center-justified {
+  --layout-horizontal: @apply;
+  --layout-center-justified: @apply;
+}
+
+.flex-end-justified {
+  --layout-horizontal: @apply;
+  --layout-end-justified: @apply;
+}
+
+.flex-equal-justified {
+  --layout-horizontal: @apply;
+  --layout-justified: @apply;
+}
+
+.flex-equal-around-justified {
+  --layout-horizontal: @apply;
+  --layout-around-justified: @apply;
+}
+
+.flex-self-align {
+  --layout-horizontal: @apply;
+  --layout-justified: @apply;
+  height: 120px;
+}
+
+.flex-self-align div {
+  --layout-flex: @apply;
+}
+
+.child1 {
+  --layout-self-start: @apply;
+}
+
+.child2 {
+  --layout-self-center: @apply;
+}
+
+.child3 {
+  --layout-self-end: @apply;
+}
+
+.child4 {
+  --layout-self-stretch: @apply;
+}
+
+.flex-wrap {
+  --layout-horizontal: @apply;
+  --layout-wrap: @apply;
+  width: 200px;
+}
+
+.flex-reversed {
+  --layout-horizontal-reverse: @apply;
+}
+
+.general {
+  width: 100%;
+}
+
+.general > div {
+  background-color: #ccc;
+  padding: 4px;
+  margin: 12px;
+}
+
+.block {
+  --layout-block: @apply;
+}
+
+.invisible {
+  --layout-invisible: @apply;
+}
+
+.relative {
+  --layout-relative: @apply;
+}
+
+.fit {
+  --layout-fit: @apply;
+}
