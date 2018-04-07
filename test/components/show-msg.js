@@ -4,13 +4,10 @@ import { AlgComponent } from '../../lib/src/base/alg-component.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../lib/styles/rules.js';
 
-// import { mixinFactory } from '../../../lib/src/util/mixins.js';
-
 /**
  * @extends { AlgComponent}
  * @class
  */
-// class TemplateComponent extends mixinFactory(AlgPaperComponent, mixin) {
 class ShowMsg extends AlgComponent {
   /**
    * Build the static template for style - static. this.apply let custom styles.
@@ -74,34 +71,12 @@ class ShowMsg extends AlgComponent {
     this.controller = this;
   }
 
-  /** @override */
-  deferredConstructor() {
-    super.deferredConstructor();
-
-    // this.displayMessage('message 0');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-    // this.displayMessage('message 1');
-  }
-
-  /**
-   * Show a message
-   * @param {String} text
-   */
-  displayMessage(text) {
-    this.ids['msg'].innerHTML += `<span>${text}</span>`;
-  }
-
   // CONTROLLER
 
   fire(channel, message) {
     const msg = this.ids['msg'];
 
+    // hh:mm:ss:mmm
     const timeNow = new Date(Date.now());
     const stamp = `${timeNow.toLocaleTimeString()}.${timeNow.getMilliseconds().toString().padStart(3, '0')}`;
 
@@ -111,6 +86,7 @@ class ShowMsg extends AlgComponent {
 
   /**
    * Associates an action with a channel
+   * Dummy
    *
    * @param  {String} channel
    * @param  {any} defaultValue - if no null, set the value in channel
@@ -119,12 +95,6 @@ class ShowMsg extends AlgComponent {
    * @return {any} - value
    */
   subscribe(channel, defaultValue, action, status) {
-    // const bind = this.getBinding(channel);
-    // if (!bind) {
-    //   status.hasChannel = false;
-    //   return defaultValue;
-    // }
-    // return bind.subscribe(channel, defaultValue, action, status);
     console.log('controller subscribe:', channel);
     status.hasChannel = false;
     return null;

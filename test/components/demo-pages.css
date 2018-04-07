@@ -1,6 +1,11 @@
 /* @copyright @polymer */
 /* @copyright 2017-2018 adalberto.lacruz@gmail.com */
 
+*:not(:defined) {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
 body {
   transition: opacity 0.4s linear;
 }
