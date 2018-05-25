@@ -40,6 +40,11 @@ alg-button {
   background-color: lightBlue;
 }
 
+alg-button.circle {
+    border-radius: 20%;
+    padding: 8px 5px 14px 8px;
+}
+
 alg-show-log {
   background-color: #70D070;
   width: 800px;

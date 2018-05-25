@@ -1,6 +1,7 @@
 
 ## 0.3.x  (2018-03-xx) iron-dropdown,
-## 0.3.0  (2018-03-xx) Refactoring, Rules.applySheet
+## 0.3.0.e(2018-05-25) attributeManager (isPreBinded, isLocal, classbind), algComponent (controllerHandler)
+## 0.3.0  (2018-03-15) Refactoring, Rules.applySheet
 ## 0.2.2  (2018-02-03) MessageManager, component lifecycle, test styles
 ## 0.2.1  (2018-01-29) iron-validatable-behavior, refactor with AttributeManager
 ## 0.2.0  (2018-01-23) Directories shuffle
