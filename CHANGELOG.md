@@ -1,5 +1,6 @@
 
 ## 0.3.x  (2018-03-xx) iron-dropdown,
+## 0.3.0.f(2018-05-27) attributeManager (value, countChanges, alias, attributeToggle)
 ## 0.3.0.e(2018-05-25) attributeManager (isPreBinded, isLocal, classbind), algComponent (controllerHandler)
 ## 0.3.0  (2018-03-15) Refactoring, Rules.applySheet
 ## 0.2.2  (2018-02-03) MessageManager, component lifecycle, test styles
