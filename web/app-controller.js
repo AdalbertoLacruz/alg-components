@@ -29,6 +29,16 @@ class AppController extends AlgController {
       .observe((value) => {
         console.log(`BUS: ${value.channel} = `, value.message);
       });
+
+    this.busManager
+      .onFire(['BTN1_CLICK'], (message) => {
+        this.btn2Push();
+        this.btn1Relax();
+      })
+      .onFire(['BTN2_CLICK', 'BTN2_ACTION'], (message) => {
+        this.btn1Push();
+        this.btn2Relax();
+      });
   }
 
   /**
@@ -37,29 +47,6 @@ class AppController extends AlgController {
    * @return {String}
    */
   get name() { return 'app-controller'; }
-
-  /**
-   * @override
-   * @param {String} channel
-   * @param {*} message
-   */
-  fire(channel, message) {
-    super.fire(channel, message);
-
-    switch (channel) {
-      case 'BTN1_CLICK':
-        this.btn2Push();
-        this.btn1Relax();
-        break;
-      case 'BTN2_CLICK':
-      case 'BTN2_ACTION':
-        this.btn1Push();
-        this.btn2Relax();
-        break;
-      default:
-        break;
-    }
-  }
 
   btn1Push() {
     this.change('btn1-text', this.getValue('btn1-text') + 1);
