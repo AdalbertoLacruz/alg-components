@@ -9,6 +9,7 @@ import { EventManager } from '../../../lib/src/base/event-manager.js';
 import { mixinFactory } from '../../../lib/src/util/mixins.js';
 // eslint-disable-next-line
 import { RulesInstance } from '../../../lib/styles/rules.js';
+import { TYPE_STRING } from '../../../lib/src/util/constants.js';
 
 /**
  * @extends {AlgComponent}
@@ -65,29 +66,27 @@ class SimpleCheckbox extends mixinFactory(AlgComponent,
     super.deferredConstructor();
 
     this.attributeManager
-      .defineDefault('label', 'not validated')
-      .define('label', 'string')
+      .define('label', TYPE_STRING, { value: 'not validated' })
       .on((value) => {
         this.ids['labelText'].innerHTML = value;
       })
-      .read({alwaysUpdate: true});
+      .autoDispatch()
+      .store((entry$) => { this.label$ = entry$; });
 
     this.ids['button'].messageManager
       .on('action', () => {
         // @ts-ignore
-        this.validate();
-        label.update(invalid.value ? 'is invalid' : 'is valid');
+        this.validate(null);
+        // @ts-ignore
+        this.label$.update(this.invalid$.value ? 'is invalid' : 'is valid');
       });
 
     new EventManager(this.ids['checkbox'])
       .on('tap', () => {
-        checked.update(this.ids['checkbox'].checked);
+        // @ts-ignore
+        this.checked$.update(this.ids['checkbox'].checked);
       })
       .subscribe();
-
-    const checked = this.attributeManager.get('checked');
-    const invalid = this.attributeManager.get('invalid');
-    const label = this.attributeManager.get('label');
   }
 }
 

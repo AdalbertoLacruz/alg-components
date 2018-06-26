@@ -1,5 +1,6 @@
 
 ## 0.3.x  (2018-03-xx) iron-dropdown,
+## 0.3.0.h(2018-06-26) alg-iron-checked-element-behavior, AttributeManager (autoDispatch, store)
 ## 0.3.0.g(2018-06-06) paper-ripple with component microcontroller, ObservableAction, BusManager
 ## 0.3.0.f(2018-05-27) AttributeManager (value, countChanges, alias, attributeToggle)
 ## 0.3.0.e(2018-05-25) AttributeManager (isPreBinded, isLocal, classbind), AlgComponent (controllerHandler)
